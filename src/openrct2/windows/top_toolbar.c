@@ -111,6 +111,7 @@ typedef enum {
 	DDIDX_INVENTIONS_LIST = 3,
 	DDIDX_SCENARIO_OPTIONS = 4,
 	DDIDX_DEBUG_PAINT = 5,
+	DDIDX_COPY_SCENERY = 6,
 
 	TOP_TOOLBAR_DEBUG_COUNT
 } TOP_TOOLBAR_DEBUG_DDIDX;
@@ -2956,6 +2957,8 @@ void top_toolbar_init_debug_menu(rct_window* w, rct_widget* widget)
 	gDropdownItemsArgs[DDIDX_SCENARIO_OPTIONS] = STR_DEBUG_DROPDOWN_SCENARIO_OPTIONS;
 	gDropdownItemsFormat[DDIDX_DEBUG_PAINT] = STR_TOGGLE_OPTION;
 	gDropdownItemsArgs[DDIDX_DEBUG_PAINT] = STR_DEBUG_DROPDOWN_DEBUG_PAINT;
+	gDropdownItemsFormat[DDIDX_COPY_SCENERY] = STR_TOGGLE_OPTION;
+	gDropdownItemsArgs[DDIDX_COPY_SCENERY] = STR_DEBUG_DROPDOWN_TILE_INSPECTOR;
 
 	window_dropdown_show_text(
 		w->x + widget->left,
@@ -3013,6 +3016,9 @@ void top_toolbar_debug_menu_dropdown(sint16 dropdownIndex)
 			} else {
 				window_close_by_class(WC_DEBUG_PAINT);
 			}
+			break;
+		case DDIDX_COPY_SCENERY:
+			window_scenery_blueprint_open();
 			break;
 		}
 	}
