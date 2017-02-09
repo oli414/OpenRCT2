@@ -30,6 +30,7 @@
 uint8 gWindowSceneryActiveTabIndex;
 uint16 gWindowSceneryTabSelections[20];
 uint8 gWindowSceneryClusterEnabled;
+uint8 gWindowSceneryPickerEnabled;
 uint8 gWindowSceneryPaintEnabled;
 uint8 gWindowSceneryRotation;
 colour_t gWindowSceneryPrimaryColour;

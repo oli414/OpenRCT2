@@ -1001,6 +1001,112 @@ static void repaint_scenery_tool_down(sint16 x, sint16 y, sint16 widgetIndex){
 	}
 }
 
+static void picker_scenery_tool_down(sint16 x, sint16 y, sint16 widgetIndex) {
+	// ax, cx, bl
+	sint16 grid_x, grid_y;
+	sint32 type;
+	// edx
+	rct_map_element* map_element;
+	uint16 flags =
+		VIEWPORT_INTERACTION_MASK_SCENERY &
+		VIEWPORT_INTERACTION_MASK_WALL &
+		VIEWPORT_INTERACTION_MASK_LARGE_SCENERY &
+		VIEWPORT_INTERACTION_MASK_BANNER;
+	// This is -2 as banner is 12 but flags are offset different
+
+	// not used
+	rct_viewport* viewport;
+	get_map_coordinates_from_pos(x, y, flags, &grid_x, &grid_y, &type, &map_element, &viewport);
+
+	switch (type) {
+	case VIEWPORT_INTERACTION_ITEM_SCENERY:
+	{
+		rct_scenery_entry* scenery_entry = get_small_scenery_entry(map_element->properties.scenery.type);
+
+		// If can't repaint
+		if (!(scenery_entry->small_scenery.flags &
+			(SMALL_SCENERY_FLAG_HAS_PRIMARY_COLOUR |
+				SMALL_SCENERY_FLAG_HAS_GLASS)))
+			return;
+
+		gWindowSceneryPrimaryColour = map_element->properties.scenery.colour_1;
+		gWindowScenerySecondaryColour = map_element->properties.scenery.colour_2;
+
+		sint32 sceneryId = map_element->properties.scenery.type;
+
+		for (sint32 tabIndex = 0; tabIndex < 20; tabIndex++)
+		{
+			for (uint16 sceneryEntry = 0; sceneryEntry < SCENERY_ENTRIES_BY_TAB + 1; sceneryEntry++)
+			{
+				if (window_scenery_tab_entries[tabIndex][sceneryEntry] == -1)
+					break;
+
+				if (window_scenery_tab_entries[tabIndex][sceneryEntry] == sceneryId)
+				{
+					//gWindowSceneryActiveTabIndex = tabIndex;
+					//gWindowSceneryTabSelections[tabIndex] = sceneryEntry;
+
+					gWindowSceneryTabSelections[gWindowSceneryActiveTabIndex] = sceneryEntry;
+				}
+			}
+		}
+
+		gWindowSceneryPickerEnabled = 0;
+		break;
+	}
+	case VIEWPORT_INTERACTION_ITEM_WALL:
+	{
+		rct_scenery_entry* scenery_entry = get_wall_entry(map_element->properties.fence.type);
+
+		// If can't repaint
+		if (!(scenery_entry->wall.flags &
+			(WALL_SCENERY_HAS_PRIMARY_COLOUR |
+				WALL_SCENERY_HAS_GLASS)))
+			return;
+
+		gWindowSceneryPickerEnabled = 0;
+		break;
+	}
+	case VIEWPORT_INTERACTION_ITEM_LARGE_SCENERY:
+	{
+		rct_scenery_entry* scenery_entry = get_large_scenery_entry(map_element->properties.scenerymultiple.type & MAP_ELEMENT_LARGE_TYPE_MASK);
+
+		// If can't repaint
+		if (!(scenery_entry->large_scenery.flags &
+			LARGE_SCENERY_FLAG_HAS_PRIMARY_COLOUR))
+			return;
+
+		gWindowSceneryPickerEnabled = 0;
+		break;
+	}
+	case VIEWPORT_INTERACTION_ITEM_BANNER:
+	{
+		rct_banner* banner = &gBanners[map_element->properties.banner.index];
+		rct_scenery_entry* scenery_entry = get_banner_entry(banner->type);
+
+		// If can't repaint
+		if (!(scenery_entry->banner.flags &
+			(1 << 0)))
+			return;
+
+		gGameCommandErrorTitle = STR_CANT_REPAINT_THIS;
+		game_do_command(
+			grid_x,
+			1,
+			grid_y,
+			map_element->base_height | ((map_element->properties.banner.position & 0x3) << 8),
+			GAME_COMMAND_SET_BANNER_COLOUR,
+			0,
+			gWindowSceneryPrimaryColour | (gWindowScenerySecondaryColour << 8));
+
+		gWindowSceneryPickerEnabled = 0;
+		break;
+	}
+	default:
+		return;
+	}
+}
+
 /**
  *
  *  rct2: 0x006E1F34
@@ -1444,6 +1550,10 @@ static void window_top_toolbar_scenery_tool_down(sint16 x, sint16 y, rct_window 
 	scenery_remove_ghost_tool_placement();
 	if (gWindowSceneryPaintEnabled & 1) {
 		repaint_scenery_tool_down(x, y, widgetIndex);
+		return;
+	}
+	if (gWindowSceneryPickerEnabled & 1) {
+		picker_scenery_tool_down(x, y, widgetIndex);
 		return;
 	}
 

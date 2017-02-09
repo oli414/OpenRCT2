@@ -140,6 +140,7 @@ enum WINDOW_SCENERY_LIST_WIDGET_IDX {
 	WIDX_SCENERY_SECONDARY_COLOUR_BUTTON,	// 10000000
 	WIDX_SCENERY_TERTIARY_COLOUR_BUTTON,	// 20000000
 	WIDX_SCENERY_BUILD_CLUSTER_BUTTON,		// 40000000
+	WIDX_SCENERY_PICKER_BUTTON,				// 80000000
 };
 
 static rct_widget window_scenery_widgets[] = {
@@ -174,6 +175,7 @@ static rct_widget window_scenery_widgets[] = {
 	{ WWT_COLOURBTN, 1, 615, 626, 105, 116, 0xFFFFFFFF, STR_SELECT_SECONDARY_COLOUR },	// 10000000			0x009DE458
 	{ WWT_COLOURBTN, 1, 615, 626, 117, 128, 0xFFFFFFFF, STR_SELECT_TERNARY_COLOUR },		// 20000000			0x009DE468
 	{ WWT_FLATBTN, 1, 609, 632, 117, 140, SPR_SCENERY_CLUSTER, STR_SCENERY_CLUSTER_TIP },									// 40000000			0x009DE478
+	{ WWT_FLATBTN, 1, 609, 632, 127, 150, SPR_ROTATE_ARROW, STR_SCENERY_CLUSTER_TIP },									// 80000000			0x009DE478
 	{ WIDGETS_END },
 };
 
@@ -456,7 +458,8 @@ void window_scenery_open()
 		(1 << WIDX_SCENERY_SECONDARY_COLOUR_BUTTON) |
 		(1 << WIDX_SCENERY_REPAINT_SCENERY_BUTTON) |
 		(1 << WIDX_SCENERY_TERTIARY_COLOUR_BUTTON) |
-		(1 << WIDX_SCENERY_BUILD_CLUSTER_BUTTON);
+		(1 << WIDX_SCENERY_BUILD_CLUSTER_BUTTON) |
+		(1 << WIDX_SCENERY_PICKER_BUTTON);
 
 	window_init_scroll_widgets(window);
 	window_scenery_update_scroll(window);
@@ -472,6 +475,7 @@ void window_scenery_open()
 	gSceneryPlaceRotation = 0;
 	gWindowSceneryPaintEnabled = 0; // repaint coloured scenery tool state
 	gWindowSceneryClusterEnabled = 0; // build cluster tool state
+	gWindowSceneryPickerEnabled = 0; // picker tool state
 
 	window->min_width = WINDOW_SCENERY_WIDTH;
 	window->max_width = WINDOW_SCENERY_WIDTH;
@@ -592,6 +596,10 @@ static void window_scenery_mouseup(rct_window *w, sint32 widgetIndex)
 		else {
 			window_error_open(STR_CANT_DO_THIS, STR_PERMISSION_DENIED);
 		}
+		window_invalidate(w);
+		break;
+	case WIDX_SCENERY_PICKER_BUTTON:
+		gWindowSceneryPickerEnabled ^= 1;
 		window_invalidate(w);
 		break;
 	}
@@ -917,14 +925,28 @@ void window_scenery_invalidate(rct_window *w)
 	if (gWindowSceneryClusterEnabled == 1)
 		w->pressed_widgets |= (1 << WIDX_SCENERY_BUILD_CLUSTER_BUTTON);
 
+	w->pressed_widgets &= !(1 << WIDX_SCENERY_PICKER_BUTTON);
+	if (gWindowSceneryPickerEnabled == 1)
+		w->pressed_widgets |= (1 << WIDX_SCENERY_PICKER_BUTTON);
+
 	window_scenery_widgets[WIDX_SCENERY_ROTATE_OBJECTS_BUTTON].type = WWT_EMPTY;
 	window_scenery_widgets[WIDX_SCENERY_BUILD_CLUSTER_BUTTON].type = WWT_EMPTY;
+	window_scenery_widgets[WIDX_SCENERY_PICKER_BUTTON].type = WWT_EMPTY;
+
+	if (!((gWindowSceneryPaintEnabled & 1) || (gWindowSceneryClusterEnabled & 1)))
+	{
+		window_scenery_widgets[WIDX_SCENERY_PICKER_BUTTON].type = WWT_FLATBTN;
+	}
 
 	sint16 tabSelectedSceneryId = gWindowSceneryTabSelections[tabIndex];
 	if (tabSelectedSceneryId != -1) {
+
 		if (tabSelectedSceneryId < 0x100) {
-			if (!(gWindowSceneryPaintEnabled & 1))
+			if (!((gWindowSceneryPaintEnabled & 1) || (gWindowSceneryPickerEnabled & 1)))
+			{
 				window_scenery_widgets[WIDX_SCENERY_BUILD_CLUSTER_BUTTON].type = WWT_FLATBTN;
+			}
+
 
 			rct_scenery_entry* sceneryEntry = get_small_scenery_entry(tabSelectedSceneryId);
 			if (sceneryEntry->small_scenery.flags & SMALL_SCENERY_FLAG4) {
@@ -1006,9 +1028,11 @@ void window_scenery_invalidate(rct_window *w)
 	window_scenery_widgets[WIDX_SCENERY_ROTATE_OBJECTS_BUTTON].left = w->width - 25;
 	window_scenery_widgets[WIDX_SCENERY_REPAINT_SCENERY_BUTTON].left = w->width - 25;
 	window_scenery_widgets[WIDX_SCENERY_BUILD_CLUSTER_BUTTON].left = w->width - 25;
+	window_scenery_widgets[WIDX_SCENERY_PICKER_BUTTON].left = w->width - 25;
 	window_scenery_widgets[WIDX_SCENERY_ROTATE_OBJECTS_BUTTON].right = w->width - 2;
 	window_scenery_widgets[WIDX_SCENERY_REPAINT_SCENERY_BUTTON].right = w->width - 2;
 	window_scenery_widgets[WIDX_SCENERY_BUILD_CLUSTER_BUTTON].right = w->width - 2;
+	window_scenery_widgets[WIDX_SCENERY_PICKER_BUTTON].right = w->width - 2;
 
 	window_scenery_widgets[WIDX_SCENERY_PRIMARY_COLOUR_BUTTON].left = w->width - 19;
 	window_scenery_widgets[WIDX_SCENERY_SECONDARY_COLOUR_BUTTON].left = w->width - 19;
@@ -1100,7 +1124,7 @@ void window_scenery_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, sint32 sc
 	while ((currentSceneryGlobalId = window_scenery_tab_entries[tabIndex][sceneryTabItemIndex]) != -1) {
 		uint16 tabSelectedSceneryId = gWindowSceneryTabSelections[tabIndex];
 
-		if (gWindowSceneryPaintEnabled == 1) {
+		if (gWindowSceneryPaintEnabled == 1 || gWindowSceneryPickerEnabled == 1) {
 			if (w->scenery.selected_scenery_id == currentSceneryGlobalId) {
 				gfx_fill_rect_inset(dpi, left, top, left + SCENERY_BUTTON_WIDTH - 1,
 					top + SCENERY_BUTTON_HEIGHT - 1, w->colours[1], INSET_RECT_FLAG_FILL_MID_LIGHT);

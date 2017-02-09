@@ -230,6 +230,7 @@ enum {
 extern uint8 gWindowSceneryActiveTabIndex;
 extern uint16 gWindowSceneryTabSelections[20];
 extern uint8 gWindowSceneryClusterEnabled;
+extern uint8 gWindowSceneryPickerEnabled;
 extern uint8 gWindowSceneryPaintEnabled;
 extern uint8 gWindowSceneryRotation;
 extern colour_t gWindowSceneryPrimaryColour;
