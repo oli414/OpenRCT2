@@ -102,7 +102,18 @@ void track_design_save_select_nearby_scenery(sint32 rideIndex)
 			mapElement = map_get_first_element_at(x, y);
 			do {
 				if (track_design_save_should_select_scenery_around(rideIndex, mapElement)) {
-					track_design_save_select_nearby_scenery_for_tile(rideIndex, x, y);
+					for (sint32 y2 = y - 20; y2 < y + 20; y2++) 
+					{
+						if (y2 < 0 || y2 >= 256 - 1)
+							continue;
+						for (sint32 x2 = x - 20; x2 < x + 20; x2++) 
+						{
+							if (x2 < 0 || x2 >= 256 - 1)
+								continue;
+
+							track_design_save_select_nearby_scenery_for_tile(rideIndex, x2, y2);
+						}
+					}
 					break;
 				}
 			} while (!map_element_is_last_for_tile(mapElement++));
