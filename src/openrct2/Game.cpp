@@ -51,6 +51,7 @@
 #include "ride/TrackDesign.h"
 #include "ride/Vehicle.h"
 #include "scenario/Scenario.h"
+#include "scripting/ScriptEngine.h"
 #include "title/TitleScreen.h"
 #include "title/TitleSequencePlayer.h"
 #include "util/SawyerCoding.h"
@@ -68,6 +69,9 @@
 #include "world/Water.h"
 #include "object/ObjectList.h"
 #include "interface/Window_internal.h"
+
+using namespace OpenRCT2;
+using namespace OpenRCT2::Scripting;
 
 #define NUMBER_OF_AUTOSAVES_TO_KEEP 9
 
@@ -473,6 +477,9 @@ void game_logic_update()
         // Check desync.
         network_check_desynchronization();
     }
+
+    auto& hookEngine = GetContext()->GetScriptEngine().GetHookEngine();
+    hookEngine.Call(HOOK_TYPE::INTERVAL_TICK);
 
     sub_68B089();
     scenario_update();
