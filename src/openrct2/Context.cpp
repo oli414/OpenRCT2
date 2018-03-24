@@ -393,6 +393,8 @@ namespace OpenRCT2
             game_init_all(150);
 
             _titleScreen = new TitleScreen();
+
+            _uiContext->Initialise();
             return true;
         }
 
