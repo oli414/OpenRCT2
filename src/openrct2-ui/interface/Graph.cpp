@@ -20,26 +20,31 @@
 
 static void graph_draw_months_uint8(rct_drawpixelinfo * dpi, const uint8 * history, sint32 count, sint32 baseX, sint32 baseY)
 {
-    sint32 i, x, y, yearOver32, currentMonth, currentDay;
+    sint32 i, x, y, currentMonth, currentDay, week, month;
 
     currentMonth = date_get_month(gDateMonthsElapsed);
-    currentDay = gDateMonthTicks;
-    yearOver32 = (currentMonth * 4) + (currentDay >> 14) - 31;
+    currentDay = ((gDateMonthTicks * days_in_month[currentMonth]) >> 16) & 0xFF;;
+
+	week = currentDay / 8; // Divide the day by week
+	month = currentMonth - 7;
+	week = (week - 3) % 4;
     x = baseX;
     y = baseY;
-    for (i = count - 1; i >= 0; i--)
-    {
-        if (history[i] != 255 && yearOver32 % 4 == 0)
-        {
+    for (i = count - 1; i >= 0; i--) {
+        if (history[i] != 0 && history[i] != 255 && week % 4 == 0) {
             // Draw month text
-            set_format_arg(0, uint32, DateGameShortMonthNames[date_get_month((yearOver32 / 4) + MONTH_COUNT)]);
+            set_format_arg(0, uint32, DateGameShortMonthNames[date_get_month(month + MONTH_COUNT)]);
             gfx_draw_string_centred(dpi, STR_GRAPH_LABEL, x, y - 10, COLOUR_BLACK, gCommonFormatArgs);
 
             // Draw month mark
             gfx_fill_rect(dpi, x, y, x, y + 3, PALETTE_INDEX_10);
         }
-
-        yearOver32 = (yearOver32 + 1) % 32;
+		week++;
+		if (week >= 4)
+		{
+			week = 0;
+			month++;
+		}
         x += 6;
     }
 }

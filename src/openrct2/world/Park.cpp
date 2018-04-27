@@ -849,6 +849,11 @@ uint32 Park::CalculateSuggestedMaxGuests() const
         }
     }
 
+#ifdef OLI414_SEASONS
+    // Increase attendance based on the current month.
+    suggestedMaxGuests = (sint32)((float)suggestedMaxGuests * (float)MonthlyAttendanceModifier[date_get_month(gDateMonthsElapsed)] / 100.0f);
+#endif // OLI414_SEASONS
+
     suggestedMaxGuests = std::min<uint32>(suggestedMaxGuests, 65535);
     return suggestedMaxGuests;
 }
@@ -869,6 +874,12 @@ uint32 Park::CalculateGuestGenerationProbability() const
             probability /= 4;
         }
     }
+#ifdef OLI414_SEASONS
+    else if (numGuests < _suggestedGuestMaximum / 2) // Boost probability if the number of guests is well below the suggested amount
+    {
+        probability *= 4;
+    }
+#endif // OLI414_SEASONS
 
     // Reduces chance for any more than 7000 guests
     if (numGuests > 7000)
@@ -905,6 +916,11 @@ uint32 Park::CalculateGuestGenerationProbability() const
             }
         }
     }
+
+#ifdef OLI414_SEASONS
+    // Adjust probability based on the next month. The next month is used since it takes about a month for a guest to actually leave the park.
+    probability *= (float)MonthlyAttendanceModifier[date_get_month(gDateMonthsElapsed + 1)] / 100.0f;
+#endif // OLI414_SEASONS
 
     return probability;
 }

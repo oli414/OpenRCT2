@@ -315,6 +315,8 @@ const rct_string_id DateDayNames[] = {
 };
 
 const rct_string_id DateGameMonthNames[MONTH_COUNT] = {
+	STR_MONTH_JANUARY,
+	STR_MONTH_FEBRUARY,
     STR_MONTH_MARCH,
     STR_MONTH_APRIL,
     STR_MONTH_MAY,
@@ -323,9 +325,13 @@ const rct_string_id DateGameMonthNames[MONTH_COUNT] = {
     STR_MONTH_AUGUST,
     STR_MONTH_SEPTEMBER,
     STR_MONTH_OCTOBER,
+	STR_MONTH_NOVEMBER,
+	STR_MONTH_DECEMBER,
 };
 
 const rct_string_id DateGameShortMonthNames[MONTH_COUNT] = {
+	STR_MONTH_SHORT_JAN,
+	STR_MONTH_SHORT_FEB,
     STR_MONTH_SHORT_MAR,
     STR_MONTH_SHORT_APR,
     STR_MONTH_SHORT_MAY,
@@ -334,6 +340,8 @@ const rct_string_id DateGameShortMonthNames[MONTH_COUNT] = {
     STR_MONTH_SHORT_AUG,
     STR_MONTH_SHORT_SEP,
     STR_MONTH_SHORT_OCT,
+	STR_MONTH_SHORT_NOV,
+	STR_MONTH_SHORT_DEC,
 };
 // clang-format on
 

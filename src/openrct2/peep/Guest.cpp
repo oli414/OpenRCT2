@@ -2874,6 +2874,20 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
         }
     }
 
+#ifdef OLI414_SEASONS
+    // Leave the park after 15 minutes
+    sint32 x = gScenarioTicks - peep->time_in_park;
+    x >>= 11;
+    if (x >= 15)
+    {
+        if ((scenario_rand() & 0xFFFF) < 3276) // 5% chance of leaving the park after 15 minutes.
+        {
+            peep_leave_park(peep);
+            return;
+        }
+    }
+#endif // OLI414_SEASONS
+
     // Approx 95% chance of staying in the park
     if ((scenario_rand() & 0xFFFF) > 3276)
     {

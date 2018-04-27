@@ -20,6 +20,8 @@
 #include "../common.h"
 
 enum {
+	MONTH_JANUARY,
+	MONTH_FEBRUARY,
     MONTH_MARCH,
     MONTH_APRIL,
     MONTH_MAY,
@@ -28,6 +30,8 @@ enum {
     MONTH_AUGUST,
     MONTH_SEPTEMBER,
     MONTH_OCTOBER,
+	MONTH_NOVEMBER,
+	MONTH_DECEMBER,
 
     MONTH_COUNT
 };
@@ -48,6 +52,7 @@ struct openrct_timeofday {
 extern const sint16 days_in_month[MONTH_COUNT];
 extern const rct_string_id DateFormatStringIds[];
 extern const rct_string_id DateFormatStringFormatIds[];
+extern const sint16 MonthlyAttendanceModifier[];
 
 extern uint16 gDateMonthTicks;
 extern uint16 gDateMonthsElapsed;
