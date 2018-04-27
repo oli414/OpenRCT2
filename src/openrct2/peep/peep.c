@@ -733,29 +733,42 @@ static void peep_decide_whether_to_leave_park(rct_peep *peep)
         return;
     }
 
-    /* Peeps that are happy enough, have enough energy and
-     * (if appropriate) have enough money will always stay
-     * in the park. */
-    if (!(peep->peep_flags & PEEP_FLAGS_LEAVING_PARK)){
-        if (gParkFlags & PARK_FLAGS_NO_MONEY) {
-            if (peep->energy >= 70 && peep->happiness >= 60) {
-                return;
-            }
-        } else {
-            if (
-                peep->energy >= 55 &&
-                peep->happiness >= 45 &&
-                peep->cash_in_pocket >= MONEY(5, 00)
-            ) {
-                return;
-            }
-        }
-    }
+	// Leave the park after 15 minutes
+	sint32 x = gScenarioTicks - peep->time_in_park;
+	x >>= 11;
+	if (x >= 15)
+	{
+		if ((peep_rand() & 0xFFFF) < 3276) // 5% chance of leaving the park after 15 minutes.
+		{
+			peep_leave_park(peep);
+			return;
+		}
+	}
 
-    // Approx 95% chance of staying in the park
-    if ((peep_rand() & 0xFFFF) > 3276) {
-        return;
-    }
+	/* Peeps that are happy enough, have enough energy and
+		* (if appropriate) have enough money will always stay
+		* in the park. */
+	if (!(peep->peep_flags & PEEP_FLAGS_LEAVING_PARK)) {
+		if (gParkFlags & PARK_FLAGS_NO_MONEY) {
+			if (peep->energy >= 70 && peep->happiness >= 60) {
+				return;
+			}
+		}
+		else {
+			if (
+				peep->energy >= 55 &&
+				peep->happiness >= 45 &&
+				peep->cash_in_pocket >= MONEY(5, 00)
+				) {
+				return;
+			}
+		}
+	}
+
+	// Approx 95% chance of staying in the park
+	if ((peep_rand() & 0xFFFF) > 3276) {
+		return;
+	}
 
     // In the remaining 5% chance the peep leaves the park.
     peep_leave_park(peep);

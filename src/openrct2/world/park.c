@@ -425,6 +425,11 @@ static sint32 park_calculate_guest_generation_probability()
     // Begin with 50 + park rating
     probability = 50 + clamp(0, gParkRating - 200, 650);
 
+	// Adjust probability based on the next month. The next month is used since it takes about a month for a guest to actually leave the park.
+	probability *= (float)MonthlyAttendanceModifier[date_get_month(gDateMonthsElapsed + 1)] / 100.0f;
+
+	suggestedMaxGuests = (sint32)((float)suggestedMaxGuests * (float)MonthlyAttendanceModifier[date_get_month(gDateMonthsElapsed)] / 100.0f);
+
     // The more guests, the lower the chance of a new one
     sint32 numGuests = gNumGuestsInPark + gNumGuestsHeadingForPark;
     if (numGuests > suggestedMaxGuests) {
@@ -434,6 +439,10 @@ static sint32 park_calculate_guest_generation_probability()
         if (gParkFlags & PARK_FLAGS_DIFFICULT_GUEST_GENERATION)
             probability /= 4;
     }
+	else if (numGuests < suggestedMaxGuests / 2) // Boost probability if the number of guests is well below the suggested amount
+	{
+		probability *= 4;
+	}
 
     // Reduces chance for any more than 7000 guests
     if (numGuests > 7000)

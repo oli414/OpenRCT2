@@ -326,7 +326,7 @@ static void scenario_day_update()
 
 static void scenario_week_update()
 {
-    sint32 month = gDateMonthsElapsed & 7;
+    sint32 month = date_get_month(gDateMonthsElapsed);
 
     finance_pay_wages();
     finance_pay_research();
@@ -397,7 +397,7 @@ void scenario_update()
     if (!(gScreenFlags & ~SCREEN_FLAGS_PLAYING)) {
         uint32 currentMonthTick = floor2(gDateMonthTicks, 4);
         uint32 nextMonthTick = currentMonthTick + 4;
-        uint8 currentMonth = gDateMonthsElapsed & 7;
+        uint8 currentMonth = date_get_month(gDateMonthsElapsed);
         uint8 currentDaysInMonth = (uint8)days_in_month[currentMonth];
 
         if ((currentDaysInMonth * nextMonthTick) >> 16 != (currentDaysInMonth * currentMonthTick) >> 16) {
