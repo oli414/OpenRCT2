@@ -873,10 +873,43 @@ bool peep_pickup_command(uint32 peepnum, sint32 x, sint32 y, sint32 z, sint32 ac
         rct_peep * existing = network_get_pickup_peep(game_command_playerid);
         if (existing)
         {
+<<<<<<< HEAD
             // already picking up a peep
             bool result = peep_pickup_command(existing->sprite_index, network_get_pickup_peep_old_x(game_command_playerid), 0,
                                               0, 1, apply);
             if (existing == peep)
+=======
+        case PEEP_STATE_WALKING:
+        case PEEP_STATE_LEAVING_PARK:
+        case PEEP_STATE_ENTERING_PARK:
+            peep_decide_whether_to_leave_park(peep);
+            peep_update_hunger(peep);
+            break;
+
+        case PEEP_STATE_SITTING:
+            if (peep->energy_target <= 135)
+                peep->energy_target += 5;
+
+            if (peep->thirst >= 5)
+            {
+                peep->thirst -= 4;
+                peep->toilet = Math::Min(255, peep->toilet + 3);
+            }
+
+            if (peep->nausea_target >= 50)
+                peep->nausea_target -= 6;
+
+            peep_decide_whether_to_leave_park(peep);
+
+            // In the original this branched differently
+            // but it would mean setting the peep happiness from
+            // a thought type entry which i think is incorrect.
+            peep_update_hunger(peep);
+            break;
+
+        case PEEP_STATE_QUEUING:
+            if (peep->time_in_queue >= 2000)
+>>>>>>> Add guests leaving at night
             {
                 return result;
             }

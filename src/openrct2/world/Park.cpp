@@ -349,18 +349,6 @@ static money32 map_buy_land_rights_for_tile(sint32 x, sint32 y, sint32 setting, 
             if (!(flags & GAME_COMMAND_FLAG_APPLY)) {
                 return gLandPrice;
             }
-
-            if ((newOwnership & 0xF0) != 0) {
-                PeepSpawn *peepSpawns = gPeepSpawns;
-
-                for (uint8 i = 0; i < MAX_PEEP_SPAWNS; ++i) {
-                    if (x == (peepSpawns[i].x & 0xFFE0)) {
-                        if (y == (peepSpawns[i].y & 0xFFE0)) {
-                            peepSpawns[i].x = PEEP_SPAWN_UNDEFINED;
-                        }
-                    }
-                }
-            }
             surfaceElement->properties.surface.ownership &= 0x0F;
             surfaceElement->properties.surface.ownership |= newOwnership;
             update_park_fences_around_tile({x, y});
@@ -877,7 +865,7 @@ uint32 Park::CalculateGuestGenerationProbability() const
 #ifdef OLI414_SEASONS
     else if (numGuests < _suggestedGuestMaximum / 2) // Boost probability if the number of guests is well below the suggested amount
     {
-        probability *= 4;
+        probability *= 10;
     }
 #endif // OLI414_SEASONS
 

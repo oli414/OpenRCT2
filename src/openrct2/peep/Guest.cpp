@@ -2875,6 +2875,13 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
     }
 
 #ifdef OLI414_SEASONS
+
+    if (!park_is_open()) // Leave the park if the park is closed.
+    {
+        peep_leave_park(peep);
+        return;
+    }
+    /*
     // Leave the park after 15 minutes
     sint32 x = gScenarioTicks - peep->time_in_park;
     x >>= 11;
@@ -2885,7 +2892,7 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
             peep_leave_park(peep);
             return;
         }
-    }
+    }*/
 #endif // OLI414_SEASONS
 
     // Approx 95% chance of staying in the park
