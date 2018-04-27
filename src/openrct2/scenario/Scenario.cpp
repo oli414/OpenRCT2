@@ -327,7 +327,7 @@ static void scenario_day_update()
 
 static void scenario_week_update()
 {
-    sint32 month = gDateMonthsElapsed & 7;
+    sint32 month = gDateMonthsElapsed;
 
     finance_pay_wages();
     finance_pay_research();
@@ -369,7 +369,8 @@ static void scenario_update_daynight_cycle()
     gDayNightCycle = 0;
 
     if (gScreenFlags == SCREEN_FLAGS_PLAYING && gConfigGeneral.day_night_cycle) {
-        float monthFraction = gDateMonthTicks / (float)0x10000;
+        const int dayNightCycleLength = 1;
+        float monthFraction = ((gDateMonthsElapsed % dayNightCycleLength) + gDateMonthTicks / (float)0x10000) / (float)dayNightCycleLength;
         if (monthFraction < (1 / 8.0f)) {
             gDayNightCycle = 0.0f;
         } else if (monthFraction < (3 / 8.0f)) {
@@ -380,6 +381,45 @@ static void scenario_update_daynight_cycle()
             gDayNightCycle = 1.0f - ((monthFraction - (5 / 8.0f)) / (2 / 8.0f));
         } else {
             gDayNightCycle = 0.0f;
+        }
+    }
+    
+    if (gDayNightCycle > 0.5f)
+    {
+        if (gParkFlags & PARK_FLAGS_PARK_OPEN)
+        {
+            park_set_open(0);
+
+            sint32 i;
+            Ride *ride;
+
+            FOR_ALL_RIDES(i, ride) {
+                if (ride->status == RIDE_STATUS_CLOSED)
+                    continue;
+                ride_set_status(i, RIDE_STATUS_CLOSED);
+                ride_set_status(i, RIDE_STATUS_CLOSED);
+            }
+        }
+    }
+    else {
+        if (!(gParkFlags & PARK_FLAGS_PARK_OPEN))
+        {
+            park_set_open(1);
+
+            sint32 i;
+            Ride *ride;
+
+            FOR_ALL_RIDES(i, ride) {
+                if (ride->status == RIDE_STATUS_OPEN)
+                    continue;
+                bool temp = gGameCommandIsNetworked;
+                gGameCommandIsNetworked = true;
+                if (ride_is_valid_for_open(i, true, 0))
+                {
+                    gGameCommandIsNetworked = temp;
+                    ride_set_status(i, RIDE_STATUS_OPEN);
+                }
+            }
         }
     }
 
@@ -397,22 +437,29 @@ void scenario_update()
 {
     if (gScreenFlags == SCREEN_FLAGS_PLAYING)
     {
+        static uint16 lastDateMonthTicks = 10;
         date_update();
-        if (date_is_day_start(gDateMonthTicks))
+
+        if (lastDateMonthTicks != gDateMonthTicks)
         {
-            scenario_day_update();
-        }
-        if (date_is_week_start(gDateMonthTicks))
-        {
-            scenario_week_update();
-        }
-        if (date_is_fortnight_start(gDateMonthTicks))
-        {
-            scenario_fortnight_update();
-        }
-        if (date_is_month_start(gDateMonthTicks))
-        {
-            scenario_month_update();
+            if (date_is_day_start(gDateMonthTicks))
+            {
+                scenario_day_update();
+            }
+            if (date_is_week_start(gDateMonthTicks))
+            {
+                scenario_week_update();
+            }
+            if (date_is_fortnight_start(gDateMonthTicks))
+            {
+                scenario_fortnight_update();
+            }
+            if (date_is_month_start(gDateMonthTicks))
+            {
+                scenario_month_update();
+            }
+
+            lastDateMonthTicks = gDateMonthTicks;
         }
     }
     scenario_update_daynight_cycle();

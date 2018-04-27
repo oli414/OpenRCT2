@@ -770,7 +770,14 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
         return;
     }
 
-	// Leave the park after 15 minutes
+    if (!park_is_open()) // Leave the park if the park is closed.
+    {
+        peep_leave_park(peep);
+        return;
+    }
+
+	// Leave the park after 15 minutes.
+    /* This is disabled since closing the park already does this
 	sint32 x = gScenarioTicks - peep->time_in_park;
 	x >>= 11;
 	if (x >= 15)
@@ -780,7 +787,7 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
 			peep_leave_park(peep);
 			return;
 		}
-	}
+	}*/
 
     /* Peeps that are happy enough, have enough energy and
      * (if appropriate) have enough money will always stay
@@ -1237,6 +1244,8 @@ static void peep_128_tick_update(rct_peep * peep, sint32 index)
 
             if (peep->nausea_target >= 50)
                 peep->nausea_target -= 6;
+
+            peep_decide_whether_to_leave_park(peep);
 
             // In the original this branched differently
             // but it would mean setting the peep happiness from

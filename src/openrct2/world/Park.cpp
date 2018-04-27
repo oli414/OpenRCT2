@@ -451,7 +451,7 @@ static sint32 park_calculate_guest_generation_probability()
     }
 	else if (numGuests < suggestedMaxGuests / 2) // Boost probability if the number of guests is well below the suggested amount
 	{
-		probability *= 4;
+		probability *= 10;
 	}
 
     // Reduces chance for any more than 7000 guests
@@ -630,7 +630,7 @@ void park_update_histories()
     // Update guests in park history
     for (sint32 i = 31; i > 0; i--)
         gGuestsInParkHistory[i] = gGuestsInParkHistory[i - 1];
-    gGuestsInParkHistory[0] = Math::Min(guestsInPark, 5000) / 20;
+    gGuestsInParkHistory[0] = Math::Max(1, Math::Min(guestsInPark, 5000) / 20);
     window_invalidate_by_class(WC_PARK_INFORMATION);
 
     // Update current cash history
