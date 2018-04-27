@@ -304,13 +304,14 @@ void scenario_autosave_check()
 
 static void scenario_day_update()
 {
+
     finance_update_daily_profit();
     peep_update_days_in_queue();
     switch (gScenarioObjectiveType) {
     case OBJECTIVE_10_ROLLERCOASTERS:
     case OBJECTIVE_GUESTS_AND_RATING:
     case OBJECTIVE_10_ROLLERCOASTERS_LENGTH:
-    case OBJECTIVE_FINISH_5_ROLLERCOASTERS:
+    case OBJECTIVE_FINISH_5_ROLLERCOASTERS: 
     case OBJECTIVE_REPLAY_LOAN_AND_PARK_VALUE:
         scenario_objective_check();
         break;
@@ -330,7 +331,7 @@ static void scenario_day_update()
 
 static void scenario_week_update()
 {
-    sint32 month = date_get_month(gDateMonthsElapsed);
+    sint32 month = gDateMonthsElapsed & 7;
 
     finance_pay_wages();
     finance_pay_research();

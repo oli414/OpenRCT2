@@ -26,7 +26,7 @@ uint16 gDateMonthsElapsed;
 // rct2: 0x00993988
 const sint16 days_in_month[MONTH_COUNT] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-const sint16 MonthlyAttendanceModifier[] = { 50, 60, 100, 100, 100, 100, 100, 100, 100, 70, 50, 60 };
+const sint16 MonthlyAttendanceModifier[] = { 50, 60, 70, 80, 100, 100, 100, 100, 100, 40, 60, 50 };
 
 // clang-format off
 const rct_string_id DateFormatStringIds[] = {
