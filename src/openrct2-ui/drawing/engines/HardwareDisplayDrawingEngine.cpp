@@ -14,18 +14,19 @@
  *****************************************************************************/
 #pragma endregion
 
+#include <cmath>
 #include <vector>
 #include <openrct2/common.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <openrct2/config/Config.h>
 #include <openrct2/drawing/IDrawingEngine.h>
 #include <openrct2/drawing/X8DrawingEngine.h>
 #include <openrct2/ui/UiContext.h>
 #include "DrawingEngines.h"
 
-#include <openrct2/drawing/lightfx.h>
-#include <openrct2/game.h>
-#include <openrct2/paint/paint.h>
+#include <openrct2/drawing/LightFX.h>
+#include <openrct2/Game.h>
+#include <openrct2/paint/Paint.h>
 
 using namespace OpenRCT2;
 using namespace OpenRCT2::Drawing;
@@ -40,6 +41,7 @@ private:
     SDL_Window *        _window                     = nullptr;
     SDL_Renderer *      _sdlRenderer                = nullptr;
     SDL_Texture *       _screenTexture              = nullptr;
+    SDL_Texture *       _scaledScreenTexture        = nullptr;
     SDL_PixelFormat *   _screenTextureFormat        = nullptr;
     uint32              _paletteHWMapped[256]       = { 0 };
 #ifdef __ENABLE_LIGHTFX__
@@ -51,8 +53,11 @@ private:
     uint32  _pixelAfterOverlay      = 0;
     bool    _overlayActive          = false;
     bool    _pausedBeforeOverlay    = false;
+    bool    _useVsync               = true;
 
     std::vector<uint32> _dirtyVisualsTime;
+    
+    bool    smoothNN = false;
 
 public:
     explicit HardwareDisplayDrawingEngine(IUiContext * uiContext)
@@ -64,19 +69,40 @@ public:
 
     ~HardwareDisplayDrawingEngine() override
     {
-        SDL_DestroyTexture(_screenTexture);
+        if (_screenTexture != nullptr)
+        {
+            SDL_DestroyTexture(_screenTexture);
+        }
+        if (_scaledScreenTexture != nullptr)
+        {
+            SDL_DestroyTexture(_scaledScreenTexture);
+        }
         SDL_FreeFormat(_screenTextureFormat);
         SDL_DestroyRenderer(_sdlRenderer);
     }
 
     void Initialise() override
     {
-        _sdlRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        _sdlRenderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | (_useVsync ? SDL_RENDERER_PRESENTVSYNC : 0));
+    }
+
+    void SetVSync(bool vsync) override
+    {
+        if (_useVsync != vsync)
+        {
+            _useVsync = vsync;
+            SDL_DestroyRenderer(_sdlRenderer);
+            Initialise();
+            Resize(_uiContext->GetWidth(), _uiContext->GetHeight());
+        }
     }
 
     void Resize(uint32 width, uint32 height) override
     {
-        SDL_DestroyTexture(_screenTexture);
+        if (_screenTexture != nullptr)
+        {
+            SDL_DestroyTexture(_screenTexture);
+        }
         SDL_FreeFormat(_screenTextureFormat);
 
         SDL_RendererInfo rendererInfo = {};
@@ -98,10 +124,41 @@ public:
             }
         }
 
-        _screenTexture = SDL_CreateTexture(_sdlRenderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
+        sint32 scaleQuality = GetContext()->GetUiContext()->GetScaleQuality();
+        if (scaleQuality == SCALE_QUALITY_SMOOTH_NN)
+        {
+            scaleQuality = SCALE_QUALITY_LINEAR;
+            smoothNN = true;
+        }
+        else
+        {
+            smoothNN = false;
+        }
+
+        if (smoothNN)
+        {
+            if (_scaledScreenTexture != nullptr)
+            {
+                SDL_DestroyTexture(_scaledScreenTexture);
+            }
+
+            char scaleQualityBuffer[4];
+            snprintf(scaleQualityBuffer, sizeof(scaleQualityBuffer), "%u", scaleQuality);
+            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+            _screenTexture = SDL_CreateTexture(_sdlRenderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING, width, height);
+            SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, scaleQualityBuffer);
+
+            uint32 scale = std::ceil(gConfigGeneral.window_scale);
+            _scaledScreenTexture = SDL_CreateTexture(_sdlRenderer, pixelFormat, SDL_TEXTUREACCESS_TARGET,
+                                                     width * scale, height * scale);
+        }
+        else
+        {
+            _screenTexture = SDL_CreateTexture(_sdlRenderer, pixelFormat, SDL_TEXTUREACCESS_STREAMING,width, height);
+        }        
 
         uint32 format;
-        SDL_QueryTexture(_screenTexture, &format, 0, 0, 0);
+        SDL_QueryTexture(_screenTexture, &format, nullptr, nullptr, nullptr);
         _screenTextureFormat = SDL_AllocFormat(format);
 
         ConfigureBits(width, height, width);
@@ -175,7 +232,18 @@ private:
         {
             CopyBitsToTexture(_screenTexture, _bits, (sint32)_width, (sint32)_height, _paletteHWMapped);
         }
-        SDL_RenderCopy(_sdlRenderer, _screenTexture, nullptr, nullptr);
+        if (smoothNN)
+        {
+            SDL_SetRenderTarget(_sdlRenderer, _scaledScreenTexture);
+            SDL_RenderCopy(_sdlRenderer, _screenTexture, nullptr, nullptr);
+            
+            SDL_SetRenderTarget(_sdlRenderer, nullptr);
+            SDL_RenderCopy(_sdlRenderer, _scaledScreenTexture, nullptr, nullptr);
+        }
+        else
+        {
+            SDL_RenderCopy(_sdlRenderer, _screenTexture, nullptr, nullptr);
+        }
 
         if (gShowDirtyVisuals)
         {
@@ -196,7 +264,7 @@ private:
         }
     }
 
-    void CopyBitsToTexture(SDL_Texture * texture, uint8 * src, sint32 width, sint32 height, uint32 * palette)
+    void CopyBitsToTexture(SDL_Texture * texture, uint8 * src, sint32 width, sint32 height, const uint32 * palette)
     {
         void *  pixels;
         sint32     pitch;

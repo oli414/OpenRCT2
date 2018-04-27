@@ -17,16 +17,13 @@
 #include <memory>
 #include "../common.h"
 #include "../core/Console.hpp"
-#include "../core/Exception.hpp"
-#include "../core/Guard.hpp"
 #include "../core/Path.hpp"
 #include "../FileClassifier.h"
 #include "../ParkImporter.h"
 #include "../rct2/S6Exporter.h"
 #include "CommandLine.hpp"
 
-#include "../game.h"
-#include "../interface/window.h"
+#include "../interface/Window.h"
 #include "../OpenRCT2.h"
 
 static void WriteConvertFromAndToMessage(uint32 sourceFileType, uint32 destinationFileType);
@@ -112,9 +109,9 @@ exitcode_t CommandLine::HandleCommandConvert(CommandLineArgEnumerator * enumerat
         importer->Load(sourcePath);
         importer->Import();
     }
-    catch (const Exception &ex)
+    catch (const std::exception &ex)
     {
-        Console::Error::WriteLine(ex.GetMessage());
+        Console::Error::WriteLine(ex.what());
         return EXITCODE_FAIL;
     }
 
@@ -143,9 +140,9 @@ exitcode_t CommandLine::HandleCommandConvert(CommandLineArgEnumerator * enumerat
             exporter->SaveGame(destinationPath);
         }
     }
-    catch (const Exception &ex)
+    catch (const std::exception &ex)
     {
-        Console::Error::WriteLine(ex.GetMessage());
+        Console::Error::WriteLine(ex.what());
         return EXITCODE_FAIL;
     }
 

@@ -13,14 +13,16 @@ distribution/android/*/external/
 artifacts
 .cache
 .dependencies
+sequencesversion
 
 #lib
 lib
 libversion
 
-#sequences
+# Downloaded or built data files
+data/g2.dat
 data/title
-sequencesversion
+data/object
 
 #################
 ## Eclipse
@@ -277,7 +279,6 @@ pip-log.txt
 openrct2.id*
 openrct2.nam
 openrct2.til
-data/g2.dat
 
 #################
 ## Linux
@@ -285,6 +286,9 @@ data/g2.dat
 
 # KDE folder settings
 .directory
+
+# discord rich presence client library
+discord-rpc
 
 ###############
 ## JetBrains ##

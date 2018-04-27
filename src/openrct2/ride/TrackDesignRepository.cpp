@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
+#include "../Context.h"
 #include "../config/Config.h"
 #include "../core/Collections.hpp"
 #include "../core/Console.hpp"
@@ -49,7 +50,7 @@ enum TRACK_REPO_ITEM_FLAGS
     TRIF_READ_ONLY = (1 << 0),
 };
 
-static std::string GetNameFromTrackPath(const std::string &path)
+std::string GetNameFromTrackPath(const std::string &path)
 {
     std::string name = Path::GetFileNameWithoutExtension(path);
     //The track name should be the file name until the first instance of a dot
@@ -61,11 +62,11 @@ class TrackDesignFileIndex final : public FileIndex<TrackRepositoryItem>
 {
 private:
     static constexpr uint32 MAGIC_NUMBER = 0x58444954; // TIDX
-    static constexpr uint16 VERSION = 1;
+    static constexpr uint16 VERSION = 2;
     static constexpr auto PATTERN = "*.td4;*.td6";
 
 public:
-    TrackDesignFileIndex(IPlatformEnvironment * env) :
+    explicit TrackDesignFileIndex(IPlatformEnvironment * env) :
         FileIndex("track design index",
             MAGIC_NUMBER,
             VERSION,
@@ -141,16 +142,14 @@ private:
     std::vector<TrackRepositoryItem> _items;
 
 public:
-    TrackDesignRepository(IPlatformEnvironment * env)
+    explicit TrackDesignRepository(IPlatformEnvironment * env)
         : _env(env),
           _fileIndex(env)
     {
         Guard::ArgumentNotNull(env);
     }
 
-    virtual ~TrackDesignRepository() final
-    {
-    }
+    ~TrackDesignRepository() = default;
 
     size_t GetCount() const override
     {
@@ -166,7 +165,7 @@ public:
     size_t GetCountForObjectEntry(uint8 rideType, const std::string &entry) const override
     {
         size_t count = 0;
-        const IObjectRepository * repo = GetObjectRepository();
+        const IObjectRepository * repo = GetContext()->GetObjectRepository();
 
         for (const auto &item : _items)
         {
@@ -180,7 +179,7 @@ public:
             {
                 const ObjectRepositoryItem * ori = repo->FindObject(item.ObjectEntry.c_str());
 
-                if (gConfigInterface.select_by_track_type || ori == nullptr || !(ori->RideFlags & ORI_RIDE_FLAG_SEPARATE))
+                if (ori == nullptr || !RideGroupManager::RideTypeIsIndependent(rideType))
                     entryIsNotSeparate = true;
             }
 
@@ -192,10 +191,10 @@ public:
         return count;
     }
 
-    size_t GetCountForRideGroup(uint8 rideType, const ride_group * rideGroup) const override
+    size_t GetCountForRideGroup(uint8 rideType, const RideGroup * rideGroup) const override
     {
         size_t count = 0;
-        const IObjectRepository * repo = GetObjectRepository();
+        const IObjectRepository * repo = GetContext()->GetObjectRepository();
 
         for (const auto &item : _items)
         {
@@ -206,9 +205,9 @@ public:
 
             const ObjectRepositoryItem * ori = repo->FindObject(item.ObjectEntry.c_str());
             uint8 rideGroupIndex = (ori != nullptr) ? ori->RideGroupIndex : 0;
-            ride_group * itemRideGroup = ride_group_find(rideType, rideGroupIndex);
+            const RideGroup * itemRideGroup = RideGroupManager::RideGroupFind(rideType, rideGroupIndex);
 
-            if (itemRideGroup != nullptr && ride_groups_are_equal(itemRideGroup, rideGroup))
+            if (itemRideGroup != nullptr && RideGroupManager::RideGroupsAreEqual(itemRideGroup, rideGroup))
             {
                 count++;
             }
@@ -224,10 +223,10 @@ public:
      * @param entry The entry name to build a track list for. Leave empty to build track list for the non-separated types (e.g. Hyper-Twister, Car Ride)
      * @return
      */
-    size_t GetItemsForObjectEntry(track_design_file_ref * * outRefs, uint8 rideType, const std::string &entry) const override
+    std::vector<track_design_file_ref> GetItemsForObjectEntry(uint8 rideType, const std::string &entry) const override
     {
         std::vector<track_design_file_ref> refs;
-        const IObjectRepository * repo = GetObjectRepository();
+        const IObjectRepository * repo = GetContext()->GetObjectRepository();
 
         for (const auto &item : _items)
         {
@@ -241,7 +240,7 @@ public:
             {
                 const ObjectRepositoryItem * ori = repo->FindObject(item.ObjectEntry.c_str());
 
-                if (gConfigInterface.select_by_track_type || ori == nullptr || !(ori->RideFlags & ORI_RIDE_FLAG_SEPARATE))
+                if (ori == nullptr || !RideGroupManager::RideTypeIsIndependent(rideType))
                     entryIsNotSeparate = true;
             }
 
@@ -254,14 +253,13 @@ public:
             }
         }
 
-        *outRefs = Collections::ToArray(refs);
-        return refs.size();
+        return refs;
     }
 
-    size_t GetItemsForRideGroup(track_design_file_ref **outRefs, uint8 rideType, const ride_group * rideGroup) const override
+    std::vector<track_design_file_ref> GetItemsForRideGroup(uint8 rideType, const RideGroup * rideGroup) const override
     {
         std::vector<track_design_file_ref> refs;
-        const IObjectRepository * repo = GetObjectRepository();
+        const IObjectRepository * repo = GetContext()->GetObjectRepository();
 
         for (const auto &item : _items)
         {
@@ -272,9 +270,9 @@ public:
 
             const ObjectRepositoryItem * ori = repo->FindObject(item.ObjectEntry.c_str());
             uint8 rideGroupIndex = (ori != nullptr) ? ori->RideGroupIndex : 0;
-            ride_group * itemRideGroup = ride_group_find(rideType, rideGroupIndex);
+            const RideGroup * itemRideGroup = RideGroupManager::RideGroupFind(rideType, rideGroupIndex);
 
-            if (itemRideGroup != nullptr && ride_groups_are_equal(itemRideGroup, rideGroup))
+            if (itemRideGroup != nullptr && RideGroupManager::RideGroupsAreEqual(itemRideGroup, rideGroup))
             {
                 track_design_file_ref ref;
                 ref.name = String::Duplicate(GetNameFromTrackPath(item.Path));
@@ -283,15 +281,14 @@ public:
             }
         }
 
-        *outRefs = Collections::ToArray(refs);
-        return refs.size();
+        return refs;
     }
 
     void Scan() override
     {
         _items.clear();
         auto trackDesigns = _fileIndex.LoadOrBuild();
-        for (auto td : trackDesigns)
+        for (const auto &td : trackDesigns)
         {
             _items.push_back(td);
         }
@@ -399,73 +396,33 @@ private:
     }
 };
 
-static TrackDesignRepository * _trackDesignRepository = nullptr;
-
 ITrackDesignRepository * CreateTrackDesignRepository(IPlatformEnvironment * env)
 {
-    _trackDesignRepository = new TrackDesignRepository(env);
-    return _trackDesignRepository;
+    return new TrackDesignRepository(env);
 }
 
-ITrackDesignRepository * GetTrackDesignRepository()
+void track_repository_scan()
 {
-    return _trackDesignRepository;
+    ITrackDesignRepository * repo = GetContext()->GetTrackDesignRepository();
+    repo->Scan();
 }
 
-extern "C"
+bool track_repository_delete(const utf8 * path)
 {
-    void track_repository_scan()
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        repo->Scan();
-    }
+    ITrackDesignRepository * repo = GetContext()->GetTrackDesignRepository();
+    return repo->Delete(path);
+}
 
-    size_t track_repository_get_count_for_ride(uint8 rideType, const utf8 * entry)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        return repo->GetCountForObjectEntry(rideType, String::ToStd(entry));
-    }
+bool track_repository_rename(const utf8 * path, const utf8 * newName)
+{
+    ITrackDesignRepository * repo = GetContext()->GetTrackDesignRepository();
+    std::string newPath = repo->Rename(path, newName);
+    return !newPath.empty();
+}
 
-    size_t track_repository_get_count_for_ride_group(uint8 rideType, const ride_group * rideGroup)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        return repo->GetCountForRideGroup(rideType, rideGroup);
-    }
-
-    size_t track_repository_get_items_for_ride(track_design_file_ref * * outRefs, uint8 rideType, const utf8 * entry)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        return repo->GetItemsForObjectEntry(outRefs, rideType, String::ToStd(entry));
-    }
-
-    size_t track_repository_get_items_for_ride_group(track_design_file_ref * * outRefs, uint8 rideType, const ride_group * rideGroup)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        return repo->GetItemsForRideGroup(outRefs, rideType, rideGroup);
-    }
-
-    bool track_repository_delete(const utf8 * path)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        return repo->Delete(path);
-    }
-
-    bool track_repository_rename(const utf8 * path, const utf8 * newName)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        std::string newPath = repo->Rename(path, newName);
-        return !newPath.empty();
-    }
-
-    bool track_repository_install(const utf8 * srcPath)
-    {
-        ITrackDesignRepository * repo = GetTrackDesignRepository();
-        std::string newPath = repo->Install(srcPath);
-        return !newPath.empty();
-    }
-
-    utf8 * track_repository_get_name_from_path(const utf8 * path)
-    {
-        return String::Duplicate(GetNameFromTrackPath(path));
-    }
+bool track_repository_install(const utf8 * srcPath)
+{
+    ITrackDesignRepository * repo = GetContext()->GetTrackDesignRepository();
+    std::string newPath = repo->Install(srcPath);
+    return !newPath.empty();
 }

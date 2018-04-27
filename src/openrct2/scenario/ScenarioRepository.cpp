@@ -32,9 +32,10 @@
 #include "ScenarioSources.h"
 
 #include "../config/Config.h"
-#include "../localisation/localisation.h"
+#include "../localisation/Localisation.h"
 #include "../platform/platform.h"
-#include "scenario.h"
+#include "Scenario.h"
+#include "../Game.h"
 
 using namespace OpenRCT2;
 
@@ -123,11 +124,11 @@ class ScenarioFileIndex final : public FileIndex<scenario_index_entry>
 {
 private:
     static constexpr uint32 MAGIC_NUMBER = 0x58444953; // SIDX
-    static constexpr uint16 VERSION = 1;
+    static constexpr uint16 VERSION = 3;
     static constexpr auto PATTERN = "*.sc4;*.sc6";
     
 public:
-    ScenarioFileIndex(IPlatformEnvironment * env) :
+    explicit ScenarioFileIndex(IPlatformEnvironment * env) :
         FileIndex("scenario index",
                   MAGIC_NUMBER,
                   VERSION,
@@ -157,18 +158,47 @@ protected:
 
     void Serialise(IStream * stream, const scenario_index_entry &item) const override
     {
-        // HACK: Zero highscore pointer
-        auto copy = item;
-        copy.highscore = nullptr;
-        stream->WriteValue(copy);
+        stream->Write(item.path, sizeof(item.path));
+        stream->WriteValue(item.timestamp);
+
+        stream->WriteValue(item.category);
+        stream->WriteValue(item.source_game);
+        stream->WriteValue(item.source_index);
+        stream->WriteValue(item.sc_id);
+
+        stream->WriteValue(item.objective_type);
+        stream->WriteValue(item.objective_arg_1);
+        stream->WriteValue(item.objective_arg_2);
+        stream->WriteValue(item.objective_arg_3);
+
+        stream->Write(item.internal_name, sizeof(item.internal_name));
+        stream->Write(item.name, sizeof(item.name));
+        stream->Write(item.details, sizeof(item.details));
     }
 
     scenario_index_entry Deserialise(IStream * stream) const override
     {
-        auto result = stream->ReadValue<scenario_index_entry>();
-        // HACK: Zero highscore pointer
-        result.highscore = nullptr;
-        return result;
+        scenario_index_entry item;
+
+        stream->Read(item.path, sizeof(item.path));
+        item.timestamp = stream->ReadValue<uint64>();
+
+        item.category = stream->ReadValue<uint8>();
+        item.source_game = stream->ReadValue<uint8>();
+        item.source_index = stream->ReadValue<sint16>();
+        item.sc_id = stream->ReadValue<uint16>();
+
+        item.objective_type = stream->ReadValue<uint8>();
+        item.objective_arg_1 = stream->ReadValue<uint8>();
+        item.objective_arg_2 = stream->ReadValue<sint32>();
+        item.objective_arg_3 = stream->ReadValue<sint16>();
+        item.highscore = nullptr;
+
+        stream->Read(item.internal_name, sizeof(item.internal_name));
+        stream->Read(item.name, sizeof(item.name));
+        stream->Read(item.details, sizeof(item.details));
+
+        return item;
     }
 
 private:
@@ -196,7 +226,7 @@ private:
                         result = true;
                     }
                 }
-                catch (Exception)
+                catch (const std::exception &)
                 {
                 }
                 return result;
@@ -211,6 +241,8 @@ private:
                 if (header.type == S6_TYPE_SCENARIO)
                 {
                     rct_s6_info info = chunkReader.ReadChunkAs<rct_s6_info>();
+                    rct2_to_utf8_self(info.name, sizeof(info.name));
+                    rct2_to_utf8_self(info.details, sizeof(info.details));
                     *entry = CreateNewScenarioEntry(path, timestamp, &info);
                     return true;
                 }
@@ -220,7 +252,7 @@ private:
                 }
             }
         }
-        catch (Exception)
+        catch (const std::exception &)
         {
             Console::Error::WriteLine("Unable to read scenario: '%s'", path.c_str());
         }
@@ -251,6 +283,9 @@ private:
             // Normalise the name to make the scenario as recognisable as possible.
             ScenarioSources::NormaliseName(entry.name, sizeof(entry.name), entry.name);
         }
+
+		// entry.name will be translated later so keep the untranslated name here
+		String::Set(entry.internal_name, sizeof(entry.internal_name), entry.name);
 
         String::Set(entry.details, sizeof(entry.details), s6Info->details);
 
@@ -293,7 +328,7 @@ private:
     std::vector<scenario_highscore_entry*> _highscores;
 
 public:
-    ScenarioRepository(IPlatformEnvironment * env)
+    explicit ScenarioRepository(IPlatformEnvironment * env)
         : _env(env),
           _fileIndex(env)
     {
@@ -340,28 +375,41 @@ public:
 
     const scenario_index_entry * GetByFilename(const utf8 * filename) const override
     {
-        for (size_t i = 0; i < _scenarios.size(); i++)
+        for (const auto &scenario : _scenarios)
         {
-            const scenario_index_entry * scenario = &_scenarios[i];
-            const utf8 * scenarioFilename = Path::GetFileName(scenario->path);
+            const utf8 * scenarioFilename = Path::GetFileName(scenario.path);
 
             // Note: this is always case insensitive search for cross platform consistency
             if (String::Equals(filename, scenarioFilename, true))
             {
-                return &_scenarios[i];
+                return &scenario;
             }
         }
         return nullptr;
     }
 
+	const scenario_index_entry * GetByInternalName(const utf8 * name) const override {
+		for (size_t i = 0; i < _scenarios.size(); i++) {
+			const scenario_index_entry * scenario = &_scenarios[i];
+
+			if (scenario->source_game == SCENARIO_SOURCE_OTHER && scenario->sc_id == SC_UNIDENTIFIED)
+				continue;
+
+			// Note: this is always case insensitive search for cross platform consistency
+			if (String::Equals(name, scenario->internal_name, true)) {
+				return &_scenarios[i];
+			}
+		}
+		return nullptr;
+	}
+
     const scenario_index_entry * GetByPath(const utf8 * path) const override
     {
-        for (size_t i = 0; i < _scenarios.size(); i++)
+        for (const auto &scenario : _scenarios)
         {
-            const scenario_index_entry * scenario = &_scenarios[i];
-            if (Path::Equals(path, scenario->path))
+            if (Path::Equals(path, scenario.path))
             {
-                return scenario;
+                return &scenario;
             }
         }
         return nullptr;
@@ -543,7 +591,7 @@ private:
                 highscore->timestamp = fs.ReadValue<datetime64>();
             }
         }
-        catch (const Exception &)
+        catch (const std::exception &)
         {
             Console::Error::WriteLine("Error reading highscores.");
         }
@@ -589,9 +637,8 @@ private:
                 if (scBasic.Flags & SCENARIO_FLAGS_COMPLETED)
                 {
                     bool notFound = true;
-                    for (size_t j = 0; j < _highscores.size(); j++)
+                    for (auto &highscore : _highscores)
                     {
-                        scenario_highscore_entry * highscore = _highscores[j];
                         if (String::Equals(scBasic.Path, highscore->fileName, true))
                         {
                             notFound = false;
@@ -618,7 +665,7 @@ private:
                 }
             }
         }
-        catch (const Exception &)
+        catch (const std::exception &)
         {
             Console::Error::WriteLine("Error reading legacy scenario scores file: '%s'", path.c_str());
         }
@@ -648,9 +695,8 @@ private:
 
     void AttachHighscores()
     {
-        for (size_t i = 0; i < _highscores.size(); i++)
+        for (auto &highscore : _highscores)
         {
-            scenario_highscore_entry * highscore = _highscores[i];
             scenario_index_entry * scenerio = GetByFilename(highscore->fileName);
             if (scenerio != nullptr)
             {
@@ -676,7 +722,7 @@ private:
                 fs.WriteValue(highscore->timestamp);
             }
         }
-        catch (const Exception &)
+        catch (const std::exception &)
         {
             Console::Error::WriteLine("Unable to save highscores to '%s'", path.c_str());
         }
@@ -696,29 +742,27 @@ IScenarioRepository * GetScenarioRepository()
     return _scenarioRepository;
 }
 
-extern "C"
+void scenario_repository_scan()
 {
-    void scenario_repository_scan()
-    {
-        IScenarioRepository * repo = GetScenarioRepository();
-        repo->Scan();
-    }
-
-    size_t scenario_repository_get_count()
-    {
-        IScenarioRepository * repo = GetScenarioRepository();
-        return repo->GetCount();
-    }
-
-    const scenario_index_entry *scenario_repository_get_by_index(size_t index)
-    {
-        IScenarioRepository * repo = GetScenarioRepository();
-        return repo->GetByIndex(index);
-    }
-
-    bool scenario_repository_try_record_highscore(const utf8 * scenarioFileName, money32 companyValue, const utf8 * name)
-    {
-        IScenarioRepository * repo = GetScenarioRepository();
-        return repo->TryRecordHighscore(scenarioFileName, companyValue, name);
-    }
+    IScenarioRepository * repo = GetScenarioRepository();
+    repo->Scan();
 }
+
+size_t scenario_repository_get_count()
+{
+    IScenarioRepository * repo = GetScenarioRepository();
+    return repo->GetCount();
+}
+
+const scenario_index_entry *scenario_repository_get_by_index(size_t index)
+{
+    IScenarioRepository * repo = GetScenarioRepository();
+    return repo->GetByIndex(index);
+}
+
+bool scenario_repository_try_record_highscore(const utf8 * scenarioFileName, money32 companyValue, const utf8 * name)
+{
+    IScenarioRepository * repo = GetScenarioRepository();
+    return repo->TryRecordHighscore(scenarioFileName, companyValue, name);
+}
+

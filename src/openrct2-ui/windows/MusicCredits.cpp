@@ -18,8 +18,10 @@
 #include <openrct2/core/Util.hpp>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/interface/widget.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/interface/Colour.h>
+#include <openrct2/drawing/Drawing.h>
 
 enum WINDOW_MUSIC_CREDITS_WIDGET_IDX {
     WIDX_BACKGROUND,
@@ -27,7 +29,7 @@ enum WINDOW_MUSIC_CREDITS_WIDGET_IDX {
     WIDX_CLOSE
 };
 
-rct_widget window_music_credits_widgets[] = {
+static rct_widget window_music_credits_widgets[] = {
     { WWT_FRAME,    0,  0,      509,    0,  313,    0xFFFFFFFF,                 STR_NONE },             // panel / background
     { WWT_CAPTION,  0,  1,      508,    1,  14,     STR_MUSIC_ACKNOWLEDGEMENTS, STR_WINDOW_TITLE_TIP }, // title bar
     { WWT_CLOSEBOX, 0,  497,    507,    2,  13,     STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP }, // close x button
@@ -35,7 +37,7 @@ rct_widget window_music_credits_widgets[] = {
     { WIDGETS_END },
 };
 
-static const rct_string_id music_credits[] = {
+static constexpr const rct_string_id music_credits[] = {
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_MARCH_CHILDREN_OF_THE_REGIMENT,
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_HEYKENS_SERENADE,
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_IN_CONTINENTAL_MOOD,
@@ -49,7 +51,7 @@ static const rct_string_id music_credits[] = {
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_BELLA_BELLA_BIMBA,
 };
 
-static const rct_string_id music_credits_rct2[] = {
+static constexpr const rct_string_id music_credits_rct2[] = {
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_RCT2_TITLE_MUSIC,
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_DODGEMS_BEAT,
     STR_MUSIC_ACKNOWLEDGEMENTS_TRACK_MIS_SUMMERS_HEAT,
@@ -170,7 +172,8 @@ static void window_music_credits_mouseup(rct_window *w, rct_widgetindex widgetIn
  */
 static void window_music_credits_scrollgetsize(rct_window *w, sint32 scrollIndex, sint32 *width, sint32 *height)
 {
-    *height = 460;
+    sint32 lineHeight = font_get_line_height(gCurrentFontSpriteBase);
+    *height = static_cast<sint32>(Util::CountOf(music_credits) + Util::CountOf(music_credits_rct2)) * lineHeight + 12;
 }
 
 /**
@@ -188,28 +191,29 @@ static void window_music_credits_paint(rct_window *w, rct_drawpixelinfo *dpi)
  */
 static void window_music_credits_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, sint32 scrollIndex)
 {
-    sint32 x = 245;
+    sint32 lineHeight = font_get_line_height(gCurrentFontSpriteBase);
 
+    sint32 x = 245;
     sint32 y = 2;
 
     for (size_t i = 0; i < Util::CountOf(music_credits); i++) {
         gfx_draw_string_centred(dpi, music_credits[i], x, y, COLOUR_BLACK, nullptr);
-        y += 10;
+        y += lineHeight;
     }
 
     // Add 4 more space before "Original recordings ...".
     y += 4;
     gfx_draw_string_centred(dpi, STR_MUSIC_ACKNOWLEDGEMENTS_ORIGINAL_RECORDINGS, x, y, COLOUR_BLACK, nullptr);
-    y += 10;
+    y += lineHeight;
 
     // Draw the separator
     y += 5;
     gfx_fill_rect_inset(dpi, 4, y, 484, y+1, w->colours[1], INSET_RECT_FLAG_BORDER_INSET);
-    y += 11;
+    y += lineHeight + 1;
 
     for (size_t i = 0; i < Util::CountOf(music_credits_rct2); i++) {
         gfx_draw_string_centred(dpi, music_credits_rct2[i], x, y, COLOUR_BLACK, nullptr);
-        y += 10;
+        y += lineHeight;
     }
 
 }

@@ -14,10 +14,13 @@
  *****************************************************************************/
 #pragma endregion
 
-#include <openrct2/game.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2/Game.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
 #include <openrct2-ui/windows/Window.h>
+#include <openrct2/windows/Intent.h>
+#include <openrct2/Context.h>
+#include <openrct2/drawing/Drawing.h>
 
 #define WW 200
 #define WH 100
@@ -34,9 +37,9 @@ enum WINDOW_RIDE_DEMOLISH_WIDGET_IDX {
 static rct_widget window_ride_demolish_widgets[] = {
     { WWT_FRAME,            0, 0,       WW - 1,     0,          WH - 1, STR_NONE,               STR_NONE },
     { WWT_CAPTION,          0, 1,       WW - 2,     1,          14,     STR_DEMOLISH_RIDE,      STR_WINDOW_TITLE_TIP },
-    { WWT_CLOSEBOX,         0, WW - 13, WW - 3,     2,          13,     STR_CLOSE_X,            STR_CLOSE_WINDOW_TIP },
-    { WWT_DROPDOWN_BUTTON,  0, 10,      94,         WH - 20,    WH - 9, STR_DEMOLISH,           STR_NONE },
-    { WWT_DROPDOWN_BUTTON,  0, WW - 95, WW - 11,    WH - 20,    WH - 9, STR_SAVE_PROMPT_CANCEL, STR_NONE },
+    { WWT_CLOSEBOX,         0, WW - 13, WW - 3,     2,          13,     STR_CLOSE_X_WHITE,      STR_CLOSE_WINDOW_TIP },
+    { WWT_BUTTON,           0, 10,      94,         WH - 20,    WH - 9, STR_DEMOLISH,           STR_NONE },
+    { WWT_BUTTON,           0, WW - 95, WW - 11,    WH - 20,    WH - 9, STR_SAVE_PROMPT_CANCEL, STR_NONE },
     { WIDGETS_END }
 };
 
@@ -100,20 +103,12 @@ rct_window * window_ride_demolish_prompt_open(sint32 rideIndex)
 */
 static void window_ride_demolish_mouseup(rct_window *w, rct_widgetindex widgetIndex)
 {
-    rct_window* window;
     switch (widgetIndex) {
     case WIDX_DEMOLISH:
-        gGameCommandErrorTitle = STR_CANT_DEMOLISH_RIDE;
-        game_do_command(0, 1, 0, w->number, GAME_COMMAND_DEMOLISH_RIDE, 0, 1); // Set ebp to 1 to be used to log demolish from window prompt
-
-        // Prevents demolished rides sticking around in the ride list window
-        window = window_find_by_class(WC_RIDE_LIST);
-        if (window != nullptr)
-        {
-            window_ride_list_refresh_list(window);
-        }
-
+    {
+        ride_demolish(w->number, GAME_COMMAND_FLAG_APPLY);
         break;
+    }
     case WIDX_CANCEL:
     case WIDX_CLOSE:
         window_close(w);

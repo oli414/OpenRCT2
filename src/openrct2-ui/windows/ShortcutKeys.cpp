@@ -18,8 +18,9 @@
 #include <openrct2-ui/input/KeyboardShortcuts.h>
 #include "Window.h"
 
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2/drawing/Drawing.h>
 
 #define WW 420
 #define WH 280
@@ -41,7 +42,7 @@ static rct_widget window_shortcut_widgets[] = {
     { WWT_CAPTION,          0,  1,      WW - 2, 1,      14,         STR_SHORTCUTS_TITLE,        STR_WINDOW_TITLE_TIP },
     { WWT_CLOSEBOX,         0,  WW-13,  WW - 3, 2,      13,         STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP },
     { WWT_SCROLL,           0,  4,      WW - 5, 18,     WH - 18,    SCROLL_VERTICAL,            STR_SHORTCUT_LIST_TIP },
-    { WWT_DROPDOWN_BUTTON,  0,  4,      153,    WH-15,  WH - 4,     STR_SHORTCUT_ACTION_RESET,  STR_SHORTCUT_ACTION_RESET_TIP },
+    { WWT_BUTTON,           0,  4,      153,    WH-15,  WH - 4,     STR_SHORTCUT_ACTION_RESET,  STR_SHORTCUT_ACTION_RESET_TIP },
     { WIDGETS_END }
 };
 
@@ -86,8 +87,6 @@ static rct_window_event_list window_shortcut_events = {
     window_shortcut_scrollpaint
 };
 
-extern "C"
-{
 const rct_string_id ShortcutStringIds[SHORTCUT_COUNT] = {
     STR_SHORTCUT_CLOSE_TOP_MOST_WINDOW,
     STR_SHORTCUT_CLOSE_ALL_FLOATING_WINDOWS,
@@ -153,8 +152,11 @@ const rct_string_id ShortcutStringIds[SHORTCUT_COUNT] = {
     STR_SHORTCUT_RIDE_CONSTRUCTION_DEMOLISH_CURRENT,
     STR_LOAD_GAME,
     STR_SHORTCUT_CLEAR_SCENERY,
+    STR_SHORTCUT_GRIDLINES_DISPLAY_TOGGLE,
+    STR_SHORTCUT_VIEW_CLIPPING,
+    STR_SHORTCUT_HIGHLIGHT_PATH_ISSUES_TOGGLE,
 };
-}
+
 
 /**
  *
@@ -241,7 +243,7 @@ static void window_shortcut_tooltip(rct_window* w, rct_widgetindex widgetIndex, 
 */
 static void window_shortcut_scrollgetsize(rct_window *w, sint32 scrollIndex, sint32 *width, sint32 *height)
 {
-    *height = w->no_list_items * 10;
+    *height = w->no_list_items * SCROLLABLE_ROW_HEIGHT;
 }
 
 /**
@@ -250,7 +252,7 @@ static void window_shortcut_scrollgetsize(rct_window *w, sint32 scrollIndex, sin
 */
 static void window_shortcut_scrollmousedown(rct_window *w, sint32 scrollIndex, sint32 x, sint32 y)
 {
-    sint32 selected_item = y / 10;
+    sint32 selected_item = (y - 1) / SCROLLABLE_ROW_HEIGHT;
     if (selected_item >= w->no_list_items)
         return;
 
@@ -263,7 +265,7 @@ static void window_shortcut_scrollmousedown(rct_window *w, sint32 scrollIndex, s
 */
 static void window_shortcut_scrollmouseover(rct_window *w, sint32 scrollIndex, sint32 x, sint32 y)
 {
-    sint32 selected_item = y / 10;
+    sint32 selected_item = (y - 1) / SCROLLABLE_ROW_HEIGHT;
     if (selected_item >= w->no_list_items)
         return;
 
@@ -280,16 +282,24 @@ static void window_shortcut_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, s
 {
     gfx_fill_rect(dpi, dpi->x, dpi->y, dpi->x + dpi->width - 1, dpi->y + dpi->height - 1, ColourMapA[w->colours[1]].mid_light);
 
-    for (sint32 i = 0; i < w->no_list_items; ++i) {
-        sint32 y = i * 10;
+    for (sint32 i = 0; i < w->no_list_items; ++i)
+    {
+        sint32 y = 1 + i * SCROLLABLE_ROW_HEIGHT;
         if (y > dpi->y + dpi->height)
+        {
             break;
+        }
 
-        if (y + 10 < dpi->y)continue;
+        if (y + SCROLLABLE_ROW_HEIGHT < dpi->y)
+        {
+            continue;
+        }
+
         sint32 format = STR_BLACK_STRING;
-        if (i == w->selected_list_item) {
+        if (i == w->selected_list_item)
+        {
             format = STR_WINDOW_COLOUR_2_STRINGID;
-            gfx_filter_rect(dpi, 0, y, 800, y + 9, PALETTE_DARKEN_1);
+            gfx_filter_rect(dpi, 0, y - 1, 800, y + (SCROLLABLE_ROW_HEIGHT - 2), PALETTE_DARKEN_1);
         }
 
         char templateString[128];

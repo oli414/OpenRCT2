@@ -14,7 +14,7 @@
  *****************************************************************************/
 #pragma endregion
 
-#include "crash.h"
+#include "Crash.h"
 
 #ifdef USE_BREAKPAD
 #include <memory>
@@ -28,17 +28,12 @@
     #error Breakpad support not implemented yet for this platform
 #endif
 
-extern "C"
-{
-    #include "../localisation/language.h"
-    #include "../scenario/scenario.h"
-    #include "platform.h"
-}
-
 #include "../core/Console.hpp"
-#include "../core/Exception.hpp"
+#include "../localisation/Language.h"
 #include "../rct2/S6Exporter.h"
+#include "../scenario/Scenario.h"
 #include "../Version.h"
+#include "platform.h"
 
 #define WSZ(x) L"" x
 
@@ -99,7 +94,7 @@ static bool OnCrash(const wchar_t * dumpPath,
         exporter->SaveGame(saveFilePathUTF8);
         savedGameDumped = true;
     }
-    catch (const Exception &)
+    catch (const std::exception &)
     {
     }
     free(saveFilePathUTF8);
@@ -163,7 +158,7 @@ constexpr const wchar_t * PipeName = L"openrct2-bpad";
 
 #endif // USE_BREAKPAD
 
-extern "C" CExceptionHandler crash_init()
+CExceptionHandler crash_init()
 {
 #ifdef USE_BREAKPAD
     // Path must exist and be RW!

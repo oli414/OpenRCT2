@@ -31,23 +31,19 @@ utf8 * IStream::ReadString()
     result.push_back(0);
 
     utf8 * resultString = Memory::AllocateArray<utf8>(result.size());
-    Memory::CopyArray(resultString, result.data(), result.size());
+    std::copy(result.begin(), result.end(), resultString);
     return resultString;
 }
 
 std::string IStream::ReadStdString()
 {
-    std::vector<utf8> result;
-
+    std::string result;
     uint8 ch;
     while ((ch = ReadValue<uint8>()) != 0)
     {
         result.push_back(ch);
     }
-    result.push_back(0);
-
-    std::string resultString(result.data(), result.data() + result.size());
-    return resultString;
+    return result;
 }
 
 void IStream::WriteString(const utf8 * str)

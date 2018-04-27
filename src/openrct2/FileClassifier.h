@@ -30,8 +30,6 @@ enum
     FILE_EXTENSION_TD6,
 };
 
-#ifdef __cplusplus
-
 #include <string>
 
 interface IStream;
@@ -55,14 +53,4 @@ struct ClassifiedFileInfo
 bool TryClassifyFile(const std::string &path, ClassifiedFileInfo * result);
 bool TryClassifyFile(IStream * stream, ClassifiedFileInfo * result);
 
-#endif // __cplusplus
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-    uint32 get_file_extension_type(const utf8 * path);
-#ifdef __cplusplus
-}
-#endif
+uint32 get_file_extension_type(const utf8 * path);

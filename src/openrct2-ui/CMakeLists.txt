@@ -7,13 +7,23 @@ endif ()
 # Options
 option(DISABLE_OPENGL "Disable OpenGL support.")
 
-if (PORTABLE)
-    set(CMAKE_INSTALL_RPATH "$ORIGIN")
+# Third party libraries
+if (MSVC)
+    find_package(jansson REQUIRED)
+
+    find_path(SDL2_INCLUDE_DIRS SDL2/SDL.h)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        find_library(SDL2_LDFLAGS sdl2d)
+    else ()
+        find_library(SDL2_LDFLAGS sdl2)
+    endif ()
+
+    find_library(SPEEX_LDFLAGS libspeexdsp)
+else ()
+    PKG_CHECK_MODULES(SDL2 REQUIRED sdl2)
+    PKG_CHECK_MODULES(SPEEX REQUIRED speexdsp)
 endif ()
 
-# Third party libraries
-PKG_CHECK_MODULES(SDL2 REQUIRED sdl2)
-PKG_CHECK_MODULES(SPEEX REQUIRED speexdsp)
 if (NOT DISABLE_OPENGL)
     # GL doesn't work nicely with macOS, while find_package doesn't work with multiarch on Ubuntu.
     if (APPLE)
@@ -25,23 +35,19 @@ endif ()
 
 # Sources
 file(GLOB_RECURSE OPENRCT2_UI_SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/*.c"
     "${CMAKE_CURRENT_LIST_DIR}/*.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/*.h"
     "${CMAKE_CURRENT_LIST_DIR}/*.hpp")
 
 if (APPLE)
-    file(GLOB_RECURSE OPENRCT2_UI_M_SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.m")
-    set_source_files_properties(${OPENRCT2_UI_M_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c -fmodules")
-
     file(GLOB_RECURSE OPENRCT2_UI_MM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/*.mm")
     set_source_files_properties(${OPENRCT2_UI_MM_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++ -fmodules")
 endif ()
 
 # Outputs
 set (PROJECT openrct2)
-project(${PROJECT})
-add_executable(${PROJECT} ${OPENRCT2_UI_SOURCES} ${OPENRCT2_UI_M_SOURCES} ${OPENRCT2_UI_MM_SOURCES})
+project(${PROJECT} CXX)
+add_executable(${PROJECT} ${OPENRCT2_UI_SOURCES} ${OPENRCT2_UI_MM_SOURCES})
 
 target_link_libraries(${PROJECT} "libopenrct2"
                                  ${SDL2_LDFLAGS}
@@ -67,18 +73,19 @@ target_include_directories(${PROJECT} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/.."
 target_include_directories(${PROJECT} SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS})
 
 # Compiler flags
-if (FORCE32)
-    set(TARGET_M "-m32")
-endif ()
 if (WIN32)
     # mingw complains about "%zu" not being a valid format specifier for printf, unless we
     # tell it that it is
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__USE_MINGW_ANSI_STDIO=1")
 endif ()
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 ${TARGET_M}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 ${TARGET_M}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${TARGET_M}")
+if (MSVC)
+    # Add DPI-aware manifest
+    # HACK Add /MANIFEST:NO first to prevent cmake from adding its own manifest arguments
+    if (NOT $ENV{VCToolsInstallDir} STREQUAL "")
+        set(MANIFEST_DPI "$ENV{VCToolsInstallDir}\\Include\\Manifest\\PerMonitorHighDPIAware.manifest")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO /MANIFEST /manifest:embed /manifestinput:\"${MANIFEST_DPI}\"")
+    endif ()
+endif ()
 
 # Defines
 if (DISABLE_OPENGL)
@@ -86,4 +93,7 @@ if (DISABLE_OPENGL)
 else ()
     # Makes OpenGL function get queried in run-time rather than linked-in
     add_definitions(-DOPENGL_NO_LINK)
+endif ()
+if (MSVC)
+    add_definitions(-D__DISABLE_DLL_PROXY__)
 endif ()

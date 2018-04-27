@@ -18,12 +18,14 @@
 #include <openrct2/core/Math.hpp>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/game.h>
-#include <openrct2/input.h>
-#include <openrct2/interface/land_tool.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2/Game.h>
+#include <openrct2/Input.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2-ui/interface/LandTool.h>
+#include <openrct2/drawing/Drawing.h>
+#include <openrct2/world/Park.h>
 
 enum WINDOW_WATER_WIDGET_IDX {
     WIDX_BACKGROUND,
@@ -162,7 +164,6 @@ static void window_land_rights_mouseup(rct_window *w, rct_widgetindex widgetInde
         {
             tool_set(w, WIDX_BUY_LAND_RIGHTS, TOOL_UP_ARROW);
             _landRightsMode = LAND_RIGHTS_MODE_BUY_LAND;
-            hide_construction_rights();
             show_land_rights();
             window_invalidate(w);
         }
@@ -172,7 +173,6 @@ static void window_land_rights_mouseup(rct_window *w, rct_widgetindex widgetInde
         {
             tool_set(w, WIDX_BUY_CONSTRUCTION_RIGHTS, TOOL_UP_ARROW);
             _landRightsMode = LAND_RIGHTS_MODE_BUY_CONSTRUCTION_RIGHTS;
-            hide_land_rights();
             show_construction_rights();
             window_invalidate(w);
         }
@@ -287,10 +287,10 @@ static void window_land_rights_tool_update_land_rights(sint16 x, sint16 y)
     map_invalidate_selection_rect();
     gMapSelectFlags &= ~MAP_SELECT_FLAG_ENABLE;
 
-    rct_xy16 mapTile = { 0 };
+    LocationXY16 mapTile = { 0 };
     screen_get_map_xy(x, y, &mapTile.x, &mapTile.y, nullptr);
 
-    if (mapTile.x == MAP_LOCATION_NULL) {
+    if (mapTile.x == LOCATION_NULL) {
         if (_landRightsCost != MONEY32_UNDEFINED) {
             _landRightsCost = MONEY32_UNDEFINED;
             window_invalidate_by_class(WC_CLEAR_SCENERY);
@@ -393,7 +393,7 @@ static void window_land_rights_tooldown(rct_window* w, rct_widgetindex widgetInd
 {
     if (_landRightsMode == LAND_RIGHTS_MODE_BUY_LAND)
     {
-        if (x != MAP_LOCATION_NULL)
+        if (x != LOCATION_NULL)
         {
             gGameCommandErrorTitle = STR_CANT_BUY_LAND;
             game_do_command(
@@ -408,7 +408,7 @@ static void window_land_rights_tooldown(rct_window* w, rct_widgetindex widgetInd
     }
     else
     {
-        if (x != MAP_LOCATION_NULL)
+        if (x != LOCATION_NULL)
         {
             gGameCommandErrorTitle = STR_CANT_BUY_CONSTRUCTION_RIGHTS_HERE;
             game_do_command(
@@ -430,7 +430,7 @@ static void window_land_rights_tooldown(rct_window* w, rct_widgetindex widgetInd
 static void window_land_rights_tooldrag(rct_window* w, rct_widgetindex widgetIndex, sint32 x, sint32 y)
 {
     if (_landRightsMode == LAND_RIGHTS_MODE_BUY_LAND) {
-        if (x != MAP_LOCATION_NULL)
+        if (x != LOCATION_NULL)
         {
             gGameCommandErrorTitle = STR_CANT_BUY_LAND;
             game_do_command(
@@ -445,7 +445,7 @@ static void window_land_rights_tooldrag(rct_window* w, rct_widgetindex widgetInd
     }
     else
     {
-        if (x != MAP_LOCATION_NULL)
+        if (x != LOCATION_NULL)
         {
             gGameCommandErrorTitle = STR_CANT_BUY_CONSTRUCTION_RIGHTS_HERE;
             game_do_command(

@@ -16,8 +16,7 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
+#include <string>
 #include "Object.h"
 
 class SceneryObject : public Object
@@ -27,12 +26,11 @@ private:
 
 public:
     explicit SceneryObject(const rct_object_entry &entry) : Object(entry) { }
-    virtual ~SceneryObject() { }
+    virtual ~SceneryObject() = default;
 
     const rct_object_entry * GetPrimarySceneryGroup() { return &_primarySceneryGroupEntry; }
 
 protected:
     void SetPrimarySceneryGroup(const rct_object_entry * entry) { _primarySceneryGroupEntry = *entry; }
+    void SetPrimarySceneryGroup(const std::string &s);
 };
-
-#endif

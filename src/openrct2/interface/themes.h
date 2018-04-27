@@ -18,7 +18,7 @@
 #define _THEMES_H_
 
 #include "../common.h"
-#include "window.h"
+#include "Window.h"
 
 enum {
     UITHEME_FLAG_PREDEFINED                            = 1 << 0,
@@ -28,10 +28,6 @@ enum {
     UITHEME_FLAG_USE_FULL_BOTTOM_TOOLBAR               = 1 << 4,
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void colour_scheme_update(rct_window *window);
 void colour_scheme_update_all();
 void colour_scheme_update_by_class(rct_window *window, rct_windowclass classification);
@@ -40,9 +36,11 @@ void         theme_manager_initialise();
 void         theme_manager_load_available_themes();
 size_t       theme_manager_get_num_available_themes();
 const utf8 * theme_manager_get_available_theme_path(size_t index);
+const utf8 * theme_manager_get_available_theme_config_name(size_t index);
 const utf8 * theme_manager_get_available_theme_name(size_t index);
 size_t       theme_manager_get_active_available_theme_index();
 void         theme_manager_set_active_available_theme(size_t index);
+size_t       theme_get_index_for_name(const utf8 * name);
 
 colour_t theme_get_colour(rct_windowclass wc, uint8 index);
 void     theme_set_colour(rct_windowclass wc, uint8 index, colour_t colour);
@@ -55,9 +53,5 @@ void     theme_delete();
 
 uint8         theme_desc_get_num_colours(rct_windowclass wc);
 rct_string_id theme_desc_get_name(rct_windowclass wc);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

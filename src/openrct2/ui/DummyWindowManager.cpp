@@ -26,6 +26,10 @@ namespace OpenRCT2 { namespace Ui
         rct_window * OpenDetails(uint8 type, sint32 id) override { return nullptr; }
         rct_window * ShowError(rct_string_id title, rct_string_id message) override { return nullptr; }
         rct_window * OpenIntent(Intent * intent) override { return nullptr; };
+        void BroadcastIntent(const Intent &intent) override { }
+        void ForceClose(rct_windowclass windowClass) override { }
+        void UpdateMapTooltip() override { }
+        void HandleInput() override { }
         void HandleKeyboard(bool isTitle) override { }
         std::string GetKeyboardShortcutString(sint32 shortcut) override { return std::string(); }
     };

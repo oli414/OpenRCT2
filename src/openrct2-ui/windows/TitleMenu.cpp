@@ -20,18 +20,17 @@
 #include <openrct2-ui/windows/Window.h>
 
 #include <openrct2/Editor.h>
-#include <openrct2/game.h>
-#include <openrct2/input.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2/Game.h>
+#include <openrct2/Input.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
 #include <openrct2/sprites.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2-ui/interface/Dropdown.h>
 
 enum {
     WIDX_START_NEW_GAME,
     WIDX_CONTINUE_SAVED_GAME,
     WIDX_MULTIPLAYER,
-    WIDX_SHOW_TUTORIAL,
     WIDX_GAME_TOOLS
 };
 
@@ -39,7 +38,6 @@ static rct_widget window_title_menu_widgets[] = {
     { WWT_IMGBTN, 2, 0, 0, 0, 81, SPR_MENU_NEW_GAME,        STR_START_NEW_GAME_TIP          },
     { WWT_IMGBTN, 2, 0, 0, 0, 81, SPR_MENU_LOAD_GAME,       STR_CONTINUE_SAVED_GAME_TIP     },
     { WWT_IMGBTN, 2, 0, 0, 0, 81, SPR_G2_MENU_MULTIPLAYER,  STR_SHOW_MULTIPLAYER_TIP        },
-    { WWT_IMGBTN, 2, 0, 0, 0, 81, SPR_MENU_TUTORIAL,        STR_SHOW_TUTORIAL_TIP           },
     { WWT_IMGBTN, 2, 0, 0, 0, 81, SPR_MENU_TOOLBOX,         STR_GAME_TOOLS_TIP              },
     { WIDGETS_END },
 };
@@ -103,8 +101,6 @@ rct_window * window_title_menu_open()
 #ifndef DISABLE_NETWORK
         (1 << WIDX_MULTIPLAYER) |
 #endif
-        // Disable tutorial
-        // (1 << WIDX_SHOW_TUTORIAL) |
         (1 << WIDX_GAME_TOOLS)
     );
 
@@ -147,7 +143,7 @@ static void window_title_menu_mouseup(rct_window *w, rct_widgetindex widgetIndex
         else {
             window_close_by_class(WC_LOADSAVE);
             window_close_by_class(WC_SERVER_LIST);
-            window_scenarioselect_open(window_title_menu_scenarioselect_callback);
+            window_scenarioselect_open(window_title_menu_scenarioselect_callback, false);
         }
         break;
     case WIDX_CONTINUE_SAVED_GAME:

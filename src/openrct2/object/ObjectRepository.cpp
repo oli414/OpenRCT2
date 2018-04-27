@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "../common.h"
+#include "../Context.h"
 #include "../core/Console.hpp"
 #include "../core/FileIndex.hpp"
 #include "../core/FileStream.hpp"
@@ -41,12 +42,12 @@
 #include "StexObject.h"
 
 #include "../config/Config.h"
-#include "../localisation/localisation.h"
-#include "../object.h"
-#include "../object_list.h"
+#include "../localisation/Localisation.h"
+#include "../object/Object.h"
+#include "ObjectList.h"
 #include "../platform/platform.h"
-#include "../util/sawyercoding.h"
-#include "../util/util.h"
+#include "../util/SawyerCoding.h"
+#include "../util/Util.h"
 
 using namespace OpenRCT2;
 
@@ -55,9 +56,9 @@ struct ObjectEntryHash
     size_t operator()(const rct_object_entry &entry) const
     {
         uint32 hash = 5381;
-        for (sint32 i = 0; i < 8; i++)
+        for (auto i : entry.name)
         {
-            hash = ((hash << 5) + hash) + entry.name[i];
+            hash = ((hash << 5) + hash) + i;
         }
         return hash;
     }
@@ -79,40 +80,58 @@ class ObjectFileIndex final : public FileIndex<ObjectRepositoryItem>
 {
 private:
     static constexpr uint32 MAGIC_NUMBER = 0x5844494F; // OIDX
-    static constexpr uint16 VERSION = 15;
-    static constexpr auto PATTERN = "*.dat;*.pob";
+    static constexpr uint16 VERSION = 17;
+    static constexpr auto PATTERN = "*.dat;*.pob;*.json";
+
+    IObjectRepository& _objectRepository;
 
 public:
-    ObjectFileIndex(IPlatformEnvironment * env) :
+    explicit ObjectFileIndex(IObjectRepository& objectRepository, IPlatformEnvironment * env) :
         FileIndex("object index",
             MAGIC_NUMBER,
             VERSION,
             env->GetFilePath(PATHID::CACHE_OBJECTS),
             std::string(PATTERN),
             std::vector<std::string>({
-                env->GetDirectoryPath(DIRBASE::RCT2, DIRID::OBJECT),
-                env->GetDirectoryPath(DIRBASE::USER, DIRID::OBJECT) }))
+                env->GetDirectoryPath(DIRBASE::OPENRCT2, DIRID::OBJECT),
+                env->GetDirectoryPath(DIRBASE::USER, DIRID::OBJECT) })),
+        _objectRepository(objectRepository)
     {
     }
 
 public:
     std::tuple<bool, ObjectRepositoryItem> Create(const std::string &path) const override
     {
-        auto object = ObjectFactory::CreateObjectFromLegacyFile(path.c_str());
-        if (object != nullptr)
+        auto extension = Path::GetExtension(path);
+        if (String::Equals(extension, ".json", true))
         {
-            ObjectRepositoryItem item = { 0 };
-            item.ObjectEntry = *object->GetObjectEntry();
-            item.Path = String::Duplicate(path);
-            item.Name = String::Duplicate(object->GetName());
-            object->SetRepositoryItem(&item);
-            delete object;
-            return std::make_tuple(true, item);
+            auto object = ObjectFactory::CreateObjectFromJsonFile(_objectRepository, path);
+            if (object != nullptr)
+            {
+                ObjectRepositoryItem item = { 0 };
+                item.ObjectEntry = *object->GetObjectEntry();
+                item.Path = String::Duplicate(path);
+                item.Name = String::Duplicate(object->GetName());
+                object->SetRepositoryItem(&item);
+                delete object;
+                return std::make_tuple(true, item);
+            }
         }
         else
         {
-            return std::make_tuple(true, ObjectRepositoryItem());
+            auto object = ObjectFactory::CreateObjectFromLegacyFile(_objectRepository, path.c_str());
+            if (object != nullptr)
+            {
+                ObjectRepositoryItem item = { 0 };
+                item.ObjectEntry = *object->GetObjectEntry();
+                item.Path = String::Duplicate(path);
+                item.Name = String::Duplicate(object->GetName());
+                object->SetRepositoryItem(&item);
+                delete object;
+                return std::make_tuple(true, item);
+            }
         }
+        return std::make_tuple(false, ObjectRepositoryItem());
     }
 
 protected:
@@ -122,7 +141,7 @@ protected:
         stream->WriteString(item.Path);
         stream->WriteString(item.Name);
 
-        switch (item.ObjectEntry.flags & 0x0F) {
+        switch (object_entry_get_type(&item.ObjectEntry)) {
         case OBJECT_TYPE_RIDE:
             stream->WriteValue<uint8>(item.RideFlags);
             for (sint32 i = 0; i < MAX_CATEGORIES_PER_RIDE; i++)
@@ -135,7 +154,7 @@ protected:
             }
             stream->WriteValue<uint8>(item.RideGroupIndex);
             break;
-        case OBJECT_TYPE_SCENERY_SETS:
+        case OBJECT_TYPE_SCENERY_GROUP:
             stream->WriteValue<uint16>(item.NumThemeObjects);
             for (uint16 i = 0; i < item.NumThemeObjects; i++)
             {
@@ -153,7 +172,7 @@ protected:
         item.Path = stream->ReadString();
         item.Name = stream->ReadString();
 
-        switch (item.ObjectEntry.flags & 0x0F) {
+        switch (object_entry_get_type(&item.ObjectEntry)) {
         case OBJECT_TYPE_RIDE:
             item.RideFlags = stream->ReadValue<uint8>();
             for (sint32 i = 0; i < 2; i++)
@@ -166,7 +185,7 @@ protected:
             }
             item.RideGroupIndex = stream->ReadValue<uint8>();
             break;
-        case OBJECT_TYPE_SCENERY_SETS:
+        case OBJECT_TYPE_SCENERY_GROUP:
             item.NumThemeObjects = stream->ReadValue<uint16>();
             item.ThemeObjects = Memory::AllocateArray<rct_object_entry>(item.NumThemeObjects);
             for (uint16 i = 0; i < item.NumThemeObjects; i++)
@@ -195,9 +214,9 @@ class ObjectRepository final : public IObjectRepository
     ObjectEntryMap                      _itemMap;
 
 public:
-    ObjectRepository(IPlatformEnvironment * env)
+    explicit ObjectRepository(IPlatformEnvironment * env)
         : _env(env),
-          _fileIndex(env)
+          _fileIndex(*this, env)
     {
     }
 
@@ -236,7 +255,7 @@ public:
         rct_object_entry entry = { 0 };
         utf8 entryName[9] = { ' ' };
         String::Set(entryName, sizeof(entryName), name);
-        Memory::Copy<void>(entry.name, entryName, 8);
+        std::copy_n(entryName, 8, entry.name);
 
         auto kvp = _itemMap.find(entry);
         if (kvp != _itemMap.end())
@@ -260,8 +279,15 @@ public:
     {
         Guard::ArgumentNotNull(ori, GUARD_LINE);
 
-        Object * object = ObjectFactory::CreateObjectFromLegacyFile(ori->Path);
-        return object;
+        auto extension = Path::GetExtension(ori->Path);
+        if (String::Equals(extension, ".json", true))
+        {
+            return ObjectFactory::CreateObjectFromJsonFile(*this, ori->Path);
+        }
+        else
+        {
+            return ObjectFactory::CreateObjectFromLegacyFile(*this, ori->Path);
+        }
     }
 
     void RegisterLoadedObject(const ObjectRepositoryItem * ori, Object * object) override
@@ -287,7 +313,7 @@ public:
         object_entry_get_name_fixed(objectName, sizeof(objectName), objectEntry);
 
         // Check that the object is loadable before writing it
-        Object * object = ObjectFactory::CreateObjectFromLegacyData(objectEntry, data, dataSize);
+        Object * object = ObjectFactory::CreateObjectFromLegacyData(*this, objectEntry, data, dataSize);
         if (object == nullptr)
         {
             Console::Error::WriteLine("[%s] Unable to export object.", objectName);
@@ -303,7 +329,7 @@ public:
                 SaveObject(path, objectEntry, data, dataSize);
                 ScanObject(path);
             }
-            catch (const Exception &)
+            catch (const std::exception &)
             {
                 Console::Error::WriteLine("Failed saving object: [%s] to '%s'.", objectName, path);
             }
@@ -350,9 +376,9 @@ public:
 private:
     void ClearItems()
     {
-        for (uint32 i = 0; i < _items.size(); i++)
+        for (auto &item : _items)
         {
-            FreeItem(&_items[i]);
+            FreeItem(&item);
         }
         _items.clear();
         _itemMap.clear();
@@ -363,7 +389,7 @@ private:
         std::sort(_items.begin(), _items.end(), [](const ObjectRepositoryItem &a,
                                                    const ObjectRepositoryItem &b) -> bool
         {
-            return strcmp(a.Name, b.Name) < 0;
+            return String::Compare(a.Name, b.Name) < 0;
         });
 
         // Fix the IDs
@@ -434,9 +460,9 @@ private:
         item->Path = nullptr;
         item->Name = nullptr;
 
-        uint8 objectType = item->ObjectEntry.flags & 0x0F;
+        uint8 objectType = object_entry_get_type(&item->ObjectEntry);
         switch (objectType) {
-        case OBJECT_TYPE_SCENERY_SETS:
+        case OBJECT_TYPE_SCENERY_GROUP:
             Memory::Free(item->ThemeObjects);
             item->ThemeObjects = nullptr;
             break;
@@ -464,10 +490,10 @@ private:
 
                 // Create new data blob with appended bytes
                 size_t newDataSize = dataSize + extraBytesCount;
-                void * newData = Memory::Allocate<void>(newDataSize);
-                void * newDataSaltOffset = (void *)((uintptr_t)newData + dataSize);
-                Memory::Copy(newData, data, dataSize);
-                Memory::Copy(newDataSaltOffset, extraBytes, extraBytesCount);
+                uint8 * newData = Memory::Allocate<uint8>(newDataSize);
+                uint8 * newDataSaltOffset = newData + dataSize;
+                std::copy_n((const uint8 *)data, dataSize, newData);
+                std::copy_n((const uint8 *)extraBytes, extraBytesCount, newDataSaltOffset);
 
                 try
                 {
@@ -487,7 +513,7 @@ private:
                     Memory::Free(newData);
                     Memory::Free(extraBytes);
                 }
-                catch (const Exception &)
+                catch (const std::exception &)
                 {
                     Memory::Free(newData);
                     Memory::Free(extraBytes);
@@ -498,7 +524,7 @@ private:
         }
 
         // Encode data
-        uint8 objectType = entry->flags & 0x0F;
+        uint8 objectType = object_entry_get_type(entry);
         sawyercoding_chunk_header chunkHeader;
         chunkHeader.encoding = object_entry_group_encoding[objectType];
         chunkHeader.length = (uint32)dataSize;
@@ -514,7 +540,7 @@ private:
 
             Memory::Free(encodedDataBuffer);
         }
-        catch (const Exception &)
+        catch (const std::exception &)
         {
             Memory::Free(encodedDataBuffer);
             throw;
@@ -591,7 +617,7 @@ private:
         const ObjectRepositoryItem * item = FindObject(entry);
         if (item == nullptr)
         {
-            throw Exception(String::StdFormat("Unable to find object '%.8s'", entry->name));
+            throw std::runtime_error(String::StdFormat("Unable to find object '%.8s'", entry->name));
         }
 
         // Read object data from file
@@ -599,7 +625,7 @@ private:
         auto fileEntry = fs.ReadValue<rct_object_entry>();
         if (!object_entry_compare(entry, &fileEntry))
         {
-            throw Exception("Header found in object file does not match object to pack.");
+            throw std::runtime_error("Header found in object file does not match object to pack.");
         }
         auto chunkReader = SawyerChunkReader(&fs);
         auto chunk = chunkReader.ReadChunk();
@@ -611,17 +637,9 @@ private:
     }
 };
 
-static ObjectRepository * _objectRepository = nullptr;
-
 IObjectRepository * CreateObjectRepository(IPlatformEnvironment * env)
 {
-    _objectRepository = new ObjectRepository(env);
-    return _objectRepository;
-}
-
-IObjectRepository * GetObjectRepository()
-{
-    return _objectRepository;
+    return new ObjectRepository(env);
 }
 
 bool IsObjectCustom(const ObjectRepositoryItem * object)
@@ -632,233 +650,186 @@ bool IsObjectCustom(const ObjectRepositoryItem * object)
     return !(object->ObjectEntry.flags & 0xF0);
 }
 
-extern "C"
+const rct_object_entry * object_list_find(rct_object_entry * entry)
 {
-    const rct_object_entry * object_list_find(rct_object_entry * entry)
+    const rct_object_entry * result = nullptr;
+    auto objRepo = GetContext()->GetObjectRepository();
+    auto item = objRepo->FindObject(entry);
+    if (item != nullptr)
     {
-        const rct_object_entry * result = nullptr;
-        auto objRepo = GetObjectRepository();
-        auto item = objRepo->FindObject(entry);
-        if (item != nullptr)
-        {
-            result = &item->ObjectEntry;
-        }
-        return result;
+        result = &item->ObjectEntry;
     }
+    return result;
+}
 
-    const rct_object_entry * object_list_find_by_name(const char * name)
+void object_list_load()
+{
+    auto context = GetContext();
+    IObjectRepository * objectRepository = context->GetObjectRepository();
+    objectRepository->LoadOrConstruct();
+
+    IObjectManager * objectManager = context->GetObjectManager();
+    objectManager->UnloadAll();
+}
+
+void * object_repository_load_object(const rct_object_entry * objectEntry)
+{
+    Object * object = nullptr;
+    IObjectRepository * objRepository = GetContext()->GetObjectRepository();
+    const ObjectRepositoryItem * ori = objRepository->FindObject(objectEntry);
+    if (ori != nullptr)
     {
-        const rct_object_entry * result = nullptr;
-        auto objRepo = GetObjectRepository();
-        auto item = objRepo->FindObject(name);
-        if (item != nullptr)
+        object = objRepository->LoadObject(ori);
+        if (object != nullptr)
         {
-            result = &item->ObjectEntry;
+            object->Load();
         }
-        return result;
     }
+    return (void *)object;
+}
 
-    void object_list_load()
+void scenario_translate(scenario_index_entry * scenarioEntry, const rct_object_entry * stexObjectEntry)
+{
+    rct_string_id localisedStringIds[3];
+    if (language_get_localised_scenario_strings(scenarioEntry->name, localisedStringIds))
     {
-        IObjectRepository * objectRepository = GetObjectRepository();
-        objectRepository->LoadOrConstruct();
-
-        IObjectManager * objectManager = GetObjectManager();
-        objectManager->UnloadAll();
-    }
-
-    void * object_repository_load_object(const rct_object_entry * objectEntry)
-    {
-        Object * object = nullptr;
-        IObjectRepository * objRepository = GetObjectRepository();
-        const ObjectRepositoryItem * ori = objRepository->FindObject(objectEntry);
-        if (ori != nullptr)
+        if (localisedStringIds[0] != STR_NONE)
         {
-            object = objRepository->LoadObject(ori);
-            if (object != nullptr)
-            {
-                object->Load();
-            }
+            String::Set(scenarioEntry->name, sizeof(scenarioEntry->name), language_get_string(localisedStringIds[0]));
         }
-        return (void *)object;
-    }
-
-    void scenario_translate(scenario_index_entry * scenarioEntry, const rct_object_entry * stexObjectEntry)
-    {
-        rct_string_id localisedStringIds[3];
-        if (language_get_localised_scenario_strings(scenarioEntry->name, localisedStringIds))
+        if (localisedStringIds[2] != STR_NONE)
         {
-            if (localisedStringIds[0] != STR_NONE)
-            {
-                String::Set(scenarioEntry->name, sizeof(scenarioEntry->name), language_get_string(localisedStringIds[0]));
-            }
-            if (localisedStringIds[2] != STR_NONE)
-            {
-                String::Set(scenarioEntry->details, sizeof(scenarioEntry->details), language_get_string(localisedStringIds[2]));
-            }
+            String::Set(scenarioEntry->details, sizeof(scenarioEntry->details), language_get_string(localisedStringIds[2]));
         }
-        else
+    }
+    else
+    {
+        // Checks for a scenario string object (possibly for localisation)
+        if ((stexObjectEntry->flags & 0xFF) != 255)
         {
-            // Checks for a scenario string object (possibly for localisation)
-            if ((stexObjectEntry->flags & 0xFF) != 255)
+            IObjectRepository * objectRepository = GetContext()->GetObjectRepository();
+            const ObjectRepositoryItem * ori = objectRepository->FindObject(stexObjectEntry);
+            if (ori != nullptr)
             {
-                IObjectRepository * objectRepository = GetObjectRepository();
-                const ObjectRepositoryItem * ori = objectRepository->FindObject(stexObjectEntry);
-                if (ori != nullptr)
+                Object * object = objectRepository->LoadObject(ori);
+                if (object != nullptr)
                 {
-                    Object * object = objectRepository->LoadObject(ori);
-                    if (object != nullptr)
-                    {
-                        StexObject * stexObject = static_cast<StexObject*>(object);
-                        const utf8 * scenarioName = stexObject->GetScenarioName();
-                        const utf8 * scenarioDetails = stexObject->GetScenarioDetails();
+                    auto stexObject = static_cast<StexObject*>(object);
+                    auto scenarioName = stexObject->GetScenarioName();
+                    auto scenarioDetails = stexObject->GetScenarioDetails();
 
-                        String::Set(scenarioEntry->name, sizeof(scenarioEntry->name), scenarioName);
-                        String::Set(scenarioEntry->details, sizeof(scenarioEntry->details), scenarioDetails);
+                    String::Set(scenarioEntry->name, sizeof(scenarioEntry->name), scenarioName.c_str());
+                    String::Set(scenarioEntry->details, sizeof(scenarioEntry->details), scenarioDetails.c_str());
 
-                        delete object;
-                    }
+                    delete object;
                 }
             }
         }
     }
+}
 
-    size_t object_repository_get_items_count()
+size_t object_repository_get_items_count()
+{
+    IObjectRepository * objectRepository = GetContext()->GetObjectRepository();
+    return objectRepository->GetNumObjects();
+}
+
+const ObjectRepositoryItem * object_repository_get_items()
+{
+    IObjectRepository * objectRepository = GetContext()->GetObjectRepository();
+    return objectRepository->GetObjects();
+}
+
+const ObjectRepositoryItem * object_repository_find_object_by_entry(const rct_object_entry * entry)
+{
+    IObjectRepository * objectRepository = GetContext()->GetObjectRepository();
+    return objectRepository->FindObject(entry);
+}
+
+const ObjectRepositoryItem * object_repository_find_object_by_name(const char * name)
+{
+    IObjectRepository * objectRepository = GetContext()->GetObjectRepository();
+    return objectRepository->FindObject(name);
+}
+
+void object_delete(void * object)
+{
+    if (object != nullptr)
     {
-        IObjectRepository * objectRepository = GetObjectRepository();
-        return objectRepository->GetNumObjects();
+        Object * baseObject = static_cast<Object *>(object);
+        baseObject->Unload();
+        delete baseObject;
     }
+}
 
-    const ObjectRepositoryItem * object_repository_get_items()
-    {
-        IObjectRepository * objectRepository = GetObjectRepository();
-        return objectRepository->GetObjects();
-    }
+void object_draw_preview(const void * object, rct_drawpixelinfo * dpi, sint32 width, sint32 height)
+{
+    const Object * baseObject = static_cast<const Object *>(object);
+    baseObject->DrawPreview(dpi, width, height);
+}
 
-    const ObjectRepositoryItem * object_repository_find_object_by_entry(const rct_object_entry * entry)
+bool object_entry_compare(const rct_object_entry * a, const rct_object_entry * b)
+{
+    // If an official object don't bother checking checksum
+    if ((a->flags & 0xF0) || (b->flags & 0xF0))
     {
-        IObjectRepository * objectRepository = GetObjectRepository();
-        return objectRepository->FindObject(entry);
-    }
-
-    const ObjectRepositoryItem * object_repository_find_object_by_name(const char * name)
-    {
-        IObjectRepository * objectRepository = GetObjectRepository();
-        return objectRepository->FindObject(name);
-    }
-
-    void object_delete(void * object)
-    {
-        if (object != nullptr)
+        if (object_entry_get_type(a) != object_entry_get_type(b))
         {
-            Object * baseObject = static_cast<Object *>(object);
-            baseObject->Unload();
-            delete baseObject;
+            return false;
+        }
+        sint32 match = memcmp(a->name, b->name, 8);
+        if (match)
+        {
+            return false;
         }
     }
-
-    const utf8 * object_get_description(const void * object)
+    else
     {
-        const Object * baseObject = static_cast<const Object *>(object);
-        switch (baseObject->GetObjectType()) {
-        case OBJECT_TYPE_RIDE:
+        if (a->flags != b->flags)
         {
-            const RideObject * rideObject = static_cast<const RideObject *>(baseObject);
-            return rideObject->GetDescription();
+            return false;
         }
-        case OBJECT_TYPE_SCENARIO_TEXT:
+        sint32 match = memcmp(a->name, b->name, 8);
+        if (match)
         {
-            const StexObject * stexObject = static_cast<const StexObject *>(baseObject);
-            return stexObject->GetScenarioDetails();
+            return false;
         }
-        default:
-            return "";
+        if (a->checksum != b->checksum)
+        {
+            return false;
         }
     }
+    return true;
+}
 
-    const utf8 * object_get_capacity(const void * object)
+sint32 object_calculate_checksum(const rct_object_entry * entry, const void * data, size_t dataLength)
+{
+    const uint8 * entryBytePtr = (uint8 *)entry;
+
+    uint32 checksum = 0xF369A75B;
+    checksum ^= entryBytePtr[0];
+    checksum = rol32(checksum, 11);
+    for (sint32 i = 4; i < 12; i++)
     {
-        const Object * baseObject = static_cast<const Object *>(object);
-        switch (baseObject->GetObjectType()) {
-        case OBJECT_TYPE_RIDE:
-        {
-            auto rideObject = static_cast<const RideObject *>(baseObject);
-            return rideObject->GetCapacity();
-        }
-        default:
-            return "";
-        }
-    }
-
-    void object_draw_preview(const void * object, rct_drawpixelinfo * dpi, sint32 width, sint32 height)
-    {
-        const Object * baseObject = static_cast<const Object *>(object);
-        baseObject->DrawPreview(dpi, width, height);
-    }
-
-    bool object_entry_compare(const rct_object_entry * a, const rct_object_entry * b)
-    {
-        // If an official object don't bother checking checksum
-        if ((a->flags & 0xF0) || (b->flags & 0xF0))
-        {
-            if ((a->flags & 0x0F) != (b->flags & 0x0F))
-            {
-                return 0;
-            }
-            sint32 match = memcmp(a->name, b->name, 8);
-            if (match)
-            {
-                return 0;
-            }
-        }
-        else
-        {
-            if (a->flags != b->flags)
-            {
-                return 0;
-            }
-            sint32 match = memcmp(a->name, b->name, 8);
-            if (match)
-            {
-                return 0;
-            }
-            if (a->checksum != b->checksum)
-            {
-                return 0;
-            }
-        }
-        return 1;
-    }
-
-    sint32 object_calculate_checksum(const rct_object_entry * entry, const void * data, size_t dataLength)
-    {
-        const uint8 * entryBytePtr = (uint8 *)entry;
-
-        uint32 checksum = 0xF369A75B;
-        checksum ^= entryBytePtr[0];
+        checksum ^= entryBytePtr[i];
         checksum = rol32(checksum, 11);
-        for (sint32 i = 4; i < 12; i++)
-        {
-            checksum ^= entryBytePtr[i];
-            checksum = rol32(checksum, 11);
-        }
-
-        uint8 *      dataBytes    = (uint8 *)data;
-        const size_t dataLength32 = dataLength - (dataLength & 31);
-        for (size_t i = 0; i < 32; i++)
-        {
-            for (size_t j = i; j < dataLength32; j += 32)
-            {
-                checksum ^= dataBytes[j];
-            }
-            checksum = rol32(checksum, 11);
-        }
-        for (size_t i = dataLength32; i < dataLength; i++)
-        {
-            checksum ^= dataBytes[i];
-            checksum = rol32(checksum, 11);
-        }
-
-        return (sint32)checksum;
     }
+
+    uint8 *      dataBytes    = (uint8 *)data;
+    const size_t dataLength32 = dataLength - (dataLength & 31);
+    for (size_t i = 0; i < 32; i++)
+    {
+        for (size_t j = i; j < dataLength32; j += 32)
+        {
+            checksum ^= dataBytes[j];
+        }
+        checksum = rol32(checksum, 11);
+    }
+    for (size_t i = dataLength32; i < dataLength; i++)
+    {
+        checksum ^= dataBytes[i];
+        checksum = rol32(checksum, 11);
+    }
+
+    return (sint32)checksum;
 }

@@ -1,5 +1,22 @@
-#include "Intent.h"
+#pragma region Copyright (c) 2014-2018 OpenRCT2 Developers
+/*****************************************************************************
+ * OpenRCT2, an open source clone of Roller Coaster Tycoon 2.
+ *
+ * OpenRCT2 is the work of many authors, a full list can be found in contributors.md
+ * For more information, visit https://github.com/OpenRCT2/OpenRCT2
+ *
+ * OpenRCT2 is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * A full copy of the GNU General Public License can be found in licence.txt
+ *****************************************************************************/
+#pragma endregion
+
+#include <utility>
 #include "../core/Guard.hpp"
+#include "Intent.h"
 
 Intent::Intent(rct_windowclass windowclass)
 {
@@ -39,10 +56,10 @@ Intent * Intent::putExtra(uint32 key, sint32 value)
     return this;
 }
 
-Intent * Intent::putExtra(uint32 key, utf8string value)
+Intent * Intent::putExtra(uint32 key, std::string value)
 {
     IntentData data = {};
-    data.stringVal = value;
+    data.stringVal = std::move(value);
     data.type = IntentData::DT_STRING;
 
     _Data.insert(std::make_pair(key, data));
@@ -50,12 +67,23 @@ Intent * Intent::putExtra(uint32 key, utf8string value)
     return this;
 }
 
-rct_windowclass Intent::GetWindowClass()
+Intent * Intent::putExtra(uint32 key, close_callback value)
+{
+    IntentData data = {};
+    data.closeCallbackVal = value;
+    data.type = IntentData::DT_CLOSE_CALLBACK;
+
+    _Data.insert(std::make_pair(key, data));
+
+    return this;
+}
+
+rct_windowclass Intent::GetWindowClass() const
 {
     return this->_Class;
 }
 
-void * Intent::GetPointerExtra(uint32 key)
+void * Intent::GetPointerExtra(uint32 key) const
 {
     if (_Data.count(key) == 0)
     {
@@ -67,7 +95,7 @@ void * Intent::GetPointerExtra(uint32 key)
     return (void *) data.pointerVal;
 }
 
-uint32 Intent::GetUIntExtra(uint32 key)
+uint32 Intent::GetUIntExtra(uint32 key) const
 {
     if (_Data.count(key) == 0)
     {
@@ -79,7 +107,7 @@ uint32 Intent::GetUIntExtra(uint32 key)
     return data.intVal.unsignedInt;
 }
 
-sint32 Intent::GetSIntExtra(uint32 key)
+sint32 Intent::GetSIntExtra(uint32 key) const
 {
     if (_Data.count(key) == 0)
     {
@@ -91,11 +119,11 @@ sint32 Intent::GetSIntExtra(uint32 key)
     return data.intVal.signedInt;
 }
 
-utf8string Intent::GetStringExtra(uint32 key)
+std::string Intent::GetStringExtra(uint32 key) const
 {
     if (_Data.count(key) == 0)
     {
-        return nullptr;
+        return std::string {};
     }
 
     auto data = _Data.at(key);
@@ -103,35 +131,14 @@ utf8string Intent::GetStringExtra(uint32 key)
     return data.stringVal;
 }
 
-extern "C" {
-    Intent *intent_create(rct_windowclass clss)
+close_callback Intent::GetCloseCallbackExtra(uint32 key) const
+{
+    if (_Data.count(key) == 0)
     {
-        return new Intent(clss);
+        return nullptr;
     }
 
-    void intent_release(Intent *intent)
-    {
-        delete intent;
-    }
-
-    void intent_set_sint(Intent * intent, uint32 key, sint32 value)
-    {
-        intent->putExtra(key, value);
-    }
-
-    void intent_set_string(Intent *intent, uint32 key, utf8string value)
-    {
-        intent->putExtra(key, value);
-    }
-
-    void intent_set_pointer(Intent *intent, uint32 key, void *value)
-    {
-        intent->putExtra(key, value);
-    }
-
-    void intent_set_uint(Intent *intent, uint32 key, uint32 value)
-    {
-        intent->putExtra(key, value);
-    }
+    auto data = _Data.at(key);
+    openrct2_assert(data.type == IntentData::DT_CLOSE_CALLBACK, "Actual type doesn't match requested type");
+    return data.closeCallbackVal;
 }
-

@@ -28,9 +28,10 @@
     #include <unistd.h>
 #elif defined(_WIN32)
     // Windows needs this for widechar <-> utf8 conversion utils
-    #include "../localisation/language.h"
+    #include "../localisation/Language.h"
 #endif
 
+#include <memory>
 #include <stack>
 #include <string>
 #include <vector>
@@ -38,8 +39,6 @@
 #include "Memory.hpp"
 #include "Path.hpp"
 #include "String.hpp"
-
-#include "../platform/platform.h"
 
 enum class DIRECTORY_CHILD_TYPE
 {
@@ -146,11 +145,14 @@ public:
                 const DirectoryChild * child = &state->Listing[state->Index];
                 if (child->Type == DIRECTORY_CHILD_TYPE::DC_DIRECTORY)
                 {
-                    utf8 childPath[MAX_PATH];
-                    String::Set(childPath, sizeof(childPath), state->Path.c_str());
-                    Path::Append(childPath, sizeof(childPath), child->Name.c_str());
+                    if (_recurse)
+                    {
+                        utf8 childPath[MAX_PATH];
+                        String::Set(childPath, sizeof(childPath), state->Path.c_str());
+                        Path::Append(childPath, sizeof(childPath), child->Name.c_str());
 
-                    PushState(childPath);
+                        PushState(childPath);
+                    }
                 }
                 else if (PatternMatch(child->Name))
                 {
@@ -166,6 +168,8 @@ public:
         }
         return false;
     }
+
+    virtual void GetDirectoryChildren(std::vector<DirectoryChild> &children, const std::string &path) abstract;
 
 private:
     void PushState(const std::string &directory)
@@ -216,10 +220,6 @@ private:
         patterns.shrink_to_fit();
         return patterns;
     }
-
-protected:
-    virtual void GetDirectoryChildren(std::vector<DirectoryChild> &children, const std::string &path) abstract;
-
 };
 
 #ifdef _WIN32
@@ -232,7 +232,6 @@ public:
     {
     }
 
-protected:
     void GetDirectoryChildren(std::vector<DirectoryChild> &children, const std::string &path) override
     {
         std::string pattern = path + "\\*";
@@ -293,7 +292,6 @@ public:
     {
     }
 
-protected:
     void GetDirectoryChildren(std::vector<DirectoryChild> &children, const std::string &path) override
     {
         struct dirent * * namelist;
@@ -325,7 +323,7 @@ private:
     {
         DirectoryChild result;
         result.Name = std::string(node->d_name);
-        if (node->d_type & DT_DIR)
+        if (node->d_type == DT_DIR)
         {
             result.Type = DIRECTORY_CHILD_TYPE::DC_DIRECTORY;
         }
@@ -345,6 +343,11 @@ private:
             {
                 result.Size = statInfo.st_size;
                 result.LastModified = statInfo.st_mtime;
+
+                if (S_ISDIR(statInfo.st_mode))
+                {
+                    result.Type = DIRECTORY_CHILD_TYPE::DC_DIRECTORY;
+                }
             }
 
             Memory::Free(path);
@@ -381,6 +384,25 @@ void Path::QueryDirectory(QueryDirectoryResult * result, const std::string &patt
         result->PathChecksum += GetPathChecksum(path);
     }
     delete scanner;
+}
+
+std::vector<std::string> Path::GetDirectories(const std::string &path)
+{
+    auto scanner = std::unique_ptr<IFileScanner>(ScanDirectory(path, false));
+    auto baseScanner = static_cast<FileScannerBase *>(scanner.get());
+
+    std::vector<DirectoryChild> children;
+    baseScanner->GetDirectoryChildren(children, path);
+
+    std::vector<std::string> subDirectories;
+    for (const auto &c : children)
+    {
+        if (c.Type == DIRECTORY_CHILD_TYPE::DC_DIRECTORY)
+        {
+            subDirectories.push_back(c.Name);
+        }
+    }
+    return subDirectories;
 }
 
 static uint32 GetPathChecksum(const utf8 * path)

@@ -14,13 +14,16 @@
  *****************************************************************************/
 #pragma endregion
 
+#include <cstddef>
+
 #include <openrct2/config/Config.h>
 #include <openrct2/core/Util.hpp>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
 #include <openrct2/sprites.h>
+#include <openrct2/drawing/Drawing.h>
 
 enum {
     NOTIFICATION_CATEGORY_PARK,
@@ -28,13 +31,13 @@ enum {
     NOTIFICATION_CATEGORY_GUEST
 };
 
-typedef struct notification_def {
+struct notification_def {
     uint8 category;
     rct_string_id caption;
     size_t config_offset;
-} notification_def;
+};
 
-static const notification_def NewsItemOptionDefinitions[] = {
+static constexpr const notification_def NewsItemOptionDefinitions[] = {
     { NOTIFICATION_CATEGORY_PARK,   STR_NOTIFICATION_PARK_AWARD,                        offsetof(NotificationConfiguration, park_award)                         },
     { NOTIFICATION_CATEGORY_PARK,   STR_NOTIFICATION_PARK_MARKETING_CAMPAIGN_FINISHED,  offsetof(NotificationConfiguration, park_marketing_campaign_finished)   },
     { NOTIFICATION_CATEGORY_PARK,   STR_NOTIFICATION_PARK_WARNINGS,                     offsetof(NotificationConfiguration, park_warnings)                      },
@@ -74,7 +77,7 @@ static rct_widget window_news_options_widgets[] = {
     { WWT_TAB,              1,  34,         64,     17,     43,     IMAGE_TYPE_REMAP | SPR_TAB,           STR_NONE },             // tab 2
     { WWT_TAB,              1,  65,         95,     17,     43,     IMAGE_TYPE_REMAP | SPR_TAB,           STR_NONE },             // tab 2
 
-    { WWT_CHECKBOX,         2,  3,          349,    46,     59,     STR_NONE,                       STR_NONE },
+    { WWT_CHECKBOX,         2,  7,          349,    49,     62,     STR_NONE,                       STR_NONE },
     { WWT_CHECKBOX,         2,  0,          0,      0,      0,      STR_NONE,                       STR_NONE },
     { WWT_CHECKBOX,         2,  0,          0,      0,      0,      STR_NONE,                       STR_NONE },
     { WWT_CHECKBOX,         2,  0,          0,      0,      0,      STR_NONE,                       STR_NONE },
@@ -224,7 +227,7 @@ static void window_news_options_invalidate(rct_window *w)
         checkboxWidget->left = baseCheckBox->left;
         checkboxWidget->right = baseCheckBox->right;
         checkboxWidget->top = y;
-        checkboxWidget->bottom = checkboxWidget->top + 13;
+        checkboxWidget->bottom = checkboxWidget->top + LIST_ROW_HEIGHT + 3;
         checkboxWidget->text = ndef->caption;
 
         const bool *configValue = get_notification_value_ptr(ndef);
@@ -232,7 +235,7 @@ static void window_news_options_invalidate(rct_window *w)
 
         checkboxWidgetIndex++;
         checkboxWidget++;
-        y += 13;
+        y += LIST_ROW_HEIGHT + 3;
     }
 
     // Remove unused checkboxes

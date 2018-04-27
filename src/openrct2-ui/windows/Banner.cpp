@@ -15,15 +15,17 @@
 #pragma endregion
 
 #include <openrct2/config/Config.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/game.h>
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/world/scenery.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2/Game.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2-ui/interface/Dropdown.h>
 #include <openrct2/sprites.h>
+#include <openrct2/world/Banner.h>
+#include <openrct2/world/Scenery.h>
+#include <openrct2/actions/BannerSetNameAction.hpp>
 
 #define WW 113
 #define WH 96
@@ -41,7 +43,7 @@ enum WINDOW_BANNER_WIDGET_IDX {
     WIDX_TEXT_COLOUR_DROPDOWN_BUTTON
 };
 
-static const rct_string_id BannerColouredTextFormats[] = {
+static constexpr const rct_string_id BannerColouredTextFormats[] = {
     STR_TEXT_COLOR_BLACK,
     STR_TEXT_COLOR_GREY,
     STR_TEXT_COLOR_WHITE,
@@ -68,7 +70,7 @@ static rct_widget window_banner_widgets[] = {
     { WWT_FLATBTN,          1,  WW - 25,    WW - 2, 67,     90,         SPR_DEMOLISH,               STR_DEMOLISH_BANNER_TIP},           // demolish button
     { WWT_COLOURBTN,        1,  5,          16,     WH - 16,WH - 5,     0xFFFFFFFF,                 STR_SELECT_MAIN_SIGN_COLOUR_TIP},   // high money
     { WWT_DROPDOWN,         1,  43,         81,     WH - 16,WH - 5,     0xFFFFFFFF,                 STR_NONE},                          // high money
-    { WWT_DROPDOWN_BUTTON,  1,  70,         80,     WH - 15,WH - 6,     STR_DROPDOWN_GLYPH,         STR_SELECT_TEXT_COLOUR_TIP},        // high money
+    { WWT_BUTTON,           1,  70,         80,     WH - 15,WH - 6,     STR_DROPDOWN_GLYPH,         STR_SELECT_TEXT_COLOUR_TIP},        // high money
     { WIDGETS_END },
 };
 
@@ -143,19 +145,19 @@ rct_window * window_banner_open(rct_windownumber number)
     sint32 view_x = gBanners[w->number].x << 5;
     sint32 view_y = gBanners[w->number].y << 5;
 
-    rct_map_element* map_element = map_get_first_element_at(view_x / 32, view_y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(view_x / 32, view_y / 32);
     while(1) {
         if (
-            (map_element_get_type(map_element) == MAP_ELEMENT_TYPE_BANNER) &&
-            (map_element->properties.banner.index == w->number)
+            (tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_BANNER) &&
+            (tile_element->properties.banner.index == w->number)
         ) {
             break;
         }
 
-        map_element++;
+        tile_element++;
     }
 
-    sint32 view_z = map_element->base_height<<3;
+    sint32 view_z = tile_element->base_height<<3;
     w->frame_no = view_z;
 
     view_x += 16;
@@ -193,12 +195,12 @@ static void window_banner_mouseup(rct_window *w, rct_widgetindex widgetIndex)
     sint32 x = banner->x << 5;
     sint32 y = banner->y << 5;
 
-    rct_map_element* map_element = map_get_first_element_at(x / 32, y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(x / 32, y / 32);
 
     while (1){
-        if ((map_element_get_type(map_element) == MAP_ELEMENT_TYPE_BANNER) &&
-            (map_element->properties.banner.index == w->number)) break;
-        map_element++;
+        if ((tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_BANNER) &&
+            (tile_element->properties.banner.index == w->number)) break;
+        tile_element++;
     }
 
     switch (widgetIndex) {
@@ -206,7 +208,7 @@ static void window_banner_mouseup(rct_window *w, rct_widgetindex widgetIndex)
         window_close(w);
         break;
     case WIDX_BANNER_DEMOLISH:
-        game_do_command(x, 1, y, map_element->base_height | (map_element->properties.banner.position << 8), GAME_COMMAND_REMOVE_BANNER, 0, 0);
+        game_do_command(x, 1, y, tile_element->base_height | (tile_element->properties.banner.position << 8), GAME_COMMAND_REMOVE_BANNER, 0, 0);
         break;
     case WIDX_BANNER_TEXT:
         window_text_input_open(w, WIDX_BANNER_TEXT, STR_BANNER_TEXT, STR_ENTER_BANNER_TEXT, gBanners[w->number].string_idx, 0, 32);
@@ -285,10 +287,10 @@ static void window_banner_dropdown(rct_window *w, rct_widgetindex widgetIndex, s
  */
 static void window_banner_textinput(rct_window *w, rct_widgetindex widgetIndex, char *text)
 {
-    if (widgetIndex == WIDX_BANNER_TEXT && text != nullptr) {
-        game_do_command(1, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 0)), GAME_COMMAND_SET_BANNER_NAME, *((sint32*)(text + 8)), *((sint32*)(text + 4)));
-        game_do_command(2, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 12)), GAME_COMMAND_SET_BANNER_NAME, *((sint32*)(text + 20)), *((sint32*)(text + 16)));
-        game_do_command(0, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 24)), GAME_COMMAND_SET_BANNER_NAME, *((sint32*)(text + 32)), *((sint32*)(text + 28)));
+    if (widgetIndex == WIDX_BANNER_TEXT && text != nullptr)
+    {
+        auto bannerSetNameAction = BannerSetNameAction(w->number, text);
+        GameActions::Execute(&bannerSetNameAction);
     }
 }
 
@@ -304,8 +306,10 @@ static void window_banner_invalidate(rct_window *w)
 
     // Scenery item not sure why we use this instead of banner?
     rct_scenery_entry* sceneryEntry = get_banner_entry(banner->type);
-
-    if (sceneryEntry->banner.flags & 1) colour_btn->type = WWT_COLOURBTN;
+    if (sceneryEntry->banner.flags & BANNER_ENTRY_FLAG_HAS_PRIMARY_COLOUR)
+    {
+        colour_btn->type = WWT_COLOURBTN;
+    }
 
     w->pressed_widgets &= ~(1ULL<<WIDX_BANNER_NO_ENTRY);
     w->disabled_widgets &= ~(

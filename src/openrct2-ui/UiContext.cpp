@@ -20,14 +20,15 @@
 #include <cmath>
 #include <memory>
 #include <vector>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <openrct2/audio/AudioMixer.h>
 #include <openrct2/config/Config.h>
 #include <openrct2/Context.h>
 #include <openrct2/core/Math.hpp>
 #include <openrct2/core/String.hpp>
 #include <openrct2/drawing/IDrawingEngine.h>
-#include <openrct2/localisation/string_ids.h>
+#include <openrct2/drawing/Drawing.h>
+#include <openrct2/localisation/StringIds.h>
 #include <openrct2/platform/Platform2.h>
 #include <openrct2/ui/UiContext.h>
 #include <openrct2/ui/WindowManager.h>
@@ -40,9 +41,11 @@
 #include "UiContext.h"
 #include "WindowManager.h"
 
-#include <openrct2/input.h>
-#include <openrct2/interface/console.h>
-#include <openrct2/interface/window.h>
+#include <openrct2/Input.h>
+#include <openrct2/interface/Console.h>
+#include <openrct2-ui/interface/Window.h>
+
+#include "interface/InGameConsole.h"
 
 using namespace OpenRCT2;
 using namespace OpenRCT2::Drawing;
@@ -69,6 +72,7 @@ private:
     SDL_Window *    _window = nullptr;
     sint32          _width  = 0;
     sint32          _height = 0;
+    sint32          _scaleQuality = 0;
 
     bool _resolutionsAllowAnyAspectRatio = false;
     std::vector<Resolution> _fsResolutions;
@@ -85,8 +89,12 @@ private:
     uint32              _lastGestureTimestamp   = 0;
     float               _gestureRadius          = 0;
 
+    InGameConsole       _inGameConsole;
+
 public:
-    UiContext(IPlatformEnvironment * env)
+    InGameConsole& GetInGameConsole() { return _inGameConsole; }
+
+    explicit UiContext(IPlatformEnvironment * env)
         : _platformUiContext(CreatePlatformUiContext()),
           _windowManager(CreateWindowManager()),
           _keyboardShortcuts(env)
@@ -108,6 +116,16 @@ public:
         delete _platformUiContext;
     }
 
+    void Update() override
+    {
+        _inGameConsole.Update();
+    }
+
+    void Draw(rct_drawpixelinfo * dpi) override
+    {
+        _inGameConsole.Draw(dpi);
+    }
+
     // Window
     void * GetWindow() override
     {
@@ -124,9 +142,14 @@ public:
         return _height;
     }
 
+    sint32 GetScaleQuality() override
+    {
+        return _scaleQuality;
+    }
+
     void SetFullscreenMode(FULLSCREEN_MODE mode) override
     {
-        static const sint32 SDLFSFlags[] = { 0, SDL_WINDOW_FULLSCREEN, SDL_WINDOW_FULLSCREEN_DESKTOP };
+        static constexpr const sint32 SDLFSFlags[] = { 0, SDL_WINDOW_FULLSCREEN, SDL_WINDOW_FULLSCREEN_DESKTOP };
         uint32 windowFlags = SDLFSFlags[(sint32)mode];
 
         // HACK Changing window size when in fullscreen usually has no effect
@@ -204,6 +227,11 @@ public:
     void SetCursor(CURSOR_ID cursor) override
     {
         _cursorRepository.SetCurrentCursor(cursor);
+    }
+
+    void SetCursorScale(uint8 scale) override
+    {
+        _cursorRepository.SetCursorScale(scale);
     }
 
     void SetCursorVisible(bool value) override
@@ -338,12 +366,12 @@ public:
                 _cursorState.y = (sint32)(e.motion.y / gConfigGeneral.window_scale);
                 break;
             case SDL_MOUSEWHEEL:
-                if (gConsoleOpen)
+                if (_inGameConsole.IsOpen())
                 {
-                    console_scroll(e.wheel.y * 3); // Scroll 3 lines at a time
+                    _inGameConsole.Scroll(e.wheel.y * 3); // Scroll 3 lines at a time
                     break;
                 }
-                _cursorState.wheel += e.wheel.y * 128;
+                _cursorState.wheel -= e.wheel.y;
                 break;
             case SDL_MOUSEBUTTONDOWN:
             {
@@ -485,11 +513,16 @@ public:
     void TriggerResize() override
     {
         char scaleQualityBuffer[4];
-        uint8 scaleQuality = gConfigGeneral.scale_quality;
-        if (gConfigGeneral.use_nn_at_integer_scales &&
-            gConfigGeneral.window_scale == std::floor(gConfigGeneral.window_scale))
+        _scaleQuality = gConfigGeneral.scale_quality;
+        if (gConfigGeneral.window_scale == std::floor(gConfigGeneral.window_scale))
         {
-            scaleQuality = 0;
+            _scaleQuality = SCALE_QUALITY_NN;
+        }
+
+        sint32 scaleQuality = _scaleQuality;
+        if (_scaleQuality == SCALE_QUALITY_SMOOTH_NN)
+        {
+            scaleQuality = SCALE_QUALITY_LINEAR;
         }
         snprintf(scaleQualityBuffer, sizeof(scaleQualityBuffer), "%u", scaleQuality);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, scaleQualityBuffer);
@@ -781,4 +814,10 @@ private:
 IUiContext * OpenRCT2::Ui::CreateUiContext(IPlatformEnvironment * env)
 {
     return new UiContext(env);
+}
+
+InGameConsole& OpenRCT2::Ui::GetInGameConsole()
+{
+    auto uiContext = static_cast<UiContext *>(GetContext()->GetUiContext());
+    return uiContext->GetInGameConsole();
 }

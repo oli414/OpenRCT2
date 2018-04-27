@@ -21,6 +21,7 @@
 #include <tuple>
 #include <vector>
 #include "../common.h"
+#include "Console.hpp"
 #include "File.h"
 #include "FileScanner.h"
 #include "FileStream.hpp"
@@ -149,7 +150,7 @@ protected:
 private:
     ScanResult Scan() const
     {
-        DirectoryStats stats;
+        DirectoryStats stats {};
         std::vector<std::string> files;
         for (const auto directory : SearchPaths)
         {
@@ -183,8 +184,12 @@ private:
         Console::WriteLine("Building %s (%zu items)", _name.c_str(), scanResult.Files.size());
 
         auto startTime = std::chrono::high_resolution_clock::now();
+        // Start at 1, so that we can reach 100% completion status
+        size_t i = 1;
         for (auto filePath : scanResult.Files)
         {
+            Console::WriteFormat("File %5d of %d, done %3d%%\r", i, scanResult.Files.size(), i * 100 / scanResult.Files.size());
+            i++;
             log_verbose("FileIndex:Indexing '%s'", filePath.c_str());
             auto item = Create(filePath);
             if (std::get<0>(item))
@@ -205,40 +210,43 @@ private:
     {
         bool loadedItems = false;
         std::vector<TItem> items;
-        try
+        if (File::Exists(_indexPath))
         {
-            log_verbose("FileIndex:Loading index: '%s'", _indexPath.c_str());
-            auto fs = FileStream(_indexPath, FILE_MODE_OPEN);
+            try
+            {
+                log_verbose("FileIndex:Loading index: '%s'", _indexPath.c_str());
+                auto fs = FileStream(_indexPath, FILE_MODE_OPEN);
 
-            // Read header, check if we need to re-scan
-            auto header = fs.ReadValue<FileIndexHeader>();
-            if (header.HeaderSize == sizeof(FileIndexHeader) &&
-                header.MagicNumber == _magicNumber &&
-                header.VersionA == FILE_INDEX_VERSION &&
-                header.VersionB == _version &&
-                header.LanguageId == gCurrentLanguage &&
-                header.Stats.TotalFiles == stats.TotalFiles &&
-                header.Stats.TotalFileSize == stats.TotalFileSize &&
-                header.Stats.FileDateModifiedChecksum == stats.FileDateModifiedChecksum &&
-                header.Stats.PathChecksum == stats.PathChecksum)
-            {
-                // Directory is the same, just read the saved items
-                for (uint32 i = 0; i < header.NumItems; i++)
+                // Read header, check if we need to re-scan
+                auto header = fs.ReadValue<FileIndexHeader>();
+                if (header.HeaderSize == sizeof(FileIndexHeader) &&
+                    header.MagicNumber == _magicNumber &&
+                    header.VersionA == FILE_INDEX_VERSION &&
+                    header.VersionB == _version &&
+                    header.LanguageId == gCurrentLanguage &&
+                    header.Stats.TotalFiles == stats.TotalFiles &&
+                    header.Stats.TotalFileSize == stats.TotalFileSize &&
+                    header.Stats.FileDateModifiedChecksum == stats.FileDateModifiedChecksum &&
+                    header.Stats.PathChecksum == stats.PathChecksum)
                 {
-                    auto item = Deserialise(&fs);
-                    items.push_back(item);
+                    // Directory is the same, just read the saved items
+                    for (uint32 i = 0; i < header.NumItems; i++)
+                    {
+                        auto item = Deserialise(&fs);
+                        items.push_back(item);
+                    }
+                    loadedItems = true;
                 }
-                loadedItems = true;
+                else
+                {
+                    Console::WriteLine("%s out of date", _name.c_str());
+                }
             }
-            else
+            catch (const std::exception &e)
             {
-                Console::WriteLine("%s out of date", _name.c_str());
+                Console::Error::WriteLine("Unable to load index: '%s'.", _indexPath.c_str());
+                Console::Error::WriteLine("%s", e.what());
             }
-        }
-        catch (const std::exception &e)
-        {
-            Console::Error::WriteLine("Unable to load index: '%s'.", _indexPath.c_str());
-            Console::Error::WriteLine("%s", e.what());
         }
         return std::make_tuple(loadedItems, items);
     }
@@ -248,6 +256,7 @@ private:
         try
         {
             log_verbose("FileIndex:Writing index: '%s'", _indexPath.c_str());
+            Path::CreateDirectory(Path::GetDirectory(_indexPath));
             auto fs = FileStream(_indexPath, FILE_MODE_WRITE);
     
             // Write header

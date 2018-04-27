@@ -20,9 +20,12 @@
 #include <sstream>
 #include <stdexcept>
 #include <openrct2/common.h>
+#include <openrct2/core/Path.hpp>
 #include <openrct2/core/String.hpp>
+#include <openrct2/localisation/Localisation.h>
 #include <openrct2/ui/UiContext.h>
 #include "UiContext.h"
+
 
 #include <SDL.h>
 
@@ -160,7 +163,28 @@ namespace OpenRCT2 { namespace Ui
                 std::string output;
                 if (Execute(cmd, &output) == 0)
                 {
-                    result = output;
+                    if (desc.Type == FILE_DIALOG_TYPE::SAVE)
+                    {
+                        // The default file extension is taken from the **first** available filter, since
+                        // we cannot obtain it from zenity's output. This means that the FileDialogDesc::Filters
+                        // array must be carefully populated, at least the first element.
+                        std::string pattern = desc.Filters[0].Pattern;
+                        std::string defaultExtension = pattern.substr(pattern.find_last_of('.'));
+
+                        const utf8 * filename = Path::GetFileName(output.c_str());
+
+                        // If there is no extension, append the pattern
+                        const utf8 * extension = Path::GetExtension(filename);
+                        result = output;
+                        if (extension[0] == '\0' && !defaultExtension.empty())
+                        {
+                            result = output.append(defaultExtension);
+                        }
+                    }
+                    else
+                    {
+                        result = output;
+                    }
                 }
                 break;
             }
@@ -350,7 +374,10 @@ namespace OpenRCT2 { namespace Ui
 
         static void ThrowMissingDialogApp()
         {
-            throw std::runtime_error("KDialog or Zenity not installed.");
+            IUiContext * uiContext = GetContext()->GetUiContext();
+            std::string dialogMissingWarning = language_get_string(STR_MISSING_DIALOG_APPLICATION_ERROR);
+            uiContext->ShowMessageBox(dialogMissingWarning);
+            throw std::runtime_error(dialogMissingWarning);
         }
     };
 

@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -26,13 +27,13 @@
 #include "String.hpp"
 #include "Utils.hpp"
 
-#include "data.h"
-#include <openrct2/interface/viewport.h>
-#include <openrct2/rct2.h>
-#include <openrct2/ride/ride.h>
-#include <openrct2/ride/ride_data.h>
-#include <openrct2/ride/track.h>
-#include <openrct2/ride/track_data.h>
+#include "Data.h"
+#include <openrct2/interface/Viewport.h>
+#include <openrct2/rct2/RCT2.h>
+#include <openrct2/ride/Ride.h>
+#include <openrct2/ride/RideData.h>
+#include <openrct2/ride/Track.h>
+#include <openrct2/ride/TrackData.h>
 
 class PaintCodeGenerator
 {
@@ -104,16 +105,16 @@ private:
     {
         const char * includes[] =
         {
-            "../../drawing/drawing.h",
+            "../../drawing/Drawing.h",
             "../../paint/supports.h",
-            "../../interface/viewport.h",
-            "../../paint/map_element/map_element.h",
+            "../../interface/Viewport.h",
+            "../../paint/tile_element/tile_element.h",
             "../../paint/paint.h",
             "../../sprites.h",
-            "../../world/map.h",
-            "../../world/sprite.h",
+            "../../world/Map.h",
+            "../../world/Sprite.h",
             "../ride_data.h",
-            "../track_data.h",
+            "../TrackData.h",
             "../track_paint.h",
         };
         for (auto include : includes)
@@ -137,7 +138,7 @@ private:
             {
                 const uint32 * paintFunctionList = RideTypeTrackPaintFunctionsOld[_rideType];
                 WriteLine(0, "/** rct2: 0x%08X, 0x%08X, 0x%08X */", paintFunctionList[TRACK_ELEM_END_STATION], paintFunctionList[TRACK_ELEM_BEGIN_STATION], paintFunctionList[TRACK_ELEM_MIDDLE_STATION]);
-                WriteLine(0, "static void " + _rideName + "_track_station(uint8 rideIndex, uint8 trackSequence, uint8 direction, int height, rct_map_element * mapElement)");
+                WriteLine(0, "static void " + _rideName + "_track_station(uint8 rideIndex, uint8 trackSequence, uint8 direction, int height, rct_tile_element * tileElement)");
                 WriteLine(0, "{");
                 WriteLine(0, "}");
                 WriteLine();
@@ -148,7 +149,7 @@ private:
     void GenerateTrackFunction(int trackType)
     {
         WriteLine(0, "/** rct2: 0x%08X */", RideTypeTrackPaintFunctionsOld[_rideType][trackType]);
-        WriteLine(0, "static void " + GetTrackFunctionName(trackType) + "(uint8 rideIndex, uint8 trackSequence, uint8 direction, int height, rct_map_element * mapElement)");
+        WriteLine(0, "static void " + GetTrackFunctionName(trackType) + "(uint8 rideIndex, uint8 trackSequence, uint8 direction, int height, rct_tile_element * tileElement)");
         WriteLine(0, "{");
         if (!GenerateMirrorCall(1, trackType))
         {
@@ -156,7 +157,7 @@ private:
                 _rideType == RIDE_TYPE_FLYING_ROLLER_COASTER ||
                 _rideType == RIDE_TYPE_LAY_DOWN_ROLLER_COASTER)
             {
-                WriteLine(1, "if (!track_element_is_inverted(mapElement)) {");
+                WriteLine(1, "if (!track_element_is_inverted(tileElement)) {");
                 _invertedTrack = false;
                 GenerateTrackFunctionBody(2, trackType);
                 WriteLine(1, "} else {");
@@ -289,37 +290,37 @@ private:
                 std::string destFuncName = GetTrackFunctionName(mirrorTable[i][2]);
                 switch (mirrorTable[i][0]) {
                 case 0:
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 2) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 2) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 1:
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn5TilesToRightQuarterTurn5Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 2:
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn5TilesToRightQuarterTurn5Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 3:
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn3TilesToRightQuarterTurn3Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 4:
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn3TilesToRightQuarterTurn3Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 5:
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 6:
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 7:
                     WriteLine(tabs, "trackSequence = mapLeftEighthTurnToOrthogonal[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 3) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 3) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 8:
                     WriteLine(tabs, "trackSequence = mapLeftEighthTurnToOrthogonal[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 2) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 2) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 9:
                     WriteLine(tabs, "if (trackSequence >= 4) {");
@@ -327,7 +328,7 @@ private:
                     WriteLine(tabs + 1, "direction = (direction + 1) & 3;");
                     WriteLine(tabs, "}");
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn3TilesToRightQuarterTurn3Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 10:
                     WriteLine(tabs, "if (trackSequence >= 4) {");
@@ -335,7 +336,7 @@ private:
                     WriteLine(tabs + 1, "direction = (direction - 1) & 3;");
                     WriteLine(tabs, "}");
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn3TilesToRightQuarterTurn3Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 11:
                     WriteLine(tabs, "if (trackSequence >= 7) {");
@@ -343,7 +344,7 @@ private:
                     WriteLine(tabs + 1, "direction = (direction + 1) & 3;");
                     WriteLine(tabs, "}");
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn5TilesToRightQuarterTurn5Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 12:
                     WriteLine(tabs, "if (trackSequence >= 7) {");
@@ -351,28 +352,28 @@ private:
                     WriteLine(tabs + 1, "direction = (direction - 1) & 3;");
                     WriteLine(tabs, "}");
                     WriteLine(tabs, "trackSequence = mapLeftQuarterTurn5TilesToRightQuarterTurn5Tiles[trackSequence];");
-                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 13:
-                    WriteLine(tabs, "%s(rideIndex, 3 - trackSequence, (direction + 2) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 3 - trackSequence, (direction + 2) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 14:
-                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction - 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction - 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 15:
-                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction + 1) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction + 1) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 16:
-                    WriteLine(tabs, "%s(rideIndex, 3 - trackSequence, direction, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 3 - trackSequence, direction, height, tileElement);", destFuncName.c_str());
                     break;
                 case 17:
-                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, direction, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, direction, height, tileElement);", destFuncName.c_str());
                     break;
                 case 18:
-                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction + 2) & 3, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 2 - trackSequence, (direction + 2) & 3, height, tileElement);", destFuncName.c_str());
                     break;
                 case 19:
-                    WriteLine(tabs, "%s(rideIndex, 6 - trackSequence, direction, height, mapElement);", destFuncName.c_str());
+                    WriteLine(tabs, "%s(rideIndex, 6 - trackSequence, direction, height, tileElement);", destFuncName.c_str());
                     break;
                 }
                 return true;
@@ -405,15 +406,15 @@ private:
         std::vector<SegmentSupportCall> segmentSupportCalls[4];
         support_height generalSupports[4] = { 0 };
         for (int direction = 0; direction < 4; direction++) {
-            rct_map_element mapElement = { 0 };
-            mapElement.flags |= MAP_ELEMENT_FLAG_LAST_TILE;
-            mapElement.properties.track.type = trackType;
-            mapElement.base_height = 3;
+            rct_tile_element tileElement = { 0 };
+            tileElement.flags |= TILE_ELEMENT_FLAG_LAST_TILE;
+            track_element_set_type(&tileElement, trackType);
+            tileElement.base_height = 3;
             if (_invertedTrack)
             {
-                mapElement.properties.track.colour |= TRACK_ELEMENT_COLOUR_FLAG_INVERTED;
+                track_element_set_inverted(&tileElement, true);
             }
-            g_currently_drawn_item = &mapElement;
+            g_currently_drawn_item = &tileElement;
 
             // Set position
             RCT2_GLOBAL(0x009DE56A, sint16) = 64;
@@ -421,7 +422,7 @@ private:
 
             function_call callBuffer[256] = { 0 };
             PaintIntercept::ClearCalls();
-            CallOriginal(trackType, direction, trackSequence, height, &mapElement);
+            CallOriginal(trackType, direction, trackSequence, height, &tileElement);
             int numCalls = PaintIntercept::GetCalls(callBuffer);
             calls[direction].insert(calls[direction].begin(), callBuffer, callBuffer + numCalls);
 
@@ -440,19 +441,19 @@ private:
             }
 
             // Get chain lift calls
-            mapElement.type |= 0x80;
+            tileElement.type |= 0x80;
             PaintIntercept::ClearCalls();
-            CallOriginal(trackType, direction, trackSequence, height, &mapElement);
+            CallOriginal(trackType, direction, trackSequence, height, &tileElement);
             numCalls = PaintIntercept::GetCalls(callBuffer);
             chainLiftCalls[direction].insert(chainLiftCalls[direction].begin(), callBuffer, callBuffer + numCalls);
 
             // Get cable lift calls (giga coaster only)
             if (_rideType == RIDE_TYPE_GIGA_COASTER)
             {
-                mapElement.type = 0;
-                mapElement.properties.track.colour |= TRACK_ELEMENT_COLOUR_FLAG_CABLE_LIFT;
+                tileElement.type = 0;
+                track_element_set_cable_lift(&tileElement);
                 PaintIntercept::ClearCalls();
-                CallOriginal(trackType, direction, trackSequence, height, &mapElement);
+                CallOriginal(trackType, direction, trackSequence, height, &tileElement);
                 numCalls = PaintIntercept::GetCalls(callBuffer);
                 cableLiftCalls[direction].insert(cableLiftCalls[direction].begin(), callBuffer, callBuffer + numCalls);
             }
@@ -462,10 +463,10 @@ private:
             {
                 RCT2_GLOBAL(0x009DE56A, sint16) = 64 + 32;
                 RCT2_GLOBAL(0x009DE56E, sint16) = 64;
-                mapElement.type = 0;
-                mapElement.properties.track.colour &= ~TRACK_ELEMENT_COLOUR_FLAG_CABLE_LIFT;
+                tileElement.type = 0;
+                track_element_clear_cable_lift(&tileElement);
                 PaintIntercept::ClearCalls();
-                CallOriginal(trackType, direction, trackSequence, height, &mapElement);
+                CallOriginal(trackType, direction, trackSequence, height, &tileElement);
                 numCalls = PaintIntercept::GetCalls(callBuffer);
                 std::vector<function_call> checkCalls = std::vector<function_call>(callBuffer, callBuffer + numCalls);
                 if (!CompareFunctionCalls(checkCalls, calls[direction]))
@@ -474,7 +475,7 @@ private:
                 }
             }
 
-            GetTunnelCalls(trackType, direction, trackSequence, height, &mapElement, tileTunnelCalls, verticalTunnelHeights);
+            GetTunnelCalls(trackType, direction, trackSequence, height, &tileElement, tileTunnelCalls, verticalTunnelHeights);
         }
 
         std::vector<function_call> supportCalls[4], chainLiftSupportCalls[4], cableLiftSupportCalls[4];
@@ -486,12 +487,12 @@ private:
 
         if (_rideType == RIDE_TYPE_GIGA_COASTER && !CompareFunctionCalls(calls, cableLiftCalls))
         {
-            WriteLine(tabs, "if (track_element_is_cable_lift(mapElement)) {");
+            WriteLine(tabs, "if (track_element_is_cable_lift(tileElement)) {");
             GenerateCalls(tabs + 1, cableLiftCalls, height);
 
             if (!CompareFunctionCalls(calls, chainLiftCalls))
             {
-                WriteLine(tabs, "} else if (track_element_is_lift_hill(mapElement)) {");
+                WriteLine(tabs, "} else if (track_element_is_lift_hill(tileElement)) {");
                 GenerateCalls(tabs + 1, chainLiftCalls, height);
             }
 
@@ -501,7 +502,7 @@ private:
         }
         else if (!CompareFunctionCalls(calls, chainLiftCalls))
         {
-            WriteLine(tabs, "if (track_element_is_lift_hill(mapElement)) {");
+            WriteLine(tabs, "if (track_element_is_lift_hill(tileElement)) {");
             GenerateCalls(tabs + 1, chainLiftCalls, height);
             WriteLine(tabs, "} else {");
             GenerateCalls(tabs + 1, calls, height);
@@ -736,7 +737,7 @@ private:
                         int direction,
                         int trackSequence,
                         int height,
-                        rct_map_element * mapElement,
+                        rct_tile_element * tileElement,
                         TunnelCall tileTunnelCalls[4][4],
                         sint16 verticalTunnelHeights[4])
     {
@@ -744,7 +745,7 @@ private:
 
         for (int offset = -8; offset <= 8; offset += 8)
         {
-            CallOriginal(trackType, direction, trackSequence, height + offset, mapElement);
+            CallOriginal(trackType, direction, trackSequence, height + offset, tileElement);
         }
 
         uint8 rightIndex = (4 - direction) % 4;
@@ -777,7 +778,7 @@ private:
 
         // Vertical tunnel
         gVerticalTunnelHeight = 0;
-        CallOriginal(trackType, direction, trackSequence, height, mapElement);
+        CallOriginal(trackType, direction, trackSequence, height, tileElement);
 
         int verticalTunnelHeight = gVerticalTunnelHeight;
         if (verticalTunnelHeight != 0)
@@ -1005,7 +1006,7 @@ private:
         return true;
     }
 
-    void CallOriginal(int trackType, int direction, int trackSequence, int height, rct_map_element *mapElement)
+    void CallOriginal(int trackType, int direction, int trackSequence, int height, rct_tile_element *tileElement)
     {
         TestPaint::ResetEnvironment();
         TestPaint::ResetSupportHeights();
@@ -1018,7 +1019,7 @@ private:
             (int) trackDirectionList,
             direction,
             height,
-            (int)mapElement,
+            (int)tileElement,
             0 * sizeof(Ride),
             trackSequence
         );
@@ -1046,7 +1047,7 @@ private:
             }
         }
         WriteLine(1, "}");
-        WriteLine(1, "return NULL;");
+        WriteLine(1, "return nullptr;");
         WriteLine(0, "}");
     }
 
@@ -1098,16 +1099,14 @@ private:
     }
 };
 
-extern "C"
+int generatePaintCode(uint8 rideType)
 {
-    int generatePaintCode(uint8 rideType)
+    if (ride_type_has_flag(rideType, RIDE_TYPE_FLAG_FLAT_RIDE))
     {
-        if (ride_type_has_flag(rideType, RIDE_TYPE_FLAG_FLAT_RIDE))
-        {
-            fprintf(stderr, "Flat rides not supported.\n");
-        }
-
-        auto pcg = PaintCodeGenerator();
-        return pcg.Generate(rideType);
+        fprintf(stderr, "Flat rides not supported.\n");
     }
+
+    auto pcg = PaintCodeGenerator();
+    return pcg.Generate(rideType);
 }
+

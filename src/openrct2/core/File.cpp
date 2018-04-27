@@ -21,13 +21,12 @@
     #include <sys/stat.h>
 #endif
 
-#include "Console.hpp"
 #include "File.h"
 #include "FileStream.hpp"
 #include "String.hpp"
+#include "../util/Util.h"
 
 #include "../platform/platform.h"
-#include "../util/util.h"
 
 namespace File
 {
@@ -135,31 +134,29 @@ namespace File
     }
 }
 
-extern "C"
+bool readentirefile(const utf8 * path, void * * outBuffer, size_t * outLength)
 {
-    bool readentirefile(const utf8 * path, void * * outBuffer, size_t * outLength)
+    try
     {
-        try
-        {
-            *outBuffer = File::ReadAllBytes(String::ToStd(path), outLength);
-            return true;
-        }
-        catch (const Exception &)
-        {
-            return false;
-        }
+        *outBuffer = File::ReadAllBytes(String::ToStd(path), outLength);
+        return true;
     }
-
-    bool writeentirefile(const utf8 * path, const void * buffer, size_t length)
+    catch (const std::exception &)
     {
-        try
-        {
-            File::WriteAllBytes(String::ToStd(path), buffer, length);
-            return true;
-        }
-        catch (const Exception &)
-        {
-            return false;
-        }
+        return false;
     }
 }
+
+bool writeentirefile(const utf8 * path, const void * buffer, size_t length)
+{
+    try
+    {
+        File::WriteAllBytes(String::ToStd(path), buffer, length);
+        return true;
+    }
+    catch (const std::exception &)
+    {
+        return false;
+    }
+}
+

@@ -17,8 +17,8 @@ STR_0012    :Dostihy
 STR_0013    :Autodráha
 STR_0014    :Volný pád
 STR_0015    :Bobová dráha
-STR_0016    :Pozorovací věž
-STR_0017    :Horská dráha s lopinky
+STR_0016    :Vyhlídková věž
+STR_0017    :Horská dráha s loopingy
 STR_0018    :Nafukovací čluny
 STR_0019    :Důlní horská dráha
 STR_0020    :Lanovka
@@ -514,7 +514,7 @@ STR_0509    :
 STR_0510    :
 STR_0511    :
 STR_0512    :Malá ocelová horská dráha se spirálovitým profilem a vozy se sedadly za sebou
-STR_0513    :Návštěvníci jedou po horské dráze s lopinky ve stoje
+STR_0513    :Návštěvníci jedou po horské dráze s loopingy ve stoje
 STR_0514    :Vlaky zavěšené pod kolejí se v zatáčkách houpají do stran
 STR_0515    :Ocelová horská dráha s vlaky držícími zespoda trati s mnoha zatáčkami
 STR_0516    :Pozvolná horská dráha pro ty kdo se zatím neodvažují na větší dráhy
@@ -527,8 +527,8 @@ STR_0522    :Menší horská dráha, na které návštěvníci sedí nad dráhou
 STR_0523    :Návštěvníci jedou pomalu ve vozidlech po postavené dráze.
 STR_0524    :Kabina pro volný pád je pneumaticky vystřelena vzhůru po vysoké ocelové věži a následně volně padá k zemi
 STR_0525    :Návštěvníci jedou po propletené bobové dráze
-STR_0526    :Otáčející se pozorovací kabina, která postupně vyjíždí na vysokou věž
-STR_0527    :Plynulá ocelová horská dráha s lopinky
+STR_0526    :Otáčející se vyhlídková kabina, která postupně vyjíždí na vysokou věž
+STR_0527    :Plynulá ocelová horská dráha s loopingy
 STR_0528    :Návštěvníci jedou v nafukovacích člunech po tobogánu
 STR_0529    :Ocelová horská dráha ve stylu důlního vlaku s věrně vypadajícími důlními kolejemi.
 STR_0530    :Kabiny visí na ocelovém laně, které nepřetržitě jede z jednoho konce na druhý a zpět
@@ -586,7 +586,7 @@ STR_0581    :Kruh sedadel je za pomalé rotace vytažen na vrchol vysoké věže
 STR_0582    :
 STR_0583    :
 STR_0584    :Speciální kola jezdí po ocelové koleji, poháněná šlapáním jezdců
-STR_0585    :Návštěvníci sedí po dvou zavěšení pod tratí a jedou skrze lopinky a ostré zatáčky
+STR_0585    :Návštěvníci sedí po dvou zavěšení pod tratí a jedou skrze loopingy a ostré zatáčky
 STR_0586    :Vozy ve tvaru lodí jedou po trati horské dráhy, což umožňuje ostré zatáčky, strmé klesání a cákající zpomalení pro mírnější říční úseky
 STR_0587    :Po mocném startu na stlačený vzduch se vozy rozjedou po svislé dráze, přes vrchol a svisle dolů zpět do stanice
 STR_0588    :Vozy po jednom jedou pod cik-cak tratí s ostrými zatáčkami a pády
@@ -604,170 +604,170 @@ STR_0599    :Malá horská dráha, na které vozy po jednom projíždí trať s 
 STR_0600    :Horská dráha s vozy ve stylu důlních vagónů, které jedou po hladkých kolejnicích skrze propletenou dráhu
 STR_0601    :
 STR_0602    :Horská dráha s vozy poháněnými elektromotorem, které sviští skrze propletenou dráhu
-STR_0603    :Návštěvník {INT32}
-STR_0604    :Návštěvník {INT32}
-STR_0605    :Návštěvník {INT32}
-STR_0606    :Návštěvník {INT32}
-STR_0607    :Návštěvník {INT32}
-STR_0608    :Návštěvník {INT32}
-STR_0609    :Návštěvník {INT32}
-STR_0610    :Návštěvník {INT32}
-STR_0611    :Návštěvník {INT32}
-STR_0612    :Návštěvník {INT32}
-STR_0613    :Návštěvník {INT32}
-STR_0614    :Návštěvník {INT32}
-STR_0615    :Návštěvník {INT32}
-STR_0616    :Návštěvník {INT32}
-STR_0617    :Návštěvník {INT32}
-STR_0618    :Návštěvník {INT32}
-STR_0619    :Návštěvník {INT32}
-STR_0620    :Návštěvník {INT32}
-STR_0621    :Návštěvník {INT32}
-STR_0622    :Návštěvník {INT32}
-STR_0623    :Návštěvník {INT32}
-STR_0624    :Návštěvník {INT32}
-STR_0625    :Návštěvník {INT32}
-STR_0626    :Návštěvník {INT32}
-STR_0627    :Návštěvník {INT32}
-STR_0628    :Návštěvník {INT32}
-STR_0629    :Návštěvník {INT32}
-STR_0630    :Návštěvník {INT32}
-STR_0631    :Návštěvník {INT32}
-STR_0632    :Návštěvník {INT32}
-STR_0633    :Návštěvník {INT32}
-STR_0634    :Návštěvník {INT32}
-STR_0635    :Návštěvník {INT32}
-STR_0636    :Návštěvník {INT32}
-STR_0637    :Návštěvník {INT32}
-STR_0638    :Návštěvník {INT32}
-STR_0639    :Návštěvník {INT32}
-STR_0640    :Návštěvník {INT32}
-STR_0641    :Návštěvník {INT32}
-STR_0642    :Návštěvník {INT32}
-STR_0643    :Návštěvník {INT32}
-STR_0644    :Návštěvník {INT32}
-STR_0645    :Návštěvník {INT32}
-STR_0646    :Návštěvník {INT32}
-STR_0647    :Návštěvník {INT32}
-STR_0648    :Návštěvník {INT32}
-STR_0649    :Návštěvník {INT32}
-STR_0650    :Návštěvník {INT32}
-STR_0651    :Návštěvník {INT32}
-STR_0652    :Návštěvník {INT32}
-STR_0653    :Návštěvník {INT32}
-STR_0654    :Návštěvník {INT32}
-STR_0655    :Návštěvník {INT32}
-STR_0656    :Návštěvník {INT32}
-STR_0657    :Návštěvník {INT32}
-STR_0658    :Návštěvník {INT32}
-STR_0659    :Návštěvník {INT32}
-STR_0660    :Návštěvník {INT32}
-STR_0661    :Návštěvník {INT32}
-STR_0662    :Návštěvník {INT32}
-STR_0663    :Návštěvník {INT32}
-STR_0664    :Návštěvník {INT32}
-STR_0665    :Návštěvník {INT32}
-STR_0666    :Návštěvník {INT32}
-STR_0667    :Návštěvník {INT32}
-STR_0668    :Návštěvník {INT32}
-STR_0669    :Návštěvník {INT32}
-STR_0670    :Návštěvník {INT32}
-STR_0671    :Návštěvník {INT32}
-STR_0672    :Návštěvník {INT32}
-STR_0673    :Návštěvník {INT32}
-STR_0674    :Návštěvník {INT32}
-STR_0675    :Návštěvník {INT32}
-STR_0676    :Návštěvník {INT32}
-STR_0677    :Návštěvník {INT32}
-STR_0678    :Návštěvník {INT32}
-STR_0679    :Návštěvník {INT32}
-STR_0680    :Návštěvník {INT32}
-STR_0681    :Návštěvník {INT32}
-STR_0682    :Návštěvník {INT32}
-STR_0683    :Návštěvník {INT32}
-STR_0684    :Návštěvník {INT32}
-STR_0685    :Návštěvník {INT32}
-STR_0686    :Návštěvník {INT32}
-STR_0687    :Návštěvník {INT32}
-STR_0688    :Návštěvník {INT32}
-STR_0689    :Návštěvník {INT32}
-STR_0690    :Návštěvník {INT32}
-STR_0691    :Návštěvník {INT32}
-STR_0692    :Návštěvník {INT32}
-STR_0693    :Návštěvník {INT32}
-STR_0694    :Návštěvník {INT32}
-STR_0695    :Návštěvník {INT32}
-STR_0696    :Návštěvník {INT32}
-STR_0697    :Návštěvník {INT32}
-STR_0698    :Návštěvník {INT32}
-STR_0699    :Návštěvník {INT32}
-STR_0700    :Návštěvník {INT32}
-STR_0701    :Návštěvník {INT32}
-STR_0702    :Návštěvník {INT32}
-STR_0703    :Návštěvník {INT32}
-STR_0704    :Návštěvník {INT32}
-STR_0705    :Návštěvník {INT32}
-STR_0706    :Návštěvník {INT32}
-STR_0707    :Návštěvník {INT32}
-STR_0708    :Návštěvník {INT32}
-STR_0709    :Návštěvník {INT32}
-STR_0710    :Návštěvník {INT32}
-STR_0711    :Návštěvník {INT32}
-STR_0712    :Návštěvník {INT32}
-STR_0713    :Návštěvník {INT32}
-STR_0714    :Návštěvník {INT32}
-STR_0715    :Návštěvník {INT32}
-STR_0716    :Návštěvník {INT32}
-STR_0717    :Návštěvník {INT32}
-STR_0718    :Návštěvník {INT32}
-STR_0719    :Návštěvník {INT32}
-STR_0720    :Návštěvník {INT32}
-STR_0721    :Návštěvník {INT32}
-STR_0722    :Návštěvník {INT32}
-STR_0723    :Návštěvník {INT32}
-STR_0724    :Návštěvník {INT32}
-STR_0725    :Návštěvník {INT32}
-STR_0726    :Návštěvník {INT32}
-STR_0727    :Návštěvník {INT32}
-STR_0728    :Návštěvník {INT32}
-STR_0729    :Návštěvník {INT32}
-STR_0730    :Návštěvník {INT32}
-STR_0731    :Návštěvník {INT32}
-STR_0732    :Návštěvník {INT32}
-STR_0733    :Návštěvník {INT32}
-STR_0734    :Návštěvník {INT32}
-STR_0735    :Návštěvník {INT32}
-STR_0736    :Návštěvník {INT32}
-STR_0737    :Návštěvník {INT32}
-STR_0738    :Návštěvník {INT32}
-STR_0739    :Návštěvník {INT32}
-STR_0740    :Návštěvník {INT32}
-STR_0741    :Návštěvník {INT32}
-STR_0742    :Návštěvník {INT32}
-STR_0743    :Návštěvník {INT32}
-STR_0744    :Návštěvník {INT32}
-STR_0745    :Návštěvník {INT32}
-STR_0746    :Návštěvník {INT32}
-STR_0747    :Návštěvník {INT32}
-STR_0748    :Návštěvník {INT32}
-STR_0749    :Návštěvník {INT32}
-STR_0750    :Návštěvník {INT32}
-STR_0751    :Návštěvník {INT32}
-STR_0752    :Návštěvník {INT32}
-STR_0753    :Návštěvník {INT32}
-STR_0754    :Návštěvník {INT32}
-STR_0755    :Návštěvník {INT32}
-STR_0756    :Návštěvník {INT32}
-STR_0757    :Návštěvník {INT32}
-STR_0758    :Návštěvník {INT32}
-STR_0759    :Návštěvník {INT32}
-STR_0760    :Návštěvník {INT32}
-STR_0761    :Návštěvník {INT32}
-STR_0762    :Návštěvník {INT32}
-STR_0763    :Návštěvník {INT32}
-STR_0764    :Návštěvník {INT32}
-STR_0765    :Návštěvník {INT32}
-STR_0766    :Návštěvník {INT32}
+STR_0603    :<removed string - do not use>
+STR_0604    :<removed string - do not use>
+STR_0605    :<removed string - do not use>
+STR_0606    :<removed string - do not use>
+STR_0607    :<removed string - do not use>
+STR_0608    :<removed string - do not use>
+STR_0609    :<removed string - do not use>
+STR_0610    :<removed string - do not use>
+STR_0611    :<removed string - do not use>
+STR_0612    :<removed string - do not use>
+STR_0613    :<removed string - do not use>
+STR_0614    :<removed string - do not use>
+STR_0615    :<removed string - do not use>
+STR_0616    :<removed string - do not use>
+STR_0617    :<removed string - do not use>
+STR_0618    :<removed string - do not use>
+STR_0619    :<removed string - do not use>
+STR_0620    :<removed string - do not use>
+STR_0621    :<removed string - do not use>
+STR_0622    :<removed string - do not use>
+STR_0623    :<removed string - do not use>
+STR_0624    :<removed string - do not use>
+STR_0625    :<removed string - do not use>
+STR_0626    :<removed string - do not use>
+STR_0627    :<removed string - do not use>
+STR_0628    :<removed string - do not use>
+STR_0629    :<removed string - do not use>
+STR_0630    :<removed string - do not use>
+STR_0631    :<removed string - do not use>
+STR_0632    :<removed string - do not use>
+STR_0633    :<removed string - do not use>
+STR_0634    :<removed string - do not use>
+STR_0635    :<removed string - do not use>
+STR_0636    :<removed string - do not use>
+STR_0637    :<removed string - do not use>
+STR_0638    :<removed string - do not use>
+STR_0639    :<removed string - do not use>
+STR_0640    :<removed string - do not use>
+STR_0641    :<removed string - do not use>
+STR_0642    :<removed string - do not use>
+STR_0643    :<removed string - do not use>
+STR_0644    :<removed string - do not use>
+STR_0645    :<removed string - do not use>
+STR_0646    :<removed string - do not use>
+STR_0647    :<removed string - do not use>
+STR_0648    :<removed string - do not use>
+STR_0649    :<removed string - do not use>
+STR_0650    :<removed string - do not use>
+STR_0651    :<removed string - do not use>
+STR_0652    :<removed string - do not use>
+STR_0653    :<removed string - do not use>
+STR_0654    :<removed string - do not use>
+STR_0655    :<removed string - do not use>
+STR_0656    :<removed string - do not use>
+STR_0657    :<removed string - do not use>
+STR_0658    :<removed string - do not use>
+STR_0659    :<removed string - do not use>
+STR_0660    :<removed string - do not use>
+STR_0661    :<removed string - do not use>
+STR_0662    :<removed string - do not use>
+STR_0663    :<removed string - do not use>
+STR_0664    :<removed string - do not use>
+STR_0665    :<removed string - do not use>
+STR_0666    :<removed string - do not use>
+STR_0667    :<removed string - do not use>
+STR_0668    :<removed string - do not use>
+STR_0669    :<removed string - do not use>
+STR_0670    :<removed string - do not use>
+STR_0671    :<removed string - do not use>
+STR_0672    :<removed string - do not use>
+STR_0673    :<removed string - do not use>
+STR_0674    :<removed string - do not use>
+STR_0675    :<removed string - do not use>
+STR_0676    :<removed string - do not use>
+STR_0677    :<removed string - do not use>
+STR_0678    :<removed string - do not use>
+STR_0679    :<removed string - do not use>
+STR_0680    :<removed string - do not use>
+STR_0681    :<removed string - do not use>
+STR_0682    :<removed string - do not use>
+STR_0683    :<removed string - do not use>
+STR_0684    :<removed string - do not use>
+STR_0685    :<removed string - do not use>
+STR_0686    :<removed string - do not use>
+STR_0687    :<removed string - do not use>
+STR_0688    :<removed string - do not use>
+STR_0689    :<removed string - do not use>
+STR_0690    :<removed string - do not use>
+STR_0691    :<removed string - do not use>
+STR_0692    :<removed string - do not use>
+STR_0693    :<removed string - do not use>
+STR_0694    :<removed string - do not use>
+STR_0695    :<removed string - do not use>
+STR_0696    :<removed string - do not use>
+STR_0697    :<removed string - do not use>
+STR_0698    :<removed string - do not use>
+STR_0699    :<removed string - do not use>
+STR_0700    :<removed string - do not use>
+STR_0701    :<removed string - do not use>
+STR_0702    :<removed string - do not use>
+STR_0703    :<removed string - do not use>
+STR_0704    :<removed string - do not use>
+STR_0705    :<removed string - do not use>
+STR_0706    :<removed string - do not use>
+STR_0707    :<removed string - do not use>
+STR_0708    :<removed string - do not use>
+STR_0709    :<removed string - do not use>
+STR_0710    :<removed string - do not use>
+STR_0711    :<removed string - do not use>
+STR_0712    :<removed string - do not use>
+STR_0713    :<removed string - do not use>
+STR_0714    :<removed string - do not use>
+STR_0715    :<removed string - do not use>
+STR_0716    :<removed string - do not use>
+STR_0717    :<removed string - do not use>
+STR_0718    :<removed string - do not use>
+STR_0719    :<removed string - do not use>
+STR_0720    :<removed string - do not use>
+STR_0721    :<removed string - do not use>
+STR_0722    :<removed string - do not use>
+STR_0723    :<removed string - do not use>
+STR_0724    :<removed string - do not use>
+STR_0725    :<removed string - do not use>
+STR_0726    :<removed string - do not use>
+STR_0727    :<removed string - do not use>
+STR_0728    :<removed string - do not use>
+STR_0729    :<removed string - do not use>
+STR_0730    :<removed string - do not use>
+STR_0731    :<removed string - do not use>
+STR_0732    :<removed string - do not use>
+STR_0733    :<removed string - do not use>
+STR_0734    :<removed string - do not use>
+STR_0735    :<removed string - do not use>
+STR_0736    :<removed string - do not use>
+STR_0737    :<removed string - do not use>
+STR_0738    :<removed string - do not use>
+STR_0739    :<removed string - do not use>
+STR_0740    :<removed string - do not use>
+STR_0741    :<removed string - do not use>
+STR_0742    :<removed string - do not use>
+STR_0743    :<removed string - do not use>
+STR_0744    :<removed string - do not use>
+STR_0745    :<removed string - do not use>
+STR_0746    :<removed string - do not use>
+STR_0747    :<removed string - do not use>
+STR_0748    :<removed string - do not use>
+STR_0749    :<removed string - do not use>
+STR_0750    :<removed string - do not use>
+STR_0751    :<removed string - do not use>
+STR_0752    :<removed string - do not use>
+STR_0753    :<removed string - do not use>
+STR_0754    :<removed string - do not use>
+STR_0755    :<removed string - do not use>
+STR_0756    :<removed string - do not use>
+STR_0757    :<removed string - do not use>
+STR_0758    :<removed string - do not use>
+STR_0759    :<removed string - do not use>
+STR_0760    :<removed string - do not use>
+STR_0761    :<removed string - do not use>
+STR_0762    :<removed string - do not use>
+STR_0763    :<removed string - do not use>
+STR_0764    :<removed string - do not use>
+STR_0765    :<removed string - do not use>
+STR_0766    :<removed string - do not use>
 STR_0767    :Návštěvník {INT32}
 STR_0768    :Údržbář {INT32}
 STR_0769    :Mechanik {INT32}
@@ -984,7 +984,7 @@ STR_0978    :Nové mírné atrakce
 STR_0979    :Nové horské dráhy
 STR_0980    :Nové adrenalinové atrakce
 STR_0981    :Nové vodní atrakce
-STR_0982    :Nové obchody & stánky
+STR_0982    :Nové obchody a stánky
 STR_0983    :Výzkum a vývoj
 STR_0984    :{WINDOW_COLOUR_2}{UP}{BLACK}  {CURRENCY2DP}
 STR_0985    :{WINDOW_COLOUR_2}{DOWN}{BLACK}  {CURRENCY2DP}
@@ -1150,11 +1150,11 @@ STR_1144    :Nelze postavit/přesunout vstup této atrakce...
 STR_1145    :Nelze postavit/přesunout výstup z této atrakce...
 STR_1146    :Vstup ještě není postaven
 STR_1147    :Výstup ještě není postaven
-STR_1148    :naložit na 25%
-STR_1149    :naložit na 50%
-STR_1150    :naložit na 75%
-STR_1151    :plně naložit
-STR_1152    :naložit jakkoliv
+STR_1148    :25% naložení
+STR_1149    :50% naložení
+STR_1150    :75% naložení
+STR_1151    :plné naložení
+STR_1152    :jakkékoliv naložení
 STR_1153    :Výškové popisky atrakcí
 STR_1154    :Výškové popisky krajiny
 STR_1155    :Výškové popisky cest
@@ -1176,7 +1176,7 @@ STR_1170    :{STRING}
 STR_1171    :{RED}Zavřeno - - 
 STR_1172    :{YELLOW}{STRINGID} - - 
 STR_1173    :{SMALLFONT}{BLACK}Nástroj pro cesty a fronty
-STR_1174    :Baner v cestě
+STR_1174    :Banner v cestě
 STR_1175    :Toto nelze postavit na strmé cestě
 STR_1176    :Nelze stavět cestu...
 STR_1177    :Tuto cestu nelze odstranit...
@@ -1209,7 +1209,7 @@ STR_1202    :1 návštěvník ve frontě
 STR_1203    :{COMMA16} návštěvníků ve frontě
 STR_1204    :{COMMA16} minutu čekání ve frontě
 STR_1205    :{COMMA16} minut čekání ve frontě
-STR_1206    :{WINDOW_COLOUR_2}Naložit:
+STR_1206    :{WINDOW_COLOUR_2}Čekat na:
 STR_1207    :{WINDOW_COLOUR_2}Vyjet když jiný vlak přijede do stanice
 STR_1208    :{WINDOW_COLOUR_2}Vyplout když jiná loď přijede do přístavu
 STR_1209    :{SMALLFONT}{BLACK}Vyberte, zda se má čekat na návštěvníky před odjezdem
@@ -1929,7 +1929,7 @@ STR_1919    :Nedostatek hotovosti!
 STR_1920    :Nelze splatit půjčku!
 STR_1921    :{SMALLFONT}{BLACK}Začít novou hru
 STR_1922    :{SMALLFONT}{BLACK}Nahrát uloženou hru
-STR_1923    :{SMALLFONT}{BLACK}Zobrazit tutoriál
+STR_1923    :<removed string - do not use>
 STR_1924    :{SMALLFONT}{BLACK}Ukončit hru
 STR_1925    :Sem tuto osobu nelze umístit...
 STR_1926    :{SMALLFONT}
@@ -1961,11 +1961,11 @@ STR_1951    :Graf hodnoty parku
 STR_1952    :Graf zisku
 STR_1953    :Marketing
 STR_1954    :Financování vývoje
-STR_1955    :{WINDOW_COLOUR_2}Počet koleček:
-STR_1956    :{SMALLFONT}{BLACK}Počet koleček za jednu jízdu
+STR_1955    :{WINDOW_COLOUR_2}Počet kol:
+STR_1956    :{SMALLFONT}{BLACK}Počet kol za jednu jízdu
 STR_1957    :{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{POP16}{COMMA16}
 STR_1958    :{COMMA16}
-STR_1959    :Počet koleček nelze změnit...
+STR_1959    :Počet kol nelze změnit...
 STR_1960    :{WINDOW_COLOUR_2}Cena balónku:
 STR_1961    :{WINDOW_COLOUR_2}Cena plyšáka:
 STR_1962    :{WINDOW_COLOUR_2}Cena mapy parku:
@@ -2865,17 +2865,17 @@ STR_2852    :Návrh trati už je nainstalován
 STR_2853    :Zakázáno místní správnou!
 STR_2854    :{RED}Návštěvníci nemohou najít vstup do {STRINGID} !{NEWLINE}Postavte cestu k vstupu
 STR_2855    :{RED}{STRINGID} nemá postavenou vestu z východu!{NEWLINE}Postavte cestu z východu atrakce
-STR_2856    :{WINDOW_COLOUR_2}Tutorial
-STR_2857    :{WINDOW_COLOUR_2}(Stiskněte klávesu, nebo klikněte pro převzetí kontroly)
+STR_2856    :<removed string - do not use>
+STR_2857    :<removed string - do not use>
 STR_2858    :Nelze zahájit reklamní kampaň...
 STR_2859    :OpenRCT2 už běží
 STR_2860    :<removed string - do not use>
 STR_2861    :{WINDOW_COLOUR_2}Licencováno Infogrames Interactive Inc.
 STR_2862    :Poděkování za hudbu...
 STR_2863    :Poděkování za hudbu
-STR_2864    :{WINDOW_COLOUR_2}March - Children of the Regiment:   (Fucik) non copyright
+STR_2864    :{WINDOW_COLOUR_2}Děti pluku - pochod:   (Fučík) non copyright
 STR_2865    :{WINDOW_COLOUR_2}Heyken's Serenade:   (J.Heyken) British Standard Music Coy; GEMA, BRITICO
-STR_2866    :{WINDOW_COLOUR_2}In Continental Mood:   (Composer unknown) Copyright Control
+STR_2866    :{WINDOW_COLOUR_2}La Belle Espagnole:   (Robert Vollstedt) non copyright
 STR_2867    :{WINDOW_COLOUR_2}Wedding Journey:   (Traditional)
 STR_2868    :{WINDOW_COLOUR_2}Tales from the Vienna Woods:   (Johann Strauss) non copyright
 STR_2869    :{WINDOW_COLOUR_2}Slavonic Dance:   (Traditional)
@@ -2989,15 +2989,15 @@ STR_2976    :{SMALLFONT}{BLACK}Obarvit část atrakce vybranou barevnou kombinac
 STR_2977    :Přejmenovat zaměstnance
 STR_2978    :Zadejte nové jméno tohoto zaměstnance:
 STR_2979    :Nelze přejmenovat zaměstnance...
-STR_2980    :Příliš mnoho banerů ve hře
+STR_2980    :Příliš mnoho bannerů ve hře
 STR_2981    :{RED}Zákaz vstupu - - 
-STR_2982    :Text baneru
-STR_2983    :Zadejte nový text baneru:
-STR_2984    :Nelze změnit text baneru...
-STR_2985    :Baner
-STR_2986    :{SMALLFONT}{BLACK}Změnit text baneru
-STR_2987    :{SMALLFONT}{BLACK}Nastavit tento baner jako "zákaz vstupu" pro návštěvníky
-STR_2988    :{SMALLFONT}{BLACK}Zrušit baner
+STR_2982    :Text banneru
+STR_2983    :Zadejte nový text banneru:
+STR_2984    :Nelze změnit text banneru...
+STR_2985    :Banner
+STR_2986    :{SMALLFONT}{BLACK}Změnit text banneru
+STR_2987    :{SMALLFONT}{BLACK}Nastavit tento banner jako "zákaz vstupu" pro návštěvníky
+STR_2988    :{SMALLFONT}{BLACK}Zrušit banner
 STR_2989    :{SMALLFONT}{BLACK}Vybrat hlavní barvu
 STR_2990    :{SMALLFONT}{BLACK}Vybrat barvu textu
 STR_2991    :Cedule
@@ -3064,9 +3064,9 @@ STR_3051    :Jamka C
 STR_3052    :Jamka D
 STR_3053    :Jamka E
 STR_3054    :Načítání...
-STR_3055    :Bílá
-STR_3056    :Průhledná
-STR_3057    :{WINDOW_COLOUR_2}Barva návrhu výstavby:
+STR_3055    :<removed string - do not use>
+STR_3056    :<removed string - do not use>
+STR_3057    :<removed string - do not use>
 STR_3058    :Cihlová zeď
 STR_3059    :Živý plot
 STR_3060    :Kusy ledu
@@ -3150,7 +3150,7 @@ STR_3137    :Vyberte okolní kulisy
 STR_3138    :Zrušit výběr
 STR_3139    :Řetězový výtah nefunguje v tomto provozním módu
 STR_3140    :Řetězový výtah musí začít hned za stanicí
-STR_3141    :Více koleček za jízdu není přípustné současně s řetězovým výtahem
+STR_3141    :Více kol za jízdu není přípustné současně s řetězovým výtahem
 STR_3142    :{WINDOW_COLOUR_2}Kapacita: {BLACK}{STRINGID}
 STR_3143    :{SMALLFONT}{BLACK}Zobrazit návštěvníky na mapě
 STR_3144    :{SMALLFONT}{BLACK}Zobrazit atrakce a stánky na mapě
@@ -3169,7 +3169,7 @@ STR_3156    :
 STR_3157    :map
 STR_3158    :graph
 STR_3159    :list
-STR_3160    :Vyberte počet koleček za jednu jízdu
+STR_3160    :Vyberte počet kol za jednu jízdu
 STR_3161    :<not used anymore>
 STR_3162    :Nepodařilo se alokovat dostatek paměti
 STR_3163    :Instaluji nová data: 
@@ -3190,7 +3190,7 @@ STR_3177    :Nelze zrušit výběr objektu
 STR_3178    :Alespoň jeden objekt cesty musí být vybrán
 STR_3179    :Alespoň jeden objekt atrakce musí být vybrán
 STR_3180    :Neplatný výběr objektů
-STR_3181    :Výběr objektu - {STRINGID}
+STR_3181    :Výběr objektů - {STRINGID}
 STR_3182    :Vstup do parku musí být vybraný
 STR_3183    :Typ vodních ploch musí být vybraný
 STR_3184    :Vozy/atrakce
@@ -3394,60 +3394,58 @@ STR_3381    :Soubor není kompatibilní, nebo obsahuje neplatná data
 STR_3382    :Kopírování souboru selhalo
 STR_3383    :Vyberte nový název návrhu trati
 STR_3384    :Existuje návrh trati se stejným názvem - vyberte prosím jiný název:
-STR_3385    :Tutoriál pro začátečníky
-STR_3386    :Tutoriál pro vlastní tratě
-STR_3387    :Tutoriál pro stavbu horských drah
+STR_3385    :<removed string - do not use>
+STR_3386    :<removed string - do not use>
+STR_3387    :<removed string - do not use>
 STR_3388    :Nepodařilo se přepnout do vybraného módu
 STR_3389    :Nepodařilo se vybrat dodatečné kulisy...
 STR_3390    :Vybráno příliš mnoho položek
-# Start of tutorial strings. Not used at the moment, so not necessary to translate.
-STR_3391    :{SMALLFONT}{BLACK}Here is our park - Let's have a quick look around...
-STR_3392    :{SMALLFONT}{BLACK}Holding down the RIGHT mouse button and moving the mouse is the quickest way to move the view...
-STR_3393    :{SMALLFONT}{BLACK}To view more of the park, you can zoom the view out using the icon at the top of the screen...
-STR_3394    :{SMALLFONT}{BLACK}You can also rotate the view in 90 degree steps...
-STR_3395    :{SMALLFONT}{BLACK}Building anything at this scale is a bit difficult, so let's zoom the view back in again...
-STR_3396    :{SMALLFONT}{BLACK}Let's build a simple ride to get the park started...
-STR_3397    :{SMALLFONT}{BLACK}The white 'ghost' image shows where the ride will be built. We'll move the pointer to select the position then click to build it...
-STR_3398    :{SMALLFONT}{BLACK}Rides need an entrance and an exit. We'll move the pointer to a square on the edge of the ride and then click to build first the entrance and then the exit...
-STR_3399    :{SMALLFONT}{BLACK}We need to build footpaths to allow guests to reach our new ride...
-STR_3400    :{SMALLFONT}{BLACK}For the path to the ride entrance we'll use a special 'queue line' path...
-STR_3401    :{SMALLFONT}{BLACK}For the exit path, just an 'ordinary' path will do...
-STR_3402    :{SMALLFONT}{BLACK}Right, lets open the ride! To open the ride we click the flag icon on the ride window and select 'open'...
-STR_3403    :{SMALLFONT}{BLACK}But where are the guests?
-STR_3404    :{SMALLFONT}{BLACK}Oh - The park is still closed! Right - Let's open it...
-STR_3405    :{SMALLFONT}{BLACK}While we're waiting for our first guests, let's build some scenery...
-STR_3406    :{SMALLFONT}{BLACK}Here's our empty park. We're going to build a simple custom-designed ride...
-STR_3407    :{SMALLFONT}{BLACK}First we need to choose a starting position...
-STR_3408    :{SMALLFONT}{BLACK}The sekce of track we've just built is a 'station platform', to allow guests to get on and off the ride...
-STR_3409    :{SMALLFONT}{BLACK}We'll extend the platform a bit by adding a couple more station platform sekces...
-STR_3410    :{SMALLFONT}{BLACK}The icons at the top of the construction window let you choose different track pieces to add...
-STR_3411    :{SMALLFONT}{BLACK}We'll select a left-hand curve...
-STR_3412    :{SMALLFONT}{BLACK}The curve hasn't been built yet, but the white ghost image shows where it will be built. Clicking the large 'build this' icon actually builds the track...
-STR_3413    :{SMALLFONT}{BLACK}Now we want to build straight track, so we click the straight track icon...
-STR_3414    :{SMALLFONT}{BLACK}Now that the circuit is complete, we need to build the ride entrance and exit...
-STR_3415    :{SMALLFONT}{BLACK}Let's test our ride to check it works...
-STR_3416    :{SMALLFONT}{BLACK}White it's being tested, we'll build the queue line and exit path...
-STR_3417    :{SMALLFONT}{BLACK}OK - Let's open the park and the ride...
-STR_3418    :{SMALLFONT}{BLACK}Our new ride isn't very exciting - Perhaps we should add some scenery?
-STR_3419    :{SMALLFONT}{BLACK}To build scenery above other scenery or in mid-air, hold down the SHIFT key and move the mouse to select the height...
-STR_3420    :{SMALLFONT}{BLACK}Some types of scenery can be re-painted after it's built...
-STR_3421    :{SMALLFONT}{BLACK}Let's add some music to the ride...
-STR_3422    :{SMALLFONT}{BLACK}Let's build a roller coaster !
-STR_3423    :{SMALLFONT}{BLACK}There are loads of pre-designed coasters, but we're going to build our own custom design...
-STR_3424    :{SMALLFONT}{BLACK}That's the station platform built. Now we need a lift hill...
-STR_3425    :{SMALLFONT}{BLACK}Roller coaster trains aren't powered, so a 'chain lift' is needed to pull the train up the first hill...
-STR_3426    :{SMALLFONT}{BLACK}That's the lift hill complete - Now for the first drop...
-STR_3427    :{SMALLFONT}{BLACK}Those curves are a bad idea - The riders will be flung to the sides by the lateral G forces as the train hurtles around...
-STR_3428    :{SMALLFONT}{BLACK}Banking the curves will improve the ride - Riders will be pushed down into their seats instead of flung to the sides...
-STR_3429    :{SMALLFONT}{BLACK}No - That won't work! Look at the height marks - The second hill is taller than the lift hill...
-STR_3430    :{SMALLFONT}{BLACK}To ensure the train makes it around, each hill should be slightly smaller than the previous one...
-STR_3431    :{SMALLFONT}{BLACK}That's better - Our train should make it up that hill now! Let's try some more twisted track...
-STR_3432    :{SMALLFONT}{BLACK}We need to slow the train before the final curve and station, so let's add some brakes...
-STR_3433    :{SMALLFONT}{BLACK}And finally we'll add 'block brakes', which allow two trains to operate more safely on the circuit...
-STR_3434    :{SMALLFONT}{BLACK}Let's test the ride and see if it works!
-STR_3435    :{SMALLFONT}{BLACK}Great - It worked! Let's add the footpaths and let guests onto our new roller coaster...
-STR_3436    :{SMALLFONT}{BLACK}While waiting for our first riders, we could customise the ride a bit...
-# End of tutorial strings
+STR_3391    :<removed string - do not use>
+STR_3392    :<removed string - do not use>
+STR_3393    :<removed string - do not use>
+STR_3394    :<removed string - do not use>
+STR_3395    :<removed string - do not use>
+STR_3396    :<removed string - do not use>
+STR_3397    :<removed string - do not use>
+STR_3398    :<removed string - do not use>
+STR_3399    :<removed string - do not use>
+STR_3400    :<removed string - do not use>
+STR_3401    :<removed string - do not use>
+STR_3402    :<removed string - do not use>
+STR_3403    :<removed string - do not use>
+STR_3404    :<removed string - do not use>
+STR_3405    :<removed string - do not use>
+STR_3406    :<removed string - do not use>
+STR_3407    :<removed string - do not use>
+STR_3408    :<removed string - do not use>
+STR_3409    :<removed string - do not use>
+STR_3410    :<removed string - do not use>
+STR_3411    :<removed string - do not use>
+STR_3412    :<removed string - do not use>
+STR_3413    :<removed string - do not use>
+STR_3414    :<removed string - do not use>
+STR_3415    :<removed string - do not use>
+STR_3416    :<removed string - do not use>
+STR_3417    :<removed string - do not use>
+STR_3418    :<removed string - do not use>
+STR_3419    :<removed string - do not use>
+STR_3420    :<removed string - do not use>
+STR_3421    :<removed string - do not use>
+STR_3422    :<removed string - do not use>
+STR_3423    :<removed string - do not use>
+STR_3424    :<removed string - do not use>
+STR_3425    :<removed string - do not use>
+STR_3426    :<removed string - do not use>
+STR_3427    :<removed string - do not use>
+STR_3428    :<removed string - do not use>
+STR_3429    :<removed string - do not use>
+STR_3430    :<removed string - do not use>
+STR_3431    :<removed string - do not use>
+STR_3432    :<removed string - do not use>
+STR_3433    :<removed string - do not use>
+STR_3434    :<removed string - do not use>
+STR_3435    :<removed string - do not use>
+STR_3436    :<removed string - do not use>
 STR_3437    :{SMALLFONT}{BLACK}Odebrat velkou oblast kulis z krajiny
 STR_3438    :Odsud nelze odebrat všechny kulisy...
 STR_3439    :Odebrat kulisy
@@ -3464,7 +3462,7 @@ STR_5120    :Finance
 STR_5121    :Výzkum
 STR_5122    :Výběr atrakcí podle typu (jako v RCT1)
 STR_5123    :Obnovit atrakce
-STR_5124    :<not used anymore>
+STR_5124    :<removed string - do not use>
 STR_5125    :Vše lze zbourat
 STR_5126    :Náhodná hudba
 STR_5127    :{SMALLFONT}{BLACK}Měnit vzhled země namísto změny výšky terénu
@@ -3511,7 +3509,7 @@ STR_5167    :Sledovat návštěvníky-followery
 STR_5168    :{SMALLFONT}{BLACK}Zapnout sledování návštěvníků{NEWLINE}pojmenovaných po Twitch followerech
 STR_5169    :Pojmenovávat návštěvníky podle lidí v Twitch chatu
 STR_5170    :{SMALLFONT}{BLACK}Pojmenovávat návštěvníky podle{NEWLINE}lidí v Twitch chatu
-STR_5171    :Sledovat návštěvníky z chatu
+STR_5171    :<removed string - do not use>
 STR_5172    :{SMALLFONT}{BLACK}Zapnout sledování návštěvníků{NEWLINE}pojmenovaných po lidech v Twitch chatu
 STR_5173    :Použít Twitch chat jako zprávy
 STR_5174    :{SMALLFONT}{BLACK}Bude používat zprávy z Twitch{NEWLINE}chatu, začínající !news pro herní notifikace
@@ -3549,7 +3547,7 @@ STR_5205    :Návštěvník
 STR_5206    :Seznam návštěvníků
 STR_5207    :Personál
 STR_5208    :Seznam personálu
-STR_5209    :Baner
+STR_5209    :Banner
 STR_5210    :Výběr objektu
 STR_5211    :Seznam vynálezů
 STR_5212    :Nastavení scénáře
@@ -3576,8 +3574,8 @@ STR_5232    :{SMALLFONT}{BLACK}Editory
 STR_5233    :{SMALLFONT}{BLACK}Ostatní
 STR_5234    :{SMALLFONT}{BLACK}Výzvy
 STR_5235    :{SMALLFONT}{BLACK}Nastavení
-STR_5236    :Okno:
-STR_5237    :Paleta:
+STR_5236    :Okno
+STR_5237    :Paleta
 STR_5238    :Aktuální motiv:
 STR_5239    :Duplikovat
 STR_5240    :Zadejte jméno pro tento motiv
@@ -3644,7 +3642,7 @@ STR_5300    :{SMALLFONT}{BLACK}Propustit zaměstnance
 STR_5301    :{MEDIUMFONT}{BLACK}Vyrovnání dluhů
 STR_5302    :Vyrovnat dluh
 STR_5303    :Povolit stavění, když je hra pozastavená
-STR_5304    :Herní sekvence:
+STR_5304    :Úvodní herní sekvence:
 STR_5305    :RollerCoaster Tycoon 1
 STR_5306    :RollerCoaster Tycoon 1 (AA)
 STR_5307    :RollerCoaster Tycoon 1 (AA + LL)
@@ -3711,7 +3709,7 @@ STR_5367    :Vysoká
 STR_5368    :Vymazat havárii
 STR_5369    :Parametry parku...
 STR_5370    :{SMALLFONT}{BLACK}Klikněte na toto tlačítko pro   {NEWLINE}úpravy parametrů jako omezení parku,{NEWLINE} generování návštěvníků a peněz.
-STR_5371    :Výběr objektu
+STR_5371    :Výběr objektů
 STR_5372    :Obrátit směr posouvání pohledu pravým tlačítkem
 STR_5373    :Název {STRINGID}
 STR_5374    :Datum {STRINGID}
@@ -3814,7 +3812,7 @@ STR_5470    :Posunou mapu vlevo
 STR_5471    :Posunou mapu dolů
 STR_5472    :Posunou mapu vpravo
 STR_5473    :Cyklus dne a noci
-STR_5474    :Zobrazit text na banerech v kapitálkách
+STR_5474    :Zobrazit text na bannerech v kapitálkách
 STR_5475    :{COMMA16} týdnů
 STR_5476    :Hardware
 STR_5477    :Vykreslování mapy
@@ -3834,10 +3832,10 @@ STR_5490    :Vypnout zvuk při přepnutí ze hry
 STR_5491    :Seznam vynálezů
 STR_5492    :Nastavení scénáře
 STR_5493    :Poslat zprávu
-STR_5494    :<not used anymore>
+STR_5494    :<removed string - do not use>
 STR_5495    :Seznam hráčů
-STR_5496    :Hráč:
-STR_5497    :Ping:
+STR_5496    :Hráč
+STR_5497    :Ping
 STR_5498    :Seznam serverů
 STR_5499    :Jméno hráče:
 STR_5500    :Přidat server
@@ -3847,7 +3845,7 @@ STR_5503    :Zadejte hostname, nebo IP adresu:
 STR_5504    :{SMALLFONT}{BLACK}Zobrazit stav hry více hráčů
 STR_5505    :Nelze se připojit k serveru.
 STR_5506    :Návštěvníci ignorují intenzitu atrakcí
-STR_5507    :Údržbáři nyní sekají trávu ve výchozím nastavení
+STR_5507    :<removed string - do not use>
 STR_5508    :Povolit nahrávání souborů s chybným kontrolním součtem
 STR_5509    :{SMALLFONT}{BLACK}Povolit nahrávání scénářů s neplatným{NEWLINE}kontrolním součtem - například{NEWLINE}scénáře demoverze, nebo{NEWLINE}poškozené uložené hry.
 STR_5510    :Výchozí zvukové zařízení
@@ -3970,7 +3968,7 @@ STR_5626    :Ostatní parky
 STR_5627    :Seskupit scénáře podle:
 STR_5628    :Původní hry
 STR_5629    :Obtížnosti
-STR_5630    :Zapnout odemykání scénářů
+STR_5630    :Zapnout progresivní odemykání scénářů
 STR_5631    :Originální DLC parky
 STR_5632    :Postav si vlastní...
 STR_5633    :CMD + 
@@ -3982,7 +3980,7 @@ STR_5638    :Přístup zamítnut
 STR_5639    :{SMALLFONT}{BLACK}Zobrazit seznam hráčů
 STR_5640    :{SMALLFONT}{BLACK}Spravovat skupiny
 STR_5641    :Výchozí skupina:
-STR_5642    :Skupina:
+STR_5642    :Skupina
 STR_5643    :Přidat skupinu
 STR_5644    :Odebrat skupinu
 STR_5645    :Chat
@@ -4010,7 +4008,7 @@ STR_5666    :Přihlášení bez hesla
 STR_5701    :{WINDOW_COLOUR_2}Poslední akce: {BLACK}{STRINGID}
 STR_5702    :{SMALLFONT}{BLACK}Najít hráčovu poslední akci
 STR_5703    :Nelze vyhodit zakladatele hry
-STR_5704    :Poslední akce:
+STR_5704    :Poslední akce
 STR_5705    :Nelze nastavit tuto skupinu
 STR_5706    :Nelze odebrat skupinu, ke které hráč patří
 STR_5707    :Tato skupina nemůže být upravena
@@ -4034,14 +4032,13 @@ STR_5723    :Déšť
 STR_5724    :Bouřka
 STR_5725    :{BLACK}Vynutit počasí:
 STR_5726    :{SMALLFONT}{BLACK}Nastaví momentální počasí v parku
-STR_5727    :Metoda škálování
+STR_5727    :Metoda škálování:
 STR_5728    :Vyžaduje hardwarové zobrazování
 STR_5729    :{SMALLFONT}{BLACK}Vyžaduje hardwarové zobrazování
-STR_5730    :Nejbližší sousedi
+STR_5730    :<removed string - do not use>
 STR_5731    :Lineární
-STR_5732    :Anizotropní
-STR_5733    :U celočíselného škálování používat NS metodu
-# tooltip for tab in options window
+STR_5732    :<removed string - do not use>
+STR_5733    :<removed string - do not use>
 STR_5734    :{SMALLFONT}{BLACK}Vykreslování
 STR_5735    :Stav připojení
 STR_5736    :Hráč
@@ -4126,13 +4123,13 @@ STR_5814    :{WINDOW_COLOUR_1}{OPENQUOTES}{STRING}{ENDQUOTES}
 #tooltips
 STR_5815    :{SMALLFONT}{BLACK}Zobrazovat počítadlo FPS ve hře
 STR_5816    :{SMALLFONT}{BLACK}Nastaví poměr stran pro škálování{NEWLINE} velikosti herního okna.{NEWLINE}Nejužitečnější je tato volba při hře ve vysokém rozlišení.
-STR_5817    :{SMALLFONT}{BLACK}[Vyžaduje hardwarové zobrazování]{NEWLINE}Nastaví typ škálování UI prvků
-STR_5818    :{SMALLFONT}{BLACK}[Vyžaduje hardwarové zobrazování]{NEWLINE}Použít škálování pomocí{NEWLINE}algoritmu nejbližších sousedů, v případě,{NEWLINE}že koeficient škálování nabývá celočíselných hodnot (1, 2, 3, atd.)
+STR_5817    :{SMALLFONT}{BLACK}Nastaví typ škálování UI prvků. Vyžaduje hardwarové vykreslování.{NEWLINE}Lineární škálování má hladký, ale rozmazaný obraz. Metoda vyhlazeného nejbližšího souseda má ostrý obraz, ale může způsobovat mírný výkonostní propad.
+STR_5818    :<removed string - do not use>
 STR_5819    :{SMALLFONT}{BLACK}[Vyžaduje hardwarové zobrazování]{NEWLINE}Pozastavit hru, pokud je {NEWLINE}zapnutý Steam in-game overlay
 STR_5820    :{SMALLFONT}{BLACK}Minimalizovat hru, pokud je v{NEWLINE}režimu celé obrazovky a jiné okno se stane aktivním
-STR_5821    :{SMALLFONT}{BLACK}Mění barvu naznačeného místa stavby pří stavbě atrakcí, cest, kulis{NEWLINE}, obchodů, stánků a dalších
+STR_5821    :<removed string - do not use>
 STR_5822    :{SMALLFONT}{BLACK}Zapnout cyklus dne a noci.{NEWLINE}Jeden cyklus trvá jeden herní měsíc
-STR_5823    :{SMALLFONT}{BLACK}Zobrazit banery kapitálkami (RCT1 chování)
+STR_5823    :{SMALLFONT}{BLACK}Zobrazit bannery kapitálkami (RCT1 chování)
 STR_5824    :{SMALLFONT}{BLACK}Zakáže blesky během bouřek
 STR_5825    :{SMALLFONT}{BLACK}Udržet kurzor v okně
 STR_5826    :{SMALLFONT}{BLACK}Obrátit směr posouvání pohledu při držení pravého tlačítka myši
@@ -4152,14 +4149,14 @@ STR_5839    :{SMALLFONT}{BLACK}Zobrazit samostatné tlačítko pro výzkum a vý
 STR_5840    :{SMALLFONT}{BLACK}Zobrazit samostatné tlačítko pro cheaty na nástrojové liště
 STR_5841    :{SMALLFONT}{BLACK}Zobrazit samostatné tlačítko pro poslední novinky na nástrojové liště
 STR_5842    :{SMALLFONT}{BLACK}Roztřídit scénáře do záložek podle obtížnosti (RCT2 chování), nebo podle hry, ze které pocházejí (RCT1 chování)
-STR_5843    :{SMALLFONT}{BLACK}Zapnout odemykání scénářů (RCT1 chování)
+STR_5843    :{SMALLFONT}{BLACK}Zapnout progresivní odemykání scénářů (RCT1 chování)
 STR_5844    :{SMALLFONT}{BLACK}Zachovat připojení do hry více hráčů,{NEWLINE}i když dojde k desynchronizaci
 STR_5845    :{SMALLFONT}{BLACK}Přidá tlačítko s vývojářskými nástroji na nástrojovou lištu.{NEWLINE}Povolí klávesovou zkratku pro vývojářskou konzoli
 STR_5846    :{SMALLFONT}{BLACK}Nastavení frekvence automatického ukládání hry
 STR_5847    :{SMALLFONT}{BLACK}Vyberte ukázky parků na hlavní obrazovce. Ukázky parků z her RCT1/2 vyžadují importované scénáře
 STR_5848    :{SMALLFONT}{BLACK}Vytvořit a spravovat vlastní ukázky parků pro hlavní obrazovku
 STR_5849    :{SMALLFONT}{BLACK}Automaticky umisťovat{NEWLINE}nově najatý personál
-STR_5850    :{SMALLFONT}{BLACK}Nově najatí údržbáři{NEWLINE}budou ve výchozím stavu sekat trávu (RCT1 chování)
+STR_5850    :<removed string - do not use>
 STR_5851    :{SMALLFONT}{BLACK}Nastaví výchozí interval inspekcí{NEWLINE}na nově postavených atrakcích
 STR_5852    :{SMALLFONT}{BLACK}Nastaví název TwitchTV kanálu, který bude použit pro Twitch integraci
 STR_5853    :{SMALLFONT}{BLACK}Povolit/zakázat zvukové efekty
@@ -4206,7 +4203,7 @@ STR_5893    :Kurz měny
 STR_5894    :Zadejte kurz měny
 STR_5895    :Uložit trať
 STR_5896    :Nepodařilo se uložit trať!
-STR_5897    :Limit okna:
+STR_5897    :<removed string - do not use>
 STR_5898    :{BLACK}Nelze načíst trať - soubor neexistuje,{newline}nebo je pravděpodobně poškozen!
 STR_5899    :Přepnout okno debug vykreslování
 STR_5900    :Použít původní vykreslovací kód
@@ -4240,7 +4237,7 @@ STR_5927    :Detail kulis
 STR_5928    :Detaily vstupu
 STR_5929    :Detaily plotu
 STR_5930    :Detaily velkých kulis
-STR_5931    :Detaily baneru
+STR_5931    :Detaily banneru
 STR_5932    :Detaily poškozených elementů
 STR_5933    :Vlastnosti
 STR_5934    :{WINDOW_COLOUR_2}Textura terénu: {BLACK}{STRINGID}
@@ -4289,8 +4286,8 @@ STR_5976    :Rovina
 STR_5977    :Pravá strana
 STR_5978    :Levá strana
 STR_5979    :{WINDOW_COLOUR_2}Typ plotu: {BLACK}{COMMA16}
-STR_5980    :{WINDOW_COLOUR_2}Text baneru: {BLACK}{STRINGID}
-STR_5981    :{WINDOW_COLOUR_2}To není baner
+STR_5980    :{WINDOW_COLOUR_2}Text banneru: {BLACK}{STRINGID}
+STR_5981    :{WINDOW_COLOUR_2}To není banner
 STR_5982    :{WINDOW_COLOUR_2}Typ velké kulisy: {BLACK}{COMMA16}
 STR_5983    :{WINDOW_COLOUR_2}ID velké kulisy: {BLACK}{COMMA16}
 STR_5984    :Zablokované cesty:
@@ -4457,6 +4454,97 @@ STR_6144    :Zvýraznit znevalidované bloky pro vykreslení
 STR_6145    :{SMALLFONT}{BLACK}Nastavit rychlostní limit boosteru
 STR_6146    :Povolit všechny vykreslitelné části trati
 STR_6147    :{SMALLFONT}{BLACK}Povolí všechny části trati, které atrakce podporuje. Nezáleží, jestli je podporují i vozy.
+STR_6148    :Připojování na master server...
+STR_6149    :Nepodařilo se připojit k master serveru
+STR_6150    :Neplatná odpověď master serveru (chybí JSON číslo)
+STR_6151    :Master server neposlal seznam herních serverů
+STR_6152    :Neplatná odpověď master serveru (chybí JSON pole)
+STR_6153    :Zpoplatněné vstupné / Zpoplatněné atrakce
+STR_6154    :Z bezpečnostních důvodů se nedoporučuje spouštět OpenRCT2 v řežimu zvýšených oprávnění.
+STR_6155    :Není nainstalován KDialog ani Zenity. Jeden z nich prosím nainstalujte, nebo konfigurujte z příkazové řádky.
+STR_6156    :Tento název je rezervován a nelze jej použít.
+STR_6157    :Konzole
+STR_6158    :Tento soubor nelze načíst...{NEWLINE}Nekompatibilní verze RCTC: {COMMA16}
+STR_6159    :Vyhlazený nejbližší soused
+STR_6160    :{WINDOW_COLOUR_2}Dostupné vozy: {BLACK}{STRING} 
+STR_6161    :Přepnout vykreslování mřížky
+STR_6162    :Točící se divoká myš
+STR_6163    :Vozy ve tvaru myší jedou po dřevěné trati a pro dezorientaci návštěvníků se točí, zatímco se naklání v ostrých zatáčkách a drsných pádech
+STR_6164    :{WHITE}{CROSS}
+STR_6165    :Vertikální synchronizace obrazu
+STR_6166    :{SMALLFONT}{BLACK}Synchonizuje každý zobrazený snímek dle obnovovací frekvence monitoru. Zamezuje trhání obrazu.
+STR_6167    :{SMALLFONT}{BLACK}Pokročilé
+STR_6168    :Úvodní herní sekvence
+STR_6169    :Výběr scénáře
+STR_6170    :Vychytávky
+STR_6171    :Vyhledávání
+STR_6172    :{SMALLFONT}{BLACK}Vyhledávání
+STR_6173    :Zadejte jméno k vyhledání:
+STR_6174    :Načíst uloženou hru
+STR_6175    :Načíst scénář
+STR_6176    :Scénář k načtení:
+STR_6177    :Načíst{MOVE_X}{87}Zvolte scénář
+STR_6178    :Načíst{MOVE_X}{87}{RED}Chybějící scénář
+STR_6179    :Vybrat
+STR_6180    :Zvolte scénář
+STR_6181    :{RED}Chybějící scénář
+STR_6182    :Následovat{MOVE_X}{87}{STRING}
+STR_6183    :Následovat{MOVE_X}{87}Zvolte sprite
+STR_6184    :Následovat sprite
+STR_6185    :Zvolit sprite
+STR_6186    :Nezvolen žádný sprite
+STR_6187    :{MEDIUMFONT}{OUTLINE}{WINDOW_COLOUR_2}{STRING}
+STR_6188    :Zvratky
+STR_6189    :Kachna
+STR_6190    :{SMALLFONT}{BLACK}Nelze zvolit sprite, když je aktivní hlavní obrazovka.
+STR_6191    :Povrch
+STR_6192    :Stěna
+STR_6193    :{COMMA16} návštěvník
+STR_6194    :{INLINE_SPRITE}{11}{20}{00}{00}{COMMA16} návštěvník
+STR_6195    :{INLINE_SPRITE}{10}{20}{00}{00}{COMMA16} návštěvník
+STR_6196    :{BLACK}Rok:
+STR_6197    :{BLACK}Měsíc:
+STR_6198    :{BLACK}Den:
+STR_6199    :Nastavit datum
+STR_6200    :Resetovat datum
+STR_6201    :{MONTH}
+STR_6202    :Vykreslovat virtuální mřížku
+STR_6203    :{SMALLFONT}{BLACK}Pro usnadnění vertikálního umisťování objektů můžete podržet klávesu Ctrl nebo Shift a poté bude vykreslena pomocná virtuální mřížka.
+STR_6204    :Cihla
+STR_6205    :Železo
+STR_6206    :Šedý štuk
+STR_6207    :Žlutý štuk
+STR_6208    :Červený štuk
+STR_6209    :Fialový štuk
+STR_6210    :Zelený štuk
+STR_6211    :Hnědý pískovec
+STR_6212    :Šedý pískovec
+STR_6213    :Mrakodrap A
+STR_6214    :Mrakodrap B
+STR_6215    :Budování
+STR_6216    :Provoz
+STR_6217    :Atrakce a tratě
+STR_6218    :OpenRCT2 oficiální
+STR_6219    :Zvýraznit problémy s cestami
+STR_6220    :Zprovoznit
+STR_6221    :{SMALLFONT}{BLACK}Nastaví vstup do/výstup ze stanice na právě vybrané políčko. V jednu chvíli může každá stanice mít v provozu pouze jeden vchod/východ.
+STR_6222    :Sem nelze umístit vstup návštěvníků...
+STR_6223    :Musí být za hranicemi parku!
+STR_6224    :{STRING} umístil/a vstup návštěvníků.
+STR_6225    :Není podporováno společně s OpenGL renderováním
+STR_6226    :Povolit předčasné splnění scénáře
+STR_6227    :{SMALLFONT}{BLACK}Umožní splnit úkoly a ukončit scénář před daným koncem scénáře
+STR_6228    :Nastavení scénáře
+STR_6229    :{WINDOW_COLOUR_2}{STRINGID}: {STRINGID}
+STR_6230    :{STRINGID}: {MOVE_X}{185}{STRINGID}
+STR_6231    :{WINDOW_COLOUR_2}{STRINGID}: {MOVE_X}{185}{STRINGID}
+STR_6232    :Zmrazený
+STR_6233    :Seříznuté zobrazení
+STR_6234    :Zvýraznit problémy s cestami
+STR_6235    :Informace o serveru
+STR_6236    :Hráči
+STR_6237    :Skupiny
+STR_6238    :Nastavení hry více hráčů
 
 ###############################################################################
 ## RCT2 Objects
@@ -4477,8 +4565,8 @@ STR_DESC    :Lanovka se sedačkami
 STR_CPTY    :2 místa na jedné sedačce
 
 [LIFT1]
-STR_NAME    :Výtahy
-STR_DESC    :Návštěvníci jezdí ve výtahu nahoru nebo dolů, aby se dostali z jednoho patra do druhého
+STR_NAME    :Výtah
+STR_DESC    :Výtah s ocelovou kabinou
 STR_CPTY    :16 návštěvníků
 
 [MONO1]
@@ -4577,7 +4665,7 @@ STR_DESC    :Bludiště je postavené z 2 metrů vysokého živého plotu, nebo 
 STR_CPTY    : 
 
 [HMCAR]
-STR_NAME    :Strašidelná jízda velkým domem
+STR_NAME    :Jízda domem hrůzy
 STR_DESC    :Vozy jezdí po vícepatrovém okruhu okolo strašidelných kulis a speciálních efektů
 STR_CPTY    :2 místa v každém vozu
 
@@ -4592,18 +4680,18 @@ STR_DESC    :Klasický kolotoč s vyřezávanými koníky
 STR_CPTY    :16 návštěvníků
 
 [MONBK]
-STR_NAME    :Jednokolejná jízdní kola
+STR_NAME    :Jízdní kola
 STR_DESC    :Po ocelové kolejnici jezdí speciální jízdní kola, ovládané šlapáním návštěvníků
 STR_CPTY    :1 místo na každém kole
 
 [OBS1]
-STR_NAME    :Pozorovací věž
-STR_DESC    :Otáčející se pozorovací kabina, která postupně vyjíždí na vysokou věž
+STR_NAME    :Vyhlídková věž
+STR_DESC    :Otáčející se vyhlídková kabina, která postupně vyjíždí na vysokou věž
 STR_CPTY    :20 návštěvníků
 
 [OBS2]
-STR_NAME    :Dvoupatrová pozorovací věž
-STR_DESC    :Otáčející se dvoupatrová pozorovací věž, která postupně vyjíždí na vysokou věž
+STR_NAME    :Dvoupatrová vyhlídková věž
+STR_DESC    :Otáčející se dvoupatrová vyhlídková věž, která postupně vyjíždí na vysokou věž
 STR_CPTY    :32 návštěvníků
 
 [RCR]
@@ -4622,7 +4710,7 @@ STR_DESC    :Tři v sobě zasazené rotující kruhy dají návštěvníkům mo�
 STR_CPTY    :1 místo v každém kruhu
 
 [SUBMAR]
-STR_NAME    :Jízda ponorkou
+STR_NAME    :Ponorky
 STR_DESC    :Návštěvníci vyrazí na podvodní jízdu v ponorce
 STR_CPTY    :4 návštěvníci v každé ponorce
 
@@ -4653,12 +4741,12 @@ STR_CPTY    :4 místa v každém voze
 
 [ARRT1]
 STR_NAME    :Vývrtková horská dráha
-STR_DESC    :Malá ocelová horská dráha, na které vozy jezdí skrze lopinky a jezdí ve vývrtce
+STR_DESC    :Horská dráha s vozy vybavenými ramenními opěrkami
 STR_CPTY    :4 místa v každém voze
 
 [ARRT2]
 STR_NAME    :Hyper horská dráha
-STR_DESC    :Vysoká horská dráha s dlouhými pády, velkou rychlostí a pohodlnými vlaky, kde se jezdí s opěrkou v klíně
+STR_DESC    :Horská dráha s pohodlnými vozy vybavenými opěrkou v klíně
 STR_CPTY    :6 míst v každém voze
 
 [ARRX]
@@ -4677,8 +4765,8 @@ STR_DESC    :Návštěvníci sedí v pohodlných sedadlech pod tratí cestujíc�
 STR_CPTY    :4 místa v každém voze
 
 [BMFL]
-STR_NAME    :Horská dráha bez podlahy
-STR_DESC    :Široká horská dráha bez podlahy poskytují návštěvníkům pocit volného vzduchu během jízdy skrze propletenou dráhu
+STR_NAME    :Zakroucená horská dráha bez podlahy
+STR_DESC    :Rozměrná horská dráha s vozy vybavenými ramenními opěrkami a s chybějící podlahou ve vozech, díky čemuž je jízda opravdu záživná
 STR_CPTY    :4 místa v každém voze
 
 [BMRB]
@@ -4688,22 +4776,22 @@ STR_CPTY    :4 místa v každém voze
 
 [BMSD]
 STR_NAME    :Zakroucená horská dráha
-STR_DESC    :Široká ocelová horská dráha, na které vozy jedou po hladkých kolejnicích skrze propletenou dráhu
+STR_DESC    :Rozměrná horská dráha s vozy vybavenými ramenními opěrkami
 STR_CPTY    :4 místa v každém voze
 
 [BMSU]
-STR_NAME    :Horská dráha "na stojáka"
-STR_DESC    :Návštěvníci jedou ve stoje v širokých vozech se speciálně navrženým držením po propletené dráze s pády
+STR_NAME    :Zakroucená horská dráha "na stojáka"
+STR_DESC    :Návštěvníci jedou ve stoje ve vozech vybavenými ramenními opěrkami
 STR_CPTY    :4 místa v každém voze
 
 [BMVD]
-STR_NAME    :Horská dráha s volným pádem
+STR_NAME    :Šestimístná zakroucená horská dráha
 STR_DESC    :Extra-široké vozy letí dolů po zcela kolmé dráze a poskytují tím pocit volného pádu
 STR_CPTY    :4 místa v každém voze
 
 [BOB1]
 STR_NAME    :Horská bobová dráha
-STR_DESC    :Návštěvníci jedou po propletené bobové dráze
+STR_DESC    :Návštěvníci sedí za sebou ve dvojmístných vozech
 STR_CPTY    :2 místa v každém vozu
 
 [GOLTR]
@@ -4713,7 +4801,7 @@ STR_CPTY    :6 míst v každém voze
 
 [INTBOB]
 STR_NAME    :Létající zatáčky
-STR_DESC    :Návštěvníci jedou po propletené bobové dráze
+STR_DESC    :Návštěvníci v šestimístných vozech sedí vedle sebe po dvou ve třech řadách 
 STR_CPTY    :6 míst v každém voze
 
 [INTINV]
@@ -4727,7 +4815,7 @@ STR_DESC    :Gigantická horská dráha schopna volných pádů a kopců přes 9
 STR_CPTY    :4 místa v každém voze
 
 [IVMC1]
-STR_NAME    :Ostrá zavěšená horská dráha
+STR_NAME    :Čtyřmístná horská dráha
 STR_DESC    :Vozy jsou zavěšeny na kolejnicích s ostrými zatáčkami a ostrými pády
 STR_CPTY    :4 místa v každém voze
 
@@ -4742,8 +4830,8 @@ STR_DESC    :Horská dráha s dvoumístnými vozy bez předků
 STR_CPTY    :2 místa v každém vozu
 
 [NEMT]
-STR_NAME    :Zavěšená horská dráha
-STR_DESC    :Vozy jsou zavěšeny na kolejnicích se zatáčkami, pády a lopinky
+STR_NAME    :Čtyřmístná zavěšená horská dráha
+STR_DESC    :Vozy jsou zavěšeny na kolejnicích se zatáčkami, pády a loopingy
 STR_CPTY    :4 místa v každém voze
 
 [PMT1]
@@ -4778,7 +4866,7 @@ STR_CPTY    :4 místa v každém voze
 
 [REVCAR]
 STR_NAME    :Otáčivá horská dráha
-STR_DESC    :Po dřevěné dráze jedou vozy, které se ve speciálních místech se otočí a jedou pozpátku
+STR_DESC    :Horská dráha s vozy, které se ve speciálních místech se otočí a jedou pozpátku
 STR_CPTY    :6 míst v každém voze
 
 [REVF1]
@@ -4787,13 +4875,13 @@ STR_DESC    :Velká dráha s vozem pro volný pád pozpátku
 STR_CPTY    :8 návštěvníků
 
 [SBOX]
-STR_NAME    :Závodní dřevěné vozy
-STR_DESC    :Návštěvníci jezdí v dřevěných závodních vozech po jednokolejné horské dráze
+STR_NAME    :Závodní krabičky od mýdla
+STR_DESC    :Návštěvníci jezdí v závodních vozech ve tvaru dávných krabiček od mýdla
 STR_CPTY    :4 místa v každém voze
 
 [SCHT1]
 STR_NAME    :Horská dráha
-STR_DESC    :Horská dráha s lopinky, po které jezdí vozy s opěrkou v klíně
+STR_DESC    :Horská dráha s loopingy, po které jezdí vozy s opěrkou v klíně
 STR_CPTY    :4 místa v každém voze
 
 [SFRIC1]
@@ -4802,18 +4890,18 @@ STR_DESC    :Po dráze jezdí vozy, které mají kola horizontálně uložená p
 STR_CPTY    :4 místa v každém voze
 
 [SKYTR]
-STR_NAME    :Mini zavěšená létající horská dráha
+STR_NAME    :Zavěšená horská dráha na "ležáka"
 STR_DESC    :Návštěvníci jedou na jednokolejné trati vleže hlavou dolů, zavěšeni ve speciálním voze, který se v zatáčkách houpe
 STR_CPTY    :1 místo v každém voze
 
 [SLCFO]
-STR_NAME    :Obrácená zavěšená horská dráha
-STR_DESC    :Návštěvníci sedí po dvou zavěšení pod tratí a vidí dopředu nebo dozadu podle toho, jak zrovna jedou skrze lopinky a ostré zatáčky
+STR_NAME    :Tvář-rvoucí zavěšená horská dráha
+STR_DESC    :Návštěvníci sedí po dvou zavěšení pod tratí a vidí dopředu nebo dozadu podle toho, jak zrovna jedou skrze loopingy a ostré zatáčky
 STR_CPTY    :4 místa v každém voze
 
 [SLCT]
 STR_NAME    :Malá zavěšená horská dráha
-STR_DESC    :Návštěvníci sedí po dvou zavěšení pod tratí a jedou skrze lopinky a ostré zatáčky
+STR_DESC    :Návštěvníci sedí po dvou zavěšení pod tratí a jedou skrze loopingy a ostré zatáčky
 STR_CPTY    :2 místa v každém vozu
 
 [SMC1]
@@ -4863,7 +4951,7 @@ STR_CPTY    :4 místa v každém voze
 
 [VEKDV]
 STR_NAME    :Zavěšená svislá dráha
-STR_DESC    :Návštěvníci sedí ve vozech zavěšených pod tratí, jedou pozpátku nahoru po svislé dráze, padají dolů a jezdí skrze lopinky s ostrými zatáčkami
+STR_DESC    :Návštěvníci sedí ve vozech zavěšených pod tratí, jedou pozpátku vzhůru po svislé dráze, padají dolů a jezdí skrze loopingy s ostrými zatáčkami
 STR_CPTY    :4 místa v každém voze
 
 [VEKST]
@@ -4887,13 +4975,13 @@ STR_DESC    :Horská dráha s vozy, které připomínají automobily
 STR_CPTY    :4 místa v každém voze
 
 [WMMINE]
-STR_NAME    :Dřevěná divoká důlní jízda
-STR_DESC    :Malinké důlní vozy jedou po cik-cak dřevěné trati a silně se naklání v ostrých zatáčkách a drsných pádech
+STR_NAME    :Divoká důlní jízda
+STR_DESC    :Horská dráha s vozy, které připomínají klasické důlní vozy 
 STR_CPTY    :2 místa v každém vozu
 
 [WMOUSE]
 STR_NAME    :Dřevěná divoká myš
-STR_DESC    :Malé vozy ve tvaru myší jedou po dřevěné trati a silně se naklání v ostrých zatáčkách a drsných pádech
+STR_DESC    :Horská dráha s vozy ve tvaru myší
 STR_CPTY    :2 místa v každém vozu
 
 [WMSPIN]
@@ -6934,12 +7022,12 @@ STR_NAME    :Oranžová voda
 ###############################################################################
 [LONDONBS]
 STR_NAME    :Tramvaj ve tvaru Londýnského autobusu
-STR_DESC    :Repliky tramvají
+STR_DESC    :Repliky červených dvoupatrových londýnských autobusů
 STR_CPTY    :10 míst v každém voze
 
 [MINELIFT]
 STR_NAME    :Důlní výtah
-STR_DESC    :Návštěvníci jezdí ve výtahu nahoru nebo dolů, aby se dostali z jednoho patra do druhého
+STR_DESC    :Výtah s ocelovou kabinou připomínající důlní výtah
 STR_CPTY    :16 návštěvníků
 
 [SANFTRAM]
@@ -6989,7 +7077,7 @@ STR_CPTY    :2 místa v každém voze
 
 [KILLWHAL]
 STR_NAME    :Zabijácká velryba
-STR_DESC    :Návštěvníci vyrazí na podvodní jízdu v ponorce
+STR_DESC    :Návštěvníci vyrazí na podvodní jízdu v ponorce ve tvaru 
 STR_CPTY    :5 míst v každé ponorce
 
 [SKIDOO]
@@ -7019,12 +7107,12 @@ STR_CPTY    :4 místa v každém voze
 
 [CONDORRD]
 STR_NAME    :Jízda kondorů
-STR_DESC    :Návštěvníci jedou na jednokolejné trati vleže hlavou dolů, zavěšeni ve speciálním voze, který se v zatáčkách houpe
-STR_CPTY    :1 místo v každém voze
+STR_DESC    :Návštěvníci jsou zavěšeni vleže hlavou napřed pod tratí a během jízdy mají pocit volného letu kondora
+STR_CPTY    :4 místa v každém voze
 
 [CONGAEEL]
-STR_NAME    :Jízda mořského úhoře
-STR_DESC    :Malá ocelová horská dráha, na které vozy připomínající mořské úhoře jezdí skrze lopinky a jezdí ve vývrtce
+STR_NAME    :Mořští úhoři
+STR_DESC    :Horská dráha, na které vozy s ramenními opěrkami připomínající mořské úhoře
 STR_CPTY    :4 místa v každém voze
 
 [DRAGON]
@@ -7044,7 +7132,7 @@ STR_CPTY    :4 místa v každém voze
 
 [GRATWHTE]
 STR_NAME    :Žraločí horská dráha
-STR_DESC    :Prostorné vozy s opěrkou v klíně
+STR_DESC    :Horská dríha s vozy vybavenými ramenní opěrkou, které připomínají žraloka bílého 
 STR_CPTY    :6 míst v každém voze
 
 [JAGUARRD]
@@ -7063,13 +7151,13 @@ STR_DESC    :Malá horská dráha, na které vozy po jednom projíždí trať s 
 STR_CPTY    :4 místa v každém voze
 
 [MINECART]
-STR_NAME    :Jízda dolem
+STR_NAME    :Dulní jízda
 STR_DESC    :Dřevěná horská dráha s vozy s polstrovanými sedadly a opěrkou v klíně
 STR_CPTY    :4 místa v každém voze
 
 [OSTRICH]
 STR_NAME    :Pštrosí jízda
-STR_DESC    :Horská dráha s lopinky, na které se jezdí ve stoje
+STR_DESC    :Horská dráha s loopingy, na které se jezdí ve stoje
 STR_CPTY    :4 místa v každém voze
 
 [PENGUINB]
@@ -7083,7 +7171,7 @@ STR_DESC    :Návštěvníci sedí po dvou zavěšení pod tratí a vidí dopře
 STR_CPTY    :4 místa v každém voze
 
 [RHINORID]
-STR_NAME    :Rhino Ride
+STR_NAME    :Nosorožčí jízda
 STR_DESC    :Malá ocelová horská dráha se spirálovitým profilem a vozy se sedadly za sebou
 STR_CPTY    :6 míst v každém voze
 
@@ -7099,7 +7187,7 @@ STR_CPTY    :4 místa v každém voze
 
 [SEALS]
 STR_NAME    :Tulení horská dráha
-STR_DESC    :Malá ocelová horská dráha, na které vozy připomínající tuleně jezdí skrze lopinky a jezdí ve vývrtce
+STR_DESC    :Malá ocelová horská dráha, na které vozy připomínající tuleně jezdí skrze loopingy a jezdí ve vývrtce
 STR_CPTY    :4 místa v každém voze
 
 [SLOTH]
@@ -7118,7 +7206,7 @@ STR_DESC    :Dřevěná horská dráha s vozy s polstrovanými sedadly a opěrko
 STR_CPTY    :4 místa v každém voze
 
 [SURFBRDC]
-STR_NAME    :Surfující horská dráha
+STR_NAME    :Surferská horská dráha
 STR_DESC    :Návštěvníci jedou ve stoje v širokých vozech se speciálně navrženým držením po propletené dráze s pády
 STR_CPTY    :4 místa v každém voze
 
@@ -7194,17 +7282,17 @@ STR_CPTY    :1 místo v každé lodi
 
 [MANDARIN]
 STR_NAME    :Čínské kachny
-STR_DESC    :Lodě ve tvaru labutí, ovládané šlapáním návštěvníků
+STR_DESC    :Lodě ve tvaru kachen, ovládané šlapáním návštěvníků sedících vepředu
 STR_CPTY    :4 místa na každé lodi
 
 [MANTARAY]
 STR_NAME    :Rejnočí jízda
-STR_DESC    :Velkokapacitní lodě se plaví po vodním kanále, poháněny do pásem do strmých úseků, zrychlují sjížděním svahů a namočí návštěvníky pořádným šplouchnutím
+STR_DESC    :Lodě ve tvaru rejnuků
 STR_CPTY    :16 míst na každé lodi
 
 [OUTRIGGR]
-STR_NAME    :Loď s podporami
-STR_DESC    :Dlouhé kánoe s postranními podporami, u kterých musí návštěvníci pádlovat
+STR_NAME    :Loď s vahadly
+STR_DESC    :Dlouhé kánoe s postranními vahadly, u kterých musí návštěvníci pádlovat
 STR_CPTY    :2 místa v každé lodi
 
 [TUTLBOAT]
@@ -9149,7 +9237,7 @@ STR_CPTY    :5 nebo 10 míst v každém vagónu
 
 [BMVOCTPS]
 STR_NAME    :Mimozemská hmota
-STR_DESC    :Tématická pozorovací věž s kabinou, která postupně vyjede až na vrchol a zpět dolů
+STR_DESC    :Tématická vyhlídková věž s kabinou, která postupně vyjede až na vrchol a zpět dolů
 STR_CPTY    :20 návštěvníků
 
 [CYCLOPSX]
@@ -9274,7 +9362,7 @@ STR_CPTY    :2 místa v každém voze
 
 [POLCHASE]
 STR_NAME    :Policejní honička
-STR_DESC    :Horská dráha s lopinky, na které návštěvníci ve vozech sedí
+STR_DESC    :Horská dráha s loopingy, na které návštěvníci ve vozech sedí
 STR_CPTY    :4 místa v každém voze
 
 [POLICECR]
@@ -9299,7 +9387,7 @@ STR_CPTY    :4 místa v každém voze
 
 [STAMPHRD]
 STR_NAME    :Horská dráha splašeného stáda
-STR_DESC    :Horská dráha s lopinky a vozy ve tvaru splašeného stáda dinosaurů
+STR_DESC    :Horská dráha s loopingy a vozy ve tvaru splašeného stáda dinosaurů
 STR_CPTY    :4 místa v každém voze
 
 [VALKYRIE]

@@ -15,7 +15,8 @@
 #pragma endregion
 
 #include <sstream>
-#include "../core/FileStream.hpp"
+#include "../core/IStream.hpp"
+#include "../core/String.hpp"
 #include "IniWriter.hpp"
 
 #include "../platform/platform.h"
@@ -27,7 +28,7 @@ private:
     bool        _firstSection = true;
 
 public:
-    IniWriter(IStream * stream)
+    explicit IniWriter(IStream * stream)
         : _stream(stream)
     {
     }

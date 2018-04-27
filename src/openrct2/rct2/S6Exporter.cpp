@@ -14,12 +14,15 @@
  *****************************************************************************/
 #pragma endregion
 
-#include "../core/Exception.hpp"
+#include <algorithm>
+#include <cstring>
+#include "../common.h"
+#include "../Context.h"
 #include "../core/FileStream.hpp"
 #include "../core/IStream.hpp"
 #include "../core/String.hpp"
 #include "../core/Util.hpp"
-#include "../management/award.h"
+#include "../management/Award.h"
 #include "../object/Object.h"
 #include "../object/ObjectManager.h"
 #include "../object/ObjectRepository.h"
@@ -28,28 +31,30 @@
 #include <functional>
 
 #include "../config/Config.h"
-#include "../game.h"
-#include "../interface/viewport.h"
-#include "../interface/window.h"
-#include "../localisation/date.h"
-#include "../localisation/localisation.h"
-#include "../management/finance.h"
-#include "../management/marketing.h"
-#include "../management/news_item.h"
-#include "../management/research.h"
-#include "../object.h"
+#include "../Game.h"
+#include "../interface/Viewport.h"
+#include "../interface/Window.h"
+#include "../localisation/Date.h"
+#include "../localisation/Localisation.h"
+#include "../management/Finance.h"
+#include "../management/Marketing.h"
+#include "../management/NewsItem.h"
+#include "../management/Research.h"
+#include "../object/Object.h"
+#include "../object/ObjectLimits.h"
 #include "../OpenRCT2.h"
-#include "../peep/staff.h"
-#include "../ride/ride.h"
-#include "../ride/ride_ratings.h"
-#include "../ride/track_data.h"
-#include "../scenario/scenario.h"
-#include "../util/sawyercoding.h"
-#include "../util/util.h"
+#include "../peep/Staff.h"
+#include "../ride/Ride.h"
+#include "../ride/RideRatings.h"
+#include "../ride/TrackData.h"
+#include "../scenario/Scenario.h"
+#include "../util/SawyerCoding.h"
+#include "../util/Util.h"
 #include "../world/Climate.h"
-#include "../world/map_animation.h"
-#include "../world/park.h"
-#include "../world/sprite.h"
+#include "../world/MapAnimation.h"
+#include "../world/Park.h"
+#include "../world/Sprite.h"
+#include "../ride/Station.h"
 
 S6Exporter::S6Exporter()
 {
@@ -102,7 +107,7 @@ void S6Exporter::Save(IStream * stream, bool isScenario)
     // 2: Write packed objects
     if (_s6.header.num_packed_objects > 0)
     {
-        IObjectRepository * objRepo = GetObjectRepository();
+        IObjectRepository * objRepo = OpenRCT2::GetContext()->GetObjectRepository();
         objRepo->WritePackedObjects(stream, ExportObjectsList);
     }
 
@@ -113,12 +118,12 @@ void S6Exporter::Save(IStream * stream, bool isScenario)
     chunkWriter.WriteChunk(&_s6.elapsed_months, 16, SAWYER_ENCODING::RLECOMPRESSED);
 
     // 5: Map elements + sprites and other fields chunk
-    chunkWriter.WriteChunk(&_s6.map_elements, 0x180000, SAWYER_ENCODING::RLECOMPRESSED);
+    chunkWriter.WriteChunk(&_s6.tile_elements, 0x180000, SAWYER_ENCODING::RLECOMPRESSED);
 
     if (_s6.header.type == S6_TYPE_SCENARIO)
     {
         // 6 to 13:
-        chunkWriter.WriteChunk(&_s6.next_free_map_element_pointer_index, 0x27104C, SAWYER_ENCODING::RLECOMPRESSED);
+        chunkWriter.WriteChunk(&_s6.next_free_tile_element_pointer_index, 0x27104C, SAWYER_ENCODING::RLECOMPRESSED);
         chunkWriter.WriteChunk(&_s6.guests_in_park, 4, SAWYER_ENCODING::RLECOMPRESSED);
         chunkWriter.WriteChunk(&_s6.last_guests_in_park, 8, SAWYER_ENCODING::RLECOMPRESSED);
         chunkWriter.WriteChunk(&_s6.park_rating, 2, SAWYER_ENCODING::RLECOMPRESSED);
@@ -130,7 +135,7 @@ void S6Exporter::Save(IStream * stream, bool isScenario)
     else
     {
         // 6: Everything else...
-        chunkWriter.WriteChunk(&_s6.next_free_map_element_pointer_index, 0x2E8570, SAWYER_ENCODING::RLECOMPRESSED);
+        chunkWriter.WriteChunk(&_s6.next_free_tile_element_pointer_index, 0x2E8570, SAWYER_ENCODING::RLECOMPRESSED);
     }
 
     // Determine number of bytes written
@@ -159,6 +164,14 @@ void S6Exporter::Export()
         log_error("Found %d disjoint null sprites", disjoint_sprites_count);
     }
     _s6.info = gS6Info;
+    {
+        auto temp = utf8_to_rct2(gS6Info.name);
+        safe_strcpy(_s6.info.name, temp.data(), sizeof(_s6.info.name));
+    }
+    {
+        auto temp = utf8_to_rct2(gS6Info.details);
+        safe_strcpy(_s6.info.details, temp.data(), sizeof(_s6.info.details));
+    }
     uint32 researchedTrackPiecesA[128];
     uint32 researchedTrackPiecesB[128];
 
@@ -166,9 +179,10 @@ void S6Exporter::Export()
     {
         const rct_object_entry * entry     = get_loaded_object_entry(i);
         void *                   entryData = get_loaded_object_chunk(i);
-        if (entryData == (void *)-1)
+        // RCT2 uses (void *)-1 to mark NULL. Make sure it's written in a vanilla-compatible way.
+        if (entryData == nullptr || entryData == (void *)-1)
         {
-            Memory::Set(&_s6.objects[i], 0xFF, sizeof(rct_object_entry));
+            std::memset(&_s6.objects[i], 0xFF, sizeof(rct_object_entry));
         }
         else
         {
@@ -182,9 +196,9 @@ void S6Exporter::Export()
     _s6.scenario_srand_0 = gScenarioSrand0;
     _s6.scenario_srand_1 = gScenarioSrand1;
 
-    memcpy(_s6.map_elements, gMapElements, sizeof(_s6.map_elements));
+    memcpy(_s6.tile_elements, gTileElements, sizeof(_s6.tile_elements));
 
-    _s6.next_free_map_element_pointer_index = gNextFreeMapElementPointerIndex;
+    _s6.next_free_tile_element_pointer_index = gNextFreeTileElementPointerIndex;
     // Sprites needs to be reset before they get used.
     // Might as well reset them in here to zero out the space and improve
     // compression ratios. Especially useful for multiplayer servers that
@@ -211,14 +225,15 @@ void S6Exporter::Export()
     // rct1_park_entrance_y
     // pad_013573EE
     // rct1_park_entrance_z
-    memcpy(_s6.peep_spawns, gPeepSpawns, sizeof(_s6.peep_spawns));
+    ExportPeepSpawns();
     _s6.guest_count_change_modifier = gGuestChangeModifier;
     _s6.current_research_level      = gResearchFundingLevel;
     // pad_01357400
-    memcpy(_s6.researched_ride_types, gResearchedRideTypes, sizeof(_s6.researched_ride_types));
-    memcpy(_s6.researched_ride_entries, gResearchedRideEntries, sizeof(_s6.researched_ride_entries));
+    ExportResearchedRideTypes();
+    ExportResearchedRideEntries();
     // Not used by OpenRCT2 any more, but left in to keep RCT2 export working.
-    for (uint8 i = 0; i < Util::CountOf(RideTypePossibleTrackConfigurations); i++) {
+    for (uint8 i = 0; i < Util::CountOf(RideTypePossibleTrackConfigurations); i++)
+    {
         researchedTrackPiecesA[i] = (RideTypePossibleTrackConfigurations[i]         ) & 0xFFFFFFFFULL;
         researchedTrackPiecesB[i] = (RideTypePossibleTrackConfigurations[i] >> 32ULL) & 0xFFFFFFFFULL;
     }
@@ -236,7 +251,7 @@ void S6Exporter::Export()
     _s6.mechanic_colour = gStaffMechanicColour;
     _s6.security_colour = gStaffSecurityColour;
 
-    memcpy(_s6.researched_scenery_items, gResearchedSceneryItems, sizeof(_s6.researched_scenery_items));
+    ExportResearchedSceneryItems();
 
     _s6.park_rating = gParkRating;
 
@@ -245,17 +260,17 @@ void S6Exporter::Export()
 
     _s6.active_research_types        = gResearchPriorities;
     _s6.research_progress_stage      = gResearchProgressStage;
-    _s6.last_researched_item_subject = gResearchLastItemSubject;
+    _s6.last_researched_item_subject = gResearchLastItem.rawValue;
     // pad_01357CF8
-    _s6.next_research_item           = gResearchNextItem;
+    _s6.next_research_item           = gResearchNextItem.rawValue;
     _s6.research_progress            = gResearchProgress;
-    _s6.next_research_category       = gResearchNextCategory;
+    _s6.next_research_category       = gResearchNextItem.category;
     _s6.next_research_expected_day   = gResearchExpectedDay;
     _s6.next_research_expected_month = gResearchExpectedMonth;
     _s6.guest_initial_happiness      = gGuestInitialHappiness;
     _s6.park_size                    = gParkSize;
     _s6.guest_generation_probability = _guestGenerationProbability;
-    _s6.total_ride_value             = gTotalRideValue;
+    _s6.total_ride_value_for_money   = gTotalRideValueForMoney;
     _s6.maximum_loan                 = gMaxBankLoan;
     _s6.guest_initial_cash           = gGuestInitialCash;
     _s6.guest_initial_hunger         = gGuestInitialHunger;
@@ -310,7 +325,7 @@ void S6Exporter::Export()
     _s6.historical_profit = gHistoricalProfit;
     // pad_013587D4
     memcpy(_s6.scenario_completed_name, gScenarioCompletedBy, sizeof(_s6.scenario_completed_name));
-    _s6.cash = gCashEncrypted;
+    _s6.cash = ENCRYPT_MONEY(gCash);
     // pad_013587FC
     _s6.park_rating_casualty_penalty = gParkRatingCasualtyPenalty;
     _s6.map_size_units               = gMapSizeUnits;
@@ -323,7 +338,7 @@ void S6Exporter::Export()
     _s6.last_entrance_style          = gLastEntranceStyle;
     // rct1_water_colour
     // pad_01358842
-    memcpy(_s6.research_items, gResearchItems, sizeof(_s6.research_items));
+    ExportResearchList();
     _s6.map_base_z = gMapBaseZ;
     memcpy(_s6.scenario_name, gScenarioName, sizeof(_s6.scenario_name));
     memcpy(_s6.scenario_description, gScenarioDetails, sizeof(_s6.scenario_description));
@@ -369,16 +384,16 @@ void S6Exporter::Export()
     // byte_13CA742
     // pad_013CA747
     _s6.climate_update_timer   = gClimateUpdateTimer;
-    _s6.current_weather        = gClimateCurrentWeather;
-    _s6.next_weather           = gClimateNextWeather;
-    _s6.temperature            = gClimateCurrentTemperature;
-    _s6.next_temperature       = gClimateNextTemperature;
-    _s6.current_weather_effect = gClimateCurrentWeatherEffect;
-    _s6.next_weather_effect    = gClimateNextWeatherEffect;
-    _s6.current_weather_gloom  = gClimateCurrentWeatherGloom;
-    _s6.next_weather_gloom     = gClimateNextWeatherGloom;
-    _s6.current_rain_level     = gClimateCurrentRainLevel;
-    _s6.next_rain_level        = gClimateNextRainLevel;
+    _s6.current_weather        = gClimateCurrent.Weather;
+    _s6.next_weather           = gClimateNext.Weather;
+    _s6.temperature            = gClimateCurrent.Temperature;
+    _s6.next_temperature       = gClimateNext.Temperature;
+    _s6.current_weather_effect = gClimateCurrent.WeatherEffect;
+    _s6.next_weather_effect    = gClimateNext.WeatherEffect;
+    _s6.current_weather_gloom  = gClimateCurrent.WeatherGloom;
+    _s6.next_weather_gloom     = gClimateNext.WeatherGloom;
+    _s6.current_rain_level     = gClimateCurrent.RainLevel;
+    _s6.next_rain_level        = gClimateNext.RainLevel;
 
     // News items
     for (size_t i = 0; i < RCT12_MAX_NEWS_ITEMS; i++)
@@ -412,6 +427,16 @@ void S6Exporter::Export()
     game_convert_strings_to_rct2(&_s6);
 }
 
+void S6Exporter::ExportPeepSpawns()
+{
+    for (size_t i = 0; i < RCT12_MAX_PEEP_SPAWNS; i++)
+    {
+        _s6.peep_spawns[i] = {
+            (uint16)gPeepSpawns[i].x, (uint16)gPeepSpawns[i].y, (uint8)(gPeepSpawns[i].z / 16), gPeepSpawns[i].direction
+        };
+    }
+}
+
 uint32 S6Exporter::GetLoanHash(money32 initialCash, money32 bankLoan, uint32 maxBankLoan)
 {
     sint32 value = 0x70093A;
@@ -426,11 +451,11 @@ uint32 S6Exporter::GetLoanHash(money32 initialCash, money32 bankLoan, uint32 max
 
 void S6Exporter::ExportRides()
 {
-    for (sint32 index = 0; index < RCT2_MAX_RIDES_IN_PARK; index++)
+    for (sint32 index = 0; index < RCT12_MAX_RIDES_IN_PARK; index++)
     {
         auto src = get_ride(index);
         auto dst = &_s6.rides[index];
-        Memory::Set(dst, 0, sizeof(rct2_ride));
+        *dst = { 0 };
         if (src->type == RIDE_TYPE_NULL)
         {
             dst->type = RIDE_TYPE_NULL;
@@ -471,8 +496,19 @@ void S6Exporter::ExportRide(rct2_ride * dst, const Ride * src)
         dst->station_length[i] = src->station_length[i];
         dst->station_depart[i] = src->station_depart[i];
         dst->train_at_station[i] = src->train_at_station[i];
-        dst->entrances[i] = src->entrances[i];
-        dst->exits[i] = src->exits[i];
+
+        TileCoordsXYZD entrance = ride_get_entrance_location(src, i);
+        if (entrance.isNull())
+            dst->entrances[i].xy = RCT_XY8_UNDEFINED;
+        else
+            dst->entrances[i] = { (uint8)entrance.x, (uint8)entrance.y };
+
+        TileCoordsXYZD exit = ride_get_exit_location(src, i);
+        if (exit.isNull())
+            dst->exits[i].xy = RCT_XY8_UNDEFINED;
+        else
+            dst->exits[i] = { (uint8)exit.x, (uint8)exit.y };
+
         dst->last_peep_in_queue[i] = src->last_peep_in_queue[i];
 
         dst->length[i] = src->length[i];
@@ -651,70 +687,127 @@ void S6Exporter::ExportRide(rct2_ride * dst, const Ride * src)
     // pad_208[0x58];
 }
 
-extern "C"
+void S6Exporter::ExportResearchedRideTypes()
 {
-    enum {
-        S6_SAVE_FLAG_EXPORT    = 1 << 0,
-        S6_SAVE_FLAG_SCENARIO  = 1 << 1,
-        S6_SAVE_FLAG_AUTOMATIC = 1u << 31,
-    };
+    std::fill(
+        std::begin(_s6.researched_ride_types),
+        std::end(_s6.researched_ride_types),
+        false);
 
-    /**
-     *
-     *  rct2: 0x006754F5
-     * @param flags bit 0: pack objects, 1: save as scenario
-     */
-    sint32 scenario_save(const utf8 * path, sint32 flags)
+    for (sint32 rideType = 0; rideType < RIDE_TYPE_COUNT; rideType++)
     {
+        if (ride_type_is_invented(rideType))
+        {
+            sint32 quadIndex = rideType >> 5;
+            sint32 bitIndex  = rideType & 0x1F;
+            _s6.researched_ride_types[quadIndex] |= (uint32) 1 << bitIndex;
+        }
+    }
+}
+
+void S6Exporter::ExportResearchedRideEntries()
+{
+    std::fill(
+        std::begin(_s6.researched_ride_entries),
+        std::end(_s6.researched_ride_entries),
+        false);
+
+    for (sint32 rideEntryIndex = 0; rideEntryIndex < MAX_RIDE_OBJECTS; rideEntryIndex++)
+    {
+        if (ride_entry_is_invented(rideEntryIndex))
+        {
+            sint32 quadIndex = rideEntryIndex >> 5;
+            sint32 bitIndex  = rideEntryIndex & 0x1F;
+            _s6.researched_ride_entries[quadIndex] |= (uint32) 1 << bitIndex;
+        }
+    }
+}
+
+void S6Exporter::ExportResearchedSceneryItems()
+{
+    std::fill(
+        std::begin(_s6.researched_scenery_items),
+        std::end(_s6.researched_scenery_items),
+        false);
+
+    for (uint16 sceneryEntryIndex = 0; sceneryEntryIndex < RCT2_MAX_RESEARCHED_SCENERY_ITEMS; sceneryEntryIndex++)
+    {
+        if (scenery_is_invented(sceneryEntryIndex))
+        {
+            sint32 quadIndex = sceneryEntryIndex >> 5;
+            sint32 bitIndex  = sceneryEntryIndex & 0x1F;
+            _s6.researched_scenery_items[quadIndex] |= (uint32) 1 << bitIndex;
+        }
+    }
+}
+
+void S6Exporter::ExportResearchList()
+{
+    memcpy(_s6.research_items, gResearchItems, sizeof(_s6.research_items));
+}
+
+enum : uint32
+{
+    S6_SAVE_FLAG_EXPORT    = 1 << 0,
+    S6_SAVE_FLAG_SCENARIO  = 1 << 1,
+    S6_SAVE_FLAG_AUTOMATIC = 1u << 31,
+};
+
+/**
+ *
+ *  rct2: 0x006754F5
+ * @param flags bit 0: pack objects, 1: save as scenario
+ */
+sint32 scenario_save(const utf8 * path, sint32 flags)
+{
+    if (flags & S6_SAVE_FLAG_SCENARIO)
+    {
+        log_verbose("saving scenario");
+    }
+    else
+    {
+        log_verbose("saving game");
+    }
+
+    if (!(flags & S6_SAVE_FLAG_AUTOMATIC))
+    {
+        window_close_construction_windows();
+    }
+
+    map_reorganise_elements();
+    viewport_set_saved_view();
+
+    bool result     = false;
+    auto s6exporter = new S6Exporter();
+    try
+    {
+        if (flags & S6_SAVE_FLAG_EXPORT)
+        {
+            IObjectManager * objManager   = OpenRCT2::GetContext()->GetObjectManager();
+            s6exporter->ExportObjectsList = objManager->GetPackableObjects();
+        }
+        s6exporter->RemoveTracklessRides = true;
+        s6exporter->Export();
         if (flags & S6_SAVE_FLAG_SCENARIO)
         {
-            log_verbose("saving scenario");
+            s6exporter->SaveScenario(path);
         }
         else
         {
-            log_verbose("saving game");
+            s6exporter->SaveGame(path);
         }
-
-        if (!(flags & S6_SAVE_FLAG_AUTOMATIC))
-        {
-            window_close_construction_windows();
-        }
-
-        map_reorganise_elements();
-        viewport_set_saved_view();
-
-        bool result     = false;
-        auto s6exporter = new S6Exporter();
-        try
-        {
-            if (flags & S6_SAVE_FLAG_EXPORT)
-            {
-                IObjectManager * objManager   = GetObjectManager();
-                s6exporter->ExportObjectsList = objManager->GetPackableObjects();
-            }
-            s6exporter->RemoveTracklessRides = true;
-            s6exporter->Export();
-            if (flags & S6_SAVE_FLAG_SCENARIO)
-            {
-                s6exporter->SaveScenario(path);
-            }
-            else
-            {
-                s6exporter->SaveGame(path);
-            }
-            result = true;
-        }
-        catch (const Exception &)
-        {
-        }
-        delete s6exporter;
-
-        gfx_invalidate_screen();
-
-        if (result && !(flags & S6_SAVE_FLAG_AUTOMATIC))
-        {
-            gScreenAge = 0;
-        }
-        return result;
+        result = true;
     }
+    catch (const std::exception &)
+    {
+    }
+    delete s6exporter;
+
+    gfx_invalidate_screen();
+
+    if (result && !(flags & S6_SAVE_FLAG_AUTOMATIC))
+    {
+        gScreenAge = 0;
+    }
+    return result;
 }

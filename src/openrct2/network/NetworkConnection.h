@@ -16,8 +16,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #ifndef DISABLE_NETWORK
 #include <list>
 #include <memory>
@@ -28,8 +26,8 @@
 #include "NetworkTypes.h"
 #include "NetworkKey.h"
 #include "NetworkPacket.h"
-#include "TcpSocket.h"
 
+interface ITcpSocket;
 class NetworkPlayer;
 struct ObjectRepositoryItem;
 
@@ -67,4 +65,3 @@ private:
 };
 
 #endif // DISABLE_NETWORK
-#endif

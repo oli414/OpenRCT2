@@ -18,11 +18,14 @@
 #include <openrct2/core/Math.hpp>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/game.h>
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/ride/ride_data.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2/actions/ParkMarketingAction.hpp>
+#include <openrct2/Game.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/ride/Ride.h>
+#include <openrct2/ride/RideData.h>
+#include <openrct2-ui/interface/Dropdown.h>
+#include <openrct2/drawing/Drawing.h>
 
 #define SELECTED_RIDE_UNDEFINED ((uint16)0xFFFF)
 
@@ -44,14 +47,14 @@ static rct_widget window_new_campaign_widgets[] = {
     { WWT_FRAME,            0,      0,      349,    0,      106,        0xFFFFFFFF,                                     STR_NONE },             // panel / background
     { WWT_CAPTION,          0,      1,      348,    1,      14,         0,                                              STR_WINDOW_TITLE_TIP }, // title bar
     { WWT_CLOSEBOX,         0,      337,    347,    2,      13,         STR_CLOSE_X,                                    STR_CLOSE_WINDOW_TIP }, // close x button
-    { WWT_24,               0,      0,      139,    24,     35,         0,                                              STR_NONE },             // ride label
+    { WWT_LABEL,            0,      0,      139,    24,     35,         0,                                              STR_NONE },             // ride label
     { WWT_DROPDOWN,         0,      100,    341,    24,     35,         0,                                              STR_NONE },             // ride dropdown
-    { WWT_DROPDOWN_BUTTON,  0,      330,    340,    25,     34,         STR_DROPDOWN_GLYPH,                             STR_NONE },             // ride dropdown button
-    { WWT_24,               0,      0,      139,    41,     52,         STR_LENGTH_OF_TIME,                             STR_NONE },             // weeks label
+    { WWT_BUTTON,           0,      330,    340,    25,     34,         STR_DROPDOWN_GLYPH,                             STR_NONE },             // ride dropdown button
+    { WWT_LABEL,            0,      0,      139,    41,     52,         STR_LENGTH_OF_TIME,                             STR_NONE },             // weeks label
     { WWT_SPINNER,          0,      120,    219,    41,     52,         0,                                              STR_NONE },             // weeks
-    { WWT_DROPDOWN_BUTTON,  0,      208,    218,    42,     46,         STR_NUMERIC_UP,                                 STR_NONE },             // weeks +
-    { WWT_DROPDOWN_BUTTON,  0,      208,    218,    47,     51,         STR_NUMERIC_DOWN,                               STR_NONE },             // weeks -
-    { WWT_DROPDOWN_BUTTON,  0,      14,     335,    89,     100,        STR_MARKETING_START_THIS_MARKETING_CAMPAIGN,    STR_NONE },             // start button
+    { WWT_BUTTON,           0,      208,    218,    42,     46,         STR_NUMERIC_UP,                                 STR_NONE },             // weeks +
+    { WWT_BUTTON,           0,      208,    218,    47,     51,         STR_NUMERIC_DOWN,                               STR_NONE },             // weeks -
+    { WWT_BUTTON,           0,      14,     335,    89,     100,        STR_MARKETING_START_THIS_MARKETING_CAMPAIGN,    STR_NONE },             // start button
     { WIDGETS_END }
 };
 
@@ -93,8 +96,8 @@ static rct_window_event_list window_new_campaign_events = {
     nullptr
 };
 
-uint8 window_new_campaign_rides[MAX_RIDES];
-uint8 window_new_campaign_shop_items[64];
+static uint8 window_new_campaign_rides[MAX_RIDES];
+static uint8 window_new_campaign_shop_items[64];
 
 static sint32 ride_value_compare(const void *a, const void *b)
 {
@@ -201,27 +204,26 @@ rct_window * window_new_campaign_open(sint16 campaignType)
 static void window_new_campaign_get_shop_items()
 {
     sint32 i, numItems;
-    Ride *ride;
+    Ride * ride;
 
     uint64 items = 0;
-    FOR_ALL_RIDES(i, ride) {
-        rct_ride_entry *rideType = get_ride_entry(ride->subtype);
-        if (rideType == nullptr) {
+    FOR_ALL_RIDES(i, ride)
+    {
+        rct_ride_entry * rideEntry = get_ride_entry(ride->subtype);
+        if (rideEntry == nullptr)
+        {
             continue;
         }
-        uint8 itemType = rideType->shop_item;
-        if (itemType != 255)
-            items |= 1LL << itemType;
+        uint8 itemType = rideEntry->shop_item;
+        if (itemType != SHOP_ITEM_NONE && shop_item_is_food_or_drink(itemType))
+            items |= 1ULL << itemType;
     }
-
-    // Remove certain items?
-    items &= 0x0011FF78036BA3E0;
 
     //
     numItems = 0;
     for (i = 0; i < 64; i++)
     {
-        if (items & (1LL << i))
+        if (items & (1ULL << i))
         {
             window_new_campaign_shop_items[numItems++] = i;
         }
@@ -235,13 +237,25 @@ static void window_new_campaign_get_shop_items()
  */
 static void window_new_campaign_mouseup(rct_window *w, rct_widgetindex widgetIndex)
 {
-    switch (widgetIndex) {
+    switch (widgetIndex)
+    {
     case WIDX_CLOSE:
         window_close(w);
         break;
     case WIDX_START_BUTTON:
-        marketing_start_campaign(w->campaign.campaign_type, w->campaign.ride_id, w->campaign.no_weeks);
-        break;
+        {
+            auto gameAction = ParkMarketingAction(w->campaign.campaign_type, w->campaign.ride_id, w->campaign.no_weeks);
+            gameAction.SetCallback(
+                [](const GameAction *ga, const GameActionResult * result)
+                {
+                    if (result->Error == GA_ERROR::OK)
+                    {
+                        window_close_by_class(WC_NEW_CAMPAIGN);
+                    }
+                });
+            GameActions::Execute(&gameAction);
+            break;
+        }
     }
 }
 
@@ -261,7 +275,7 @@ static void window_new_campaign_mousedown(rct_window *w, rct_widgetindex widgetI
             window_new_campaign_get_shop_items();
             if (window_new_campaign_shop_items[0] != 255) {
                 sint32 numItems = 0;
-                for (sint32 i = 0; i < 40; i++) {
+                for (sint32 i = 0; i < DROPDOWN_ITEMS_MAX_SIZE; i++) {
                     if (window_new_campaign_shop_items[i] == 255)
                         break;
 
@@ -283,11 +297,12 @@ static void window_new_campaign_mousedown(rct_window *w, rct_widgetindex widgetI
             }
         } else {
             sint32 numItems = 0;
-            for (sint32 i = 0; i < 40; i++) {
+            for (sint32 i = 0; i < DROPDOWN_ITEMS_MAX_SIZE; i++)
+            {
                 if (window_new_campaign_rides[i] == 255)
                     break;
 
-                Ride *ride = get_ride(window_new_campaign_rides[i]);
+                Ride * ride = get_ride(window_new_campaign_rides[i]);
                 gDropdownItemsFormat[i] = STR_DROPDOWN_MENU_LABEL;
                 gDropdownItemsArgs[i] = ((uint64)ride->name_arguments << 16ULL) | ride->name;
                 numItems++;
@@ -351,9 +366,9 @@ static void window_new_campaign_invalidate(rct_window *w)
     switch (w->campaign.campaign_type) {
     case ADVERTISING_CAMPAIGN_RIDE_FREE:
     case ADVERTISING_CAMPAIGN_RIDE:
-        window_new_campaign_widgets[WIDX_RIDE_LABEL].type = WWT_24;
+        window_new_campaign_widgets[WIDX_RIDE_LABEL].type = WWT_LABEL;
         window_new_campaign_widgets[WIDX_RIDE_DROPDOWN].type = WWT_DROPDOWN;
-        window_new_campaign_widgets[WIDX_RIDE_DROPDOWN_BUTTON].type = WWT_DROPDOWN_BUTTON;
+        window_new_campaign_widgets[WIDX_RIDE_DROPDOWN_BUTTON].type = WWT_BUTTON;
         window_new_campaign_widgets[WIDX_RIDE_LABEL].text = STR_MARKETING_RIDE;
         if (w->campaign.ride_id != SELECTED_RIDE_UNDEFINED) {
             Ride *ride = get_ride(w->campaign.ride_id);
@@ -362,9 +377,9 @@ static void window_new_campaign_invalidate(rct_window *w)
         }
         break;
     case ADVERTISING_CAMPAIGN_FOOD_OR_DRINK_FREE:
-        window_new_campaign_widgets[WIDX_RIDE_LABEL].type = WWT_24;
+        window_new_campaign_widgets[WIDX_RIDE_LABEL].type = WWT_LABEL;
         window_new_campaign_widgets[WIDX_RIDE_DROPDOWN].type = WWT_DROPDOWN;
-        window_new_campaign_widgets[WIDX_RIDE_DROPDOWN_BUTTON].type = WWT_DROPDOWN_BUTTON;
+        window_new_campaign_widgets[WIDX_RIDE_DROPDOWN_BUTTON].type = WWT_BUTTON;
         window_new_campaign_widgets[WIDX_RIDE_LABEL].text = STR_MARKETING_ITEM;
         if (w->campaign.ride_id != SELECTED_RIDE_UNDEFINED) {
             window_new_campaign_widgets[WIDX_RIDE_DROPDOWN].text = ShopItemStringIds[w->campaign.ride_id].plural;

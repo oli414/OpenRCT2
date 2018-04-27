@@ -16,8 +16,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <string>
 #include "common.h"
 
@@ -29,8 +27,11 @@ namespace OpenRCT2
         RCT2,               // Base directory for original RollerCoaster Tycoon 2 content.
         OPENRCT2,           // Base directory for OpenRCT2 installation.
         USER,               // Base directory for OpenRCT2 user content.
+        CONFIG,             // Base directory for OpenRCT2 configuration.
+        CACHE,              // Base directory for OpenRCT2 cache files.
+        DOCUMENTATION,      // Base directory for OpenRCT2 doc files.
     };
-    constexpr sint32 DIRBASE_COUNT = 4;
+    constexpr sint32 DIRBASE_COUNT = 7;
     using DIRBASE_VALUES = std::string[DIRBASE_COUNT];
 
     enum class DIRID
@@ -65,6 +66,7 @@ namespace OpenRCT2
         SCORES,             // Scenario scores (highscores.dat).
         SCORES_LEGACY,      // Scenario scores, legacy (scores.dat).
         SCORES_RCT2,        // Scenario scores, rct2 (\Saved Games\scores.dat).
+        CHANGELOG,          // Notable changes to the game between versions, distributed with the game.
     };
 
     /**
@@ -83,5 +85,3 @@ namespace OpenRCT2
     IPlatformEnvironment * CreatePlatformEnvironment(DIRBASE_VALUES basePaths);
     IPlatformEnvironment * CreatePlatformEnvironment();
 }
-
-#endif

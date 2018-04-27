@@ -14,12 +14,15 @@
  *****************************************************************************/
 #pragma endregion
 
+#include <cmath>
+
 #include <openrct2/config/Config.h>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/interface/widget.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2/paint/Paint.h>
 
 enum WINDOW_VIEW_CLIPPING_WIDGET_IDX {
     WIDX_BACKGROUND,
@@ -37,7 +40,7 @@ enum class DISPLAY_TYPE {
     DISPLAY_UNITS
 };
 
-DISPLAY_TYPE gClipHeightDisplayType = DISPLAY_TYPE::DISPLAY_UNITS;
+static DISPLAY_TYPE gClipHeightDisplayType = DISPLAY_TYPE::DISPLAY_UNITS;
 
 #pragma region Widgets
 
@@ -50,8 +53,8 @@ static rct_widget window_view_clipping_widgets[] = {
     { WWT_CLOSEBOX,     0,  WW - 13,    WW - 3, 2,  13,     STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP }, // close x button
     { WWT_CHECKBOX,     0,  11,     149,    19, 29,     STR_VIEW_CLIPPING_HEIGHT_ENABLE,    STR_VIEW_CLIPPING_HEIGHT_ENABLE_TIP }, // clip height enable/disable check box
     { WWT_SPINNER,      0,  90,     149,    34, 45,     STR_NONE,               STR_VIEW_CLIPPING_HEIGHT_VALUE_TOGGLE }, // clip height value
-    { WWT_DROPDOWN_BUTTON,  0,  138,        148,    35, 39,     STR_NUMERIC_UP,             STR_NONE }, // clip height increase
-    { WWT_DROPDOWN_BUTTON,  0,  138,        148,    40, 44,     STR_NUMERIC_DOWN,           STR_NONE }, // clip height decrease
+    { WWT_BUTTON,           0,  138,        148,    35, 39,     STR_NUMERIC_UP,             STR_NONE }, // clip height increase
+    { WWT_BUTTON,           0,  138,        148,    40, 44,     STR_NUMERIC_DOWN,           STR_NONE }, // clip height decrease
     { WWT_SCROLL,       0,  11,     149,    49, 61,     SCROLL_HORIZONTAL,          STR_VIEW_CLIPPING_HEIGHT_SCROLL_TIP }, // clip height scrollbar
     { WIDGETS_END }
 };
@@ -106,7 +109,7 @@ static void window_view_clipping_set_clipheight(rct_window *w, const uint8 cliph
     gClipHeight = clipheight;
     rct_widget* widget = &window_view_clipping_widgets[WIDX_CLIP_HEIGHT_SLIDER];
     const float clip_height_ratio = (float)gClipHeight / 255;
-    w->scrolls[0].h_left = (sint16)ceil(clip_height_ratio * (w->scrolls[0].h_right - ((widget->right - widget->left) - 1)));
+    w->scrolls[0].h_left = (sint16)std::ceil(clip_height_ratio * (w->scrolls[0].h_right - ((widget->right - widget->left) - 1)));
 }
 
 rct_window * window_view_clipping_open()

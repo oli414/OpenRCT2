@@ -14,20 +14,21 @@
  *****************************************************************************/
 #pragma endregion
 
+#include <algorithm>
 #ifndef _WIN32
     #include <dirent.h>
 #endif
 
 #include "../platform/platform.h"
-#include "../localisation/localisation.h"
-#include "../util/util.h"
+#include "../util/Util.h"
+#include "../localisation/Language.h"
 
 #include "File.h"
 #include "Math.hpp"
 #include "Memory.hpp"
 #include "Path.hpp"
-#include "String.hpp"
 #include "Util.hpp"
+#include "String.hpp"
 
 namespace Path
 {
@@ -64,16 +65,29 @@ namespace Path
 
     utf8 * GetDirectory(utf8 * buffer, size_t bufferSize, const utf8 * path)
     {
-        size_t lastPathSepIndex = String::LastIndexOf(path, *PATH_SEPARATOR);
-        if (lastPathSepIndex == SIZE_MAX)
+        auto lastPathSepIndex = Math::Max(
+            String::LastIndexOf(path, *PATH_SEPARATOR),
+            String::LastIndexOf(path, '/')
+        );
+        if (lastPathSepIndex < 0)
         {
             return String::Set(buffer, bufferSize, String::Empty);
         }
 
-        size_t copyLength = Math::Min(lastPathSepIndex, bufferSize - 1);
-        Memory::Copy(buffer, path, copyLength);
+        size_t copyLength = Math::Min(lastPathSepIndex, static_cast<ptrdiff_t>(bufferSize - 1));
+        std::copy_n(path, copyLength, buffer);
         buffer[copyLength] = '\0';
         return buffer;
+    }
+
+    void CreateDirectory(const std::string &path)
+    {
+        platform_ensure_directory_exists(path.c_str());
+    }
+
+    bool DirectoryExists(const std::string &path)
+    {
+        return platform_directory_exists(path.c_str());
     }
 
     std::string GetFileName(const std::string &path)
@@ -83,25 +97,18 @@ namespace Path
 
     const utf8 * GetFileName(const utf8 * path)
     {
-        const utf8 * lastPathSeperator = nullptr;
+        const utf8 * lastPathSeparator = nullptr;
         for (const utf8 * ch = path; *ch != '\0'; ch++)
         {
-            if (*ch == *PATH_SEPARATOR)
+            if (*ch == *PATH_SEPARATOR || *ch == '/')
             {
-                lastPathSeperator = ch;
+                lastPathSeparator = ch;
             }
-#ifdef _WIN32
-            // Windows also allows forward slashes in paths
-            else if (*ch == '/')
-            {
-                lastPathSeperator = ch;
-            }
-#endif
         }
 
-        return lastPathSeperator == nullptr ?
+        return lastPathSeparator == nullptr ?
             path :
-            lastPathSeperator + 1;
+            lastPathSeparator + 1;
     }
 
     std::string GetFileNameWithoutExtension(const std::string &path)
@@ -142,7 +149,7 @@ namespace Path
         }
 
         size_t truncatedLength = Math::Min<size_t>(bufferSize - 1, lastDot - path);
-        Memory::Copy(buffer, path, truncatedLength);
+        std::copy_n(path, truncatedLength, buffer);
         buffer[truncatedLength] = '\0';
         return buffer;
     }
@@ -155,7 +162,7 @@ namespace Path
     const utf8 * GetExtension(const utf8 * path)
     {
         const utf8 * lastDot = nullptr;
-        const utf8 * ch = path;
+        const utf8 * ch = GetFileName(path);
         for (; *ch != '\0'; ch++)
         {
             if (*ch == '.')
@@ -205,6 +212,12 @@ namespace Path
             return buffer;
         }
 #endif
+    }
+
+    std::string GetAbsolute(const std::string &relative)
+    {
+        utf8 absolute[MAX_PATH];
+        return GetAbsolute(absolute, sizeof(absolute), relative.c_str());
     }
 
     bool Equals(const std::string &a, const std::string &b)

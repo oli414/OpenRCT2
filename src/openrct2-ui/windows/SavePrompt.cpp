@@ -22,9 +22,10 @@
 #include <openrct2/Context.h>
 
 #include <openrct2/audio/audio.h>
-#include <openrct2/game.h>
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/interface/widget.h>
+#include <openrct2/Game.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/scenario/Scenario.h>
 
 enum WINDOW_SAVE_PROMPT_WIDGET_IDX {
     WIDX_BACKGROUND,
@@ -37,13 +38,13 @@ enum WINDOW_SAVE_PROMPT_WIDGET_IDX {
 };
 
 static rct_widget window_save_prompt_widgets[] = {
-    { WWT_FRAME,            0,  0,      259,    0,  49, STR_NONE,                   STR_NONE },                 // panel / background
+    { WWT_FRAME,            0,  0,      259,    0,  53, STR_NONE,                   STR_NONE },                 // panel / background
     { WWT_CAPTION,          0,  1,      258,    1,  14, 0,                          STR_WINDOW_TITLE_TIP },     // title bar
-    { WWT_CLOSEBOX,         0,  247,    257,    2,  13, STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP },     // close x button
-    { WWT_12,               0,  2,      257,    19, 30, 0,                          STR_NONE },                 // question/label
-    { WWT_DROPDOWN_BUTTON,  0,  8,      85,     35, 46, STR_SAVE_PROMPT_SAVE,       STR_NONE },     // save
-    { WWT_DROPDOWN_BUTTON,  0,  91,     168,    35, 46, STR_SAVE_PROMPT_DONT_SAVE,  STR_NONE },     // don't save
-    { WWT_DROPDOWN_BUTTON,  0,  174,    251,    35, 46, STR_SAVE_PROMPT_CANCEL,     STR_NONE },     // cancel
+    { WWT_CLOSEBOX,         0,  247,    257,    2,  13, STR_CLOSE_X_WHITE,          STR_CLOSE_WINDOW_TIP },     // close x button
+    { WWT_LABEL_CENTRED,    0,  2,      257,    19, 30, 0,                          STR_NONE },                 // question/label
+    { WWT_BUTTON,           0,  8,      85,     35, 48, STR_SAVE_PROMPT_SAVE,       STR_NONE },     // save
+    { WWT_BUTTON,           0,  91,     168,    35, 48, STR_SAVE_PROMPT_DONT_SAVE,  STR_NONE },     // don't save
+    { WWT_BUTTON,           0,  174,    251,    35, 48, STR_SAVE_PROMPT_CANCEL,     STR_NONE },     // cancel
     { WIDGETS_END },
 };
 
@@ -56,15 +57,15 @@ enum WINDOW_QUIT_PROMPT_WIDGET_IDX {
 };
 
 static rct_widget window_quit_prompt_widgets[] = {
-    { WWT_FRAME,            0,  0,      176,    0,  33, STR_NONE,                   STR_NONE },                 // panel / background
+    { WWT_FRAME,            0,  0,      176,    0,  37, STR_NONE,                   STR_NONE },                 // panel / background
     { WWT_CAPTION,          0,  1,      175,    1,  14, STR_QUIT_GAME_PROMPT_TITLE, STR_WINDOW_TITLE_TIP },     // title bar
-    { WWT_CLOSEBOX,         0,  164,    174,    2,  13, STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP },     // close x button
-    { WWT_DROPDOWN_BUTTON,  0,  8,      85,     19, 30, STR_OK,                     STR_NONE },     // ok
-    { WWT_DROPDOWN_BUTTON,  0,  91,     168,    19, 30, STR_CANCEL,                 STR_NONE },     // cancel
+    { WWT_CLOSEBOX,         0,  164,    174,    2,  13, STR_CLOSE_X_WHITE,          STR_CLOSE_WINDOW_TIP },     // close x button
+    { WWT_BUTTON,           0,  8,      85,     19, 32, STR_OK,                     STR_NONE },     // ok
+    { WWT_BUTTON,           0,  91,     168,    19, 32, STR_CANCEL,                 STR_NONE },     // cancel
     { WIDGETS_END },
 };
 
-static const rct_string_id window_save_prompt_labels[][2] = {
+static constexpr const rct_string_id window_save_prompt_labels[][2] = {
     { STR_LOAD_GAME_PROMPT_TITLE,   STR_SAVE_BEFORE_LOADING },
     { STR_QUIT_GAME_PROMPT_TITLE,   STR_SAVE_BEFORE_QUITTING },
     { STR_QUIT_GAME_2_PROMPT_TITLE, STR_SAVE_BEFORE_QUITTING_2 },
@@ -156,7 +157,7 @@ rct_window * window_save_prompt_open()
             (1 << WQIDX_OK) |
             (1 << WQIDX_CANCEL);
         width = 177;
-        height = 34;
+        height = 38;
     } else {
         widgets = window_save_prompt_widgets;
         enabled_widgets =
@@ -165,7 +166,7 @@ rct_window * window_save_prompt_open()
             (1 << WIDX_DONT_SAVE) |
             (1 << WIDX_CANCEL);
         width = 260;
-        height = 50;
+        height = 54;
     }
 
     if (prompt_mode >= Util::CountOf(window_save_prompt_labels)) {
@@ -186,7 +187,7 @@ rct_window * window_save_prompt_open()
 
     // Pause the game
     gGamePaused |= GAME_PAUSED_MODAL;
-    audio_pause_sounds();
+    audio_stop_all_music_and_sounds();
     window_invalidate_by_class(WC_TOP_TOOLBAR);
 
     stringId = window_save_prompt_labels[prompt_mode][0];
@@ -238,18 +239,18 @@ static void window_save_prompt_mouseup(rct_window *w, rct_widgetindex widgetInde
 
             if (gScreenFlags & (SCREEN_FLAGS_EDITOR))
             {
-                intent = intent_create(WC_LOADSAVE);
-                intent_set_uint(intent, INTENT_EXTRA_LOADSAVE_TYPE, LOADSAVETYPE_SAVE | LOADSAVETYPE_LANDSCAPE);
-                intent_set_string(intent, INTENT_EXTRA_PATH, gS6Info.name);
+                intent = new Intent(WC_LOADSAVE);
+                intent->putExtra(INTENT_EXTRA_LOADSAVE_TYPE, LOADSAVETYPE_SAVE | LOADSAVETYPE_LANDSCAPE);
+                intent->putExtra(INTENT_EXTRA_PATH, std::string{gS6Info.name});
             }
             else
             {
                 intent = (Intent *) create_save_game_as_intent();
             }
             window_close(w);
-            intent_set_pointer(intent, INTENT_EXTRA_CALLBACK, (void *) window_save_prompt_callback);
+            intent->putExtra(INTENT_EXTRA_CALLBACK, (void *) window_save_prompt_callback);
             context_open_intent(intent);
-            intent_release(intent);
+            delete intent;
             break;
         }
         case WIDX_DONT_SAVE:

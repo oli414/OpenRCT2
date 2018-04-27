@@ -14,21 +14,27 @@
  *****************************************************************************/
 #pragma endregion
 
+#include <limits>
 #include <openrct2/config/Config.h>
+#include <openrct2/windows/Intent.h>
 #include <openrct2-ui/windows/Window.h>
 #include <openrct2/Context.h>
 
-#include <openrct2/drawing/drawing.h>
-#include <openrct2/game.h>
-#include <openrct2/input.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/peep/staff.h>
+#include <openrct2/actions/StaffSetColourAction.hpp>
+#include <openrct2/drawing/Drawing.h>
+#include <openrct2/Game.h>
+#include <openrct2/Input.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2/peep/Staff.h>
 #include <openrct2/sprites.h>
-#include <openrct2/util/util.h>
-#include <openrct2/world/footpath.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2/util/Util.h>
+#include <openrct2/world/Footpath.h>
+#include <openrct2-ui/interface/Dropdown.h>
+#include <openrct2/world/Sprite.h>
+#include <openrct2/world/Park.h>
+#include <openrct2/management/Finance.h>
 
 enum {
     WINDOW_STAFF_LIST_TAB_HANDYMEN,
@@ -119,7 +125,7 @@ static rct_widget window_staff_list_widgets[] = {
     { WWT_TAB,              1,  96,         126,        17,     43,     IMAGE_TYPE_REMAP | SPR_TAB,   STR_STAFF_ENTERTAINERS_TAB_TIP },   // entertainers tab
     { WWT_SCROLL,           1,  3,          316,        72,     266,    SCROLL_BOTH,            STR_NONE },                         // staff list
     { WWT_COLOURBTN,        1,  130,        141,        58,     69,     STR_NONE,               STR_UNIFORM_COLOUR_TIP },           // uniform colour picker
-    { WWT_DROPDOWN_BUTTON,  0,  WW - 155,   WW - 11,    17,     29,     STR_NONE,               STR_HIRE_STAFF_TIP },               // hire button
+    { WWT_BUTTON,           0,  WW - 155,   WW - 11,    17,     29,     STR_NONE,               STR_HIRE_STAFF_TIP },               // hire button
     { WWT_FLATBTN,          1,  WW - 77,    WW - 54,    46,     69,     SPR_DEMOLISH,           STR_QUICK_FIRE_STAFF },             // quick fire staff
     { WWT_FLATBTN,          1,  WW - 53,    WW - 30,    46,     69,     SPR_PATROL_BTN,         STR_SHOW_PATROL_AREA_TIP },         // show staff patrol area tool
     { WWT_FLATBTN,          1,  WW - 29,    WW - 6,     46,     69,     SPR_MAP,                STR_SHOW_STAFF_ON_MAP_TIP },        // show staff on map button
@@ -132,14 +138,14 @@ static sint32 _windowStaffListSelectedTab = WINDOW_STAFF_LIST_TAB_HANDYMEN;
 
 static uint8 window_staff_list_get_random_entertainer_costume();
 
-typedef struct staff_naming_convention
+struct staff_naming_convention
 {
     rct_string_id plural;
     rct_string_id singular;
     rct_string_id action_hire;
-} staff_naming_convention;
+};
 
-static const staff_naming_convention StaffNamingConvention[] = {
+static constexpr const staff_naming_convention StaffNamingConvention[] = {
     { STR_HANDYMAN_PLURAL,          STR_HANDYMAN_SINGULAR,          STR_HIRE_HANDYMAN },
     { STR_MECHANIC_PLURAL,          STR_MECHANIC_SINGULAR,          STR_HIRE_MECHANIC },
     { STR_SECURITY_GUARD_PLURAL,    STR_SECURITY_GUARD_SINGULAR,    STR_HIRE_SECURITY_GUARD },
@@ -229,7 +235,7 @@ static void window_staff_list_mouseup(rct_window *w, rct_widgetindex widgetIndex
         }
         break;
     case WIDX_STAFF_LIST_MAP:
-        window_map_open();
+        context_open_window(WC_MAP);
         break;
     case WIDX_STAFF_LIST_QUICK_FIRE:
         _quick_fire_mode ^= 1;
@@ -292,8 +298,10 @@ static void window_staff_list_mousedown(rct_window *w, rct_widgetindex widgetInd
 */
 static void window_staff_list_dropdown(rct_window *w, rct_widgetindex widgetIndex, sint32 dropdownIndex)
 {
-    if (widgetIndex == WIDX_STAFF_LIST_UNIFORM_COLOUR_PICKER && dropdownIndex != -1) {
-        update_staff_colour(_windowStaffListSelectedTab, dropdownIndex);
+    if (widgetIndex == WIDX_STAFF_LIST_UNIFORM_COLOUR_PICKER && dropdownIndex != -1)
+    {
+        auto action = StaffSetColourAction(_windowStaffListSelectedTab, dropdownIndex);
+        GameActions::Execute(&action);
     }
 }
 
@@ -335,8 +343,8 @@ static void window_staff_list_tooldown(rct_window *w, rct_widgetindex widgetInde
         sint32 selectedPeepType = _windowStaffListSelectedTab;
 
         sint32 direction;
-        rct_map_element *mapElement;
-        footpath_get_coordinates_from_pos(x, y, &x, &y, &direction, &mapElement);
+        rct_tile_element *tileElement;
+        footpath_get_coordinates_from_pos(x, y, &x, &y, &direction, &tileElement);
         if (x == 0x8000)
             return;
 
@@ -344,7 +352,7 @@ static void window_staff_list_tooldown(rct_window *w, rct_widgetindex widgetInde
 
         uint16 spriteIndex;
         rct_peep *peep, *closestPeep = nullptr;
-        sint32 closestPeepDistance = INT_MAX;
+        sint32 closestPeepDistance = std::numeric_limits<sint32>::max();
         FOR_ALL_STAFF(spriteIndex, peep) {
             if (peep->staff_type != selectedPeepType)
                 continue;
@@ -358,7 +366,7 @@ static void window_staff_list_tooldown(rct_window *w, rct_widgetindex widgetInde
                 }
             }
 
-            if (peep->x == MAP_LOCATION_NULL) {
+            if (peep->x == LOCATION_NULL) {
                 continue;
             }
 
@@ -416,7 +424,7 @@ void window_staff_list_scrollgetsize(rct_window *w, sint32 scrollIndex, sint32 *
         window_invalidate(w);
     }
 
-    *height = staffCount * 10;
+    *height = staffCount * SCROLLABLE_ROW_HEIGHT;
     i = *height - window_staff_list_widgets[WIDX_STAFF_LIST_LIST].bottom + window_staff_list_widgets[WIDX_STAFF_LIST_LIST].top + 21;
     if (i < 0)
         i = 0;
@@ -437,7 +445,7 @@ void window_staff_list_scrollmousedown(rct_window *w, sint32 scrollIndex, sint32
     sint32 i, spriteIndex;
     rct_peep *peep;
 
-    i = y / 10;
+    i = y / SCROLLABLE_ROW_HEIGHT;
     FOR_ALL_STAFF(spriteIndex, peep) {
         if (peep->staff_type != _windowStaffListSelectedTab)
             continue;
@@ -446,7 +454,11 @@ void window_staff_list_scrollmousedown(rct_window *w, sint32 scrollIndex, sint32
             if (_quick_fire_mode)
                 game_do_command(peep->x, 1, peep->y, spriteIndex, GAME_COMMAND_FIRE_STAFF_MEMBER, 0, 0);
             else
-                window_staff_open(peep);
+            {
+                auto intent = Intent(WC_PEEP);
+                intent.putExtra(INTENT_EXTRA_PEEP, peep);
+                context_open_intent(&intent);
+            }
             break;
         }
 
@@ -462,7 +474,7 @@ void window_staff_list_scrollmouseover(rct_window *w, sint32 scrollIndex, sint32
 {
     sint32 i;
 
-    i = y / 10;
+    i = y / SCROLLABLE_ROW_HEIGHT;
     if (i != _windowStaffListHighlightedIndex) {
         _windowStaffListHighlightedIndex = i;
         window_invalidate(w);
@@ -610,14 +622,14 @@ void window_staff_list_paint(rct_window *w, rct_drawpixelinfo *dpi)
 }
 
 /** rct2: 0x00992A08 */
-static const uint32 staffOrderBaseSprites[] = {
+static constexpr const uint32 staffOrderBaseSprites[] = {
     SPR_STAFF_ORDERS_SWEEPING,
     SPR_STAFF_ORDERS_INSPECT_RIDES,
     0,
     0,
 };
 
-static const uint32 staffCostumeSprites[] = {
+static constexpr const uint32 staffCostumeSprites[] = {
     SPR_STAFF_COSTUME_PANDA,
     SPR_STAFF_COSTUME_TIGER,
     SPR_STAFF_COSTUME_ELEPHANT,
@@ -657,22 +669,22 @@ void window_staff_list_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, sint32
                 sint32 format = (_quick_fire_mode ? STR_RED_STRINGID : STR_BLACK_STRING);
 
                 if (i == _windowStaffListHighlightedIndex) {
-                    gfx_filter_rect(dpi, 0, y, 800, y + 9, PALETTE_DARKEN_1);
+                    gfx_filter_rect(dpi, 0, y, 800, y + (SCROLLABLE_ROW_HEIGHT - 1), PALETTE_DARKEN_1);
                     format = (_quick_fire_mode ? STR_LIGHTPINK_STRINGID : STR_WINDOW_COLOUR_2_STRINGID);
                 }
 
                 set_format_arg(0, rct_string_id, peep->name_string_idx);
                 set_format_arg(2, uint32, peep->id);
-                gfx_draw_string_left_clipped(dpi, format, gCommonFormatArgs, COLOUR_BLACK, 0, y - 1, 107);
+                gfx_draw_string_left_clipped(dpi, format, gCommonFormatArgs, COLOUR_BLACK, 0, y, 107);
 
                 get_arguments_from_action(peep, &argument_1, &argument_2);
                 set_format_arg(0, uint32, argument_1);
                 set_format_arg(4, uint32, argument_2);
-                gfx_draw_string_left_clipped(dpi, format, gCommonFormatArgs, COLOUR_BLACK, 175, y - 1, 305);
+                gfx_draw_string_left_clipped(dpi, format, gCommonFormatArgs, COLOUR_BLACK, 175, y, 305);
 
                 // True if a patrol path is set for the worker
                 if (gStaffModes[peep->staff_id] & 2) {
-                    gfx_draw_sprite(dpi, SPR_STAFF_PATROL_PATH, 110, y - 1, 0);
+                    gfx_draw_sprite(dpi, SPR_STAFF_PATROL_PATH, 110, y, 0);
                 }
 
                 staffOrderIcon_x = 0x7D;
@@ -682,7 +694,7 @@ void window_staff_list_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, sint32
 
                     while (staffOrders != 0) {
                         if (staffOrders & 1) {
-                            gfx_draw_sprite(dpi, staffOrderSprite, staffOrderIcon_x, y - 1, 0);
+                            gfx_draw_sprite(dpi, staffOrderSprite, staffOrderIcon_x, y, 0);
                         }
                         staffOrders = staffOrders >> 1;
                         staffOrderIcon_x += 9;
@@ -690,11 +702,11 @@ void window_staff_list_scrollpaint(rct_window *w, rct_drawpixelinfo *dpi, sint32
                         staffOrderSprite++;
                     }
                 } else {
-                    gfx_draw_sprite(dpi, staffCostumeSprites[peep->sprite_type - 4], staffOrderIcon_x, y - 1, 0);
+                    gfx_draw_sprite(dpi, staffCostumeSprites[peep->sprite_type - 4], staffOrderIcon_x, y, 0);
                 }
             }
 
-            y += 10;
+            y += SCROLLABLE_ROW_HEIGHT;
             i++;
         }
     }

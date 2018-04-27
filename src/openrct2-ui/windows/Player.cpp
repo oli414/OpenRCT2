@@ -18,14 +18,16 @@
 #include <openrct2/network/network.h>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/game.h>
-#include <openrct2/input.h>
-#include <openrct2/localisation/localisation.h>
+#include <openrct2/Game.h>
+#include <openrct2/Input.h>
+#include <openrct2/localisation/Localisation.h>
 #include <openrct2/sprites.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/util/util.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/util/Util.h>
+#include <openrct2-ui/interface/Dropdown.h>
+#include <openrct2/interface/Colour.h>
+#include <openrct2/drawing/Drawing.h>
 
 enum WINDOW_PLAYER_PAGE {
     WINDOW_PLAYER_PAGE_OVERVIEW,
@@ -57,22 +59,22 @@ enum WINDOW_PLAYER_WIDGET_IDX {
     { WWT_TAB,              1,  3,      33,     17,     43,     IMAGE_TYPE_REMAP | SPR_TAB,   STR_NONE },             /* Tab 1                */      \
     { WWT_TAB,              1,  34,     64,     17,     43,     IMAGE_TYPE_REMAP | SPR_TAB,   STR_NONE }              /* Tab 2                */
 
-rct_widget window_player_overview_widgets[] = {
+static rct_widget window_player_overview_widgets[] = {
     WINDOW_PLAYER_COMMON_WIDGETS,
     { WWT_DROPDOWN,         1,  3,      177,    46,     57,     0xFFFFFFFF,         STR_NONE },                 // Permission group
-    { WWT_DROPDOWN_BUTTON,  1,  167,    177,    47,     56,     STR_DROPDOWN_GLYPH, STR_NONE },                 //
+    { WWT_BUTTON,           1,  167,    177,    47,     56,     STR_DROPDOWN_GLYPH, STR_NONE },                 //
     { WWT_FLATBTN,          1,  179,    190,    45,     68,     SPR_LOCATE,         STR_LOCATE_PLAYER_TIP },    // Locate button
     { WWT_FLATBTN,          1,  179,    190,    69,     92,     SPR_DEMOLISH,       STR_KICK_PLAYER_TIP },      // Kick button
     { WWT_VIEWPORT,         1,  3,      177,    60,     120,    0xFFFFFFFF,         STR_NONE },                 // Viewport
     { WIDGETS_END },
 };
 
-rct_widget window_player_statistics_widgets[] = {
+static rct_widget window_player_statistics_widgets[] = {
     WINDOW_PLAYER_COMMON_WIDGETS,
     { WIDGETS_END },
 };
 
-rct_widget *window_player_page_widgets[] = {
+static rct_widget *window_player_page_widgets[] = {
     window_player_overview_widgets,
     window_player_statistics_widgets
 };
@@ -171,7 +173,7 @@ static void window_player_draw_tab_images(rct_drawpixelinfo *dpi, rct_window *w)
 static void window_player_update_viewport(rct_window *w, bool scroll);
 static void window_player_update_title(rct_window* w);
 
-uint32 window_player_page_enabled_widgets[] = {
+static uint32 window_player_page_enabled_widgets[] = {
     (1 << WIDX_CLOSE) |
     (1 << WIDX_TAB_1) |
     (1 << WIDX_TAB_2) |
@@ -278,7 +280,7 @@ void window_player_overview_mouse_up(rct_window *w, rct_widgetindex widgetIndex)
             if (player == -1) {
                 return;
             }
-            rct_xyz16 coord = network_get_player_last_action_coord(player);
+            LocationXYZ16 coord = network_get_player_last_action_coord(player);
             if (coord.x || coord.y || coord.z) {
                 window_scroll_to_location(mainWindow, coord.x, coord.y, coord.z);
             }
@@ -521,7 +523,7 @@ void window_player_statistics_paint(rct_window *w, rct_drawpixelinfo *dpi)
     set_format_arg(0, uint32, network_get_player_commands_ran(player));
     gfx_draw_string_left(dpi, STR_COMMANDS_RAN, gCommonFormatArgs, COLOUR_BLACK, x, y);
 
-    y += 10;
+    y += LIST_ROW_HEIGHT;
 
     set_format_arg(0, uint32, network_get_player_money_spent(player));
     gfx_draw_string_left(dpi, STR_MONEY_SPENT, gCommonFormatArgs, COLOUR_BLACK, x, y);
@@ -603,7 +605,7 @@ static void window_player_update_viewport(rct_window *w, bool scroll)
 
     rct_viewport *viewport = w->viewport;
     if (viewport != nullptr) {
-        rct_xyz16 coord = network_get_player_last_action_coord(playerIndex);
+        LocationXYZ16 coord = network_get_player_last_action_coord(playerIndex);
         if (coord.x != 0 || coord.y != 0 || coord.z != 0) {
             sint32 viewX, viewY;
             centre_2d_coordinates(coord.x, coord.y, coord.z, &viewX, &viewY, viewport);

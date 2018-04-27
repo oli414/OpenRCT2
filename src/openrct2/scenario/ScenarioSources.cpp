@@ -19,7 +19,7 @@
 #include "../core/Util.hpp"
 #include "ScenarioSources.h"
 
-#include "scenario.h"
+#include "Scenario.h"
 
 namespace ScenarioSources
 {
@@ -38,7 +38,8 @@ namespace ScenarioSources
 
     #pragma region Scenario Data
 
-    static const ScenarioAlias ScenarioAliases[] =
+    // clang-format off
+    static constexpr const ScenarioAlias ScenarioAliases[] =
     {
         // UK - US differences:
         { "Katie's Dreamland",                      "Katie's World"                             },
@@ -52,10 +53,73 @@ namespace ScenarioSources
 
         // RCT1 pack by RCTScenarioLover has a mistake:
         { "Geoffrey Gardens",                       "Geoffery Gardens"                          },
+
+        // CD Projekt Polish Edition
+        { "Alpine Adventures",                          "Górska przygoda"                           },
+        { "Amity Airfield",                             "Lotnisko Pogięcie"                         },
+        { "Botany Breakers",                            "Wyspa Odludna"                             },
+        { "Bumbly Bazaar",                              "Gwarne targowisko"                         },
+        { "Crazy Castle",                               "Zwariowany zamek"                          },
+        { "Dusty Greens",                               "Zapiaszczone Dołki"                        },
+        { "Electric Fields",                            "Pola elektryczne"                          },
+        { "Extreme Heights",                            "Ekstremalne wysokości"                     },
+        { "Factory Capers",                             "300% normy"                                },
+        { "Fungus Woods",                               "Grzybowe Lasy"                             },
+        { "Ghost Town",                                 "Miasto-widmo"                              },
+        { "Gravity Gardens",                            "Ogrody Grawitacji"                         },
+        { "Infernal Views",                             "Piekielny widok"                           },
+        { "Lucky Lake",                                 "Jezioro Szczęściarzy"                      },
+        { "Rainbow Summit",                             "Tęczowy Szczyt"                            },
+
+        { "Six Flags Belgium",                          "\"Sześć Flag\" - Belgia"                   },
+        { "Six Flags Holland",                          "\"Sześć Flag\" - Holandia"                 },
+        { "Six Flags Magic Mountain",                   "Czarodziejska góra \"Sześciu Flag\""       },
+        { "Six Flags Great Adventure",                  "\"Sześć Flag\" - wielka przygoda"          },
+        { "Six Flags over Texas",                       "\"Sześć Flag nad Teksasem\""             },
+        { "Build your own Six Flags Belgium",           "Wybuduj własny park \"Sześć Flag\" - Belgia" },
+        { "Build your own Six Flags Holland",           "Wybuduj własny park \"Sześć Flag\" - Holandia" },
+        { "Build your own Six Flags Magic Mountain",    "Wybuduj własny park czarodziejska góra \"Sześciu Flag\"" },
+        { "Build your own Six Flags Great Adventure",   "Wybuduj własny park \"Sześć Flag\" - wielka przygoda" },
+        { "Build your own Six Flags over Texas",        "Wybuduj własny park \"Sześć Flag nad Teksasem\"" },
+        { "Build your own Six Flags Park",              "Wybuduj własny park \"Sześć Flag\""        },
+
+        { "Africa - African Diamond Mine",              "Afryka - kopalnia diamentów"               },
+        { "Africa - Oasis",                             "Afryka - oaza"                             },
+        { "Africa - Victoria Falls",                    "Afryka - Wodospad Wiktorii"                },
+        { "Antarctic - Ecological Salvage",             "Antarktyka - utylizacja"                   },
+        { "Asia - Great Wall of China Tourism Enhancement", "Azja - rozwój turystyki wokół Wielkiego Muru Chińskiego" },
+        { "Asia - Japanese Coastal Reclaim",            "Azja - odzysk japońskiego wybrzeża"        },
+        { "Asia - Maharaja Palace",                     "Azja - pałac maharadży"                    },
+        { "Australasia - Ayers Rock",                   "Australazja - Ayers Rock"                  },
+        { "Australasia - Fun at the beach",             "Australazja - zabawa na plaży"             },
+        { "Europe - European Cultural Festival",        "Europa - Europejski Festiwal Kulturalny"   },
+        { "Europe - Renovation",                        "Europa - odbudowa"                         },
+        { "N. America - Extreme Hawaiian Island",       "Ameryka Płn. - ekstremalne Hawaje"         },
+        { "North America - Grand Canyon",               "Ameryka Płn. - Wielki Kanion"              },
+        { "North America - Rollercoaster Heaven",       "Ameryka Płn. - raj kolejek górskich"       },
+        { "South America - Inca Lost City",             "Ameryka Płd. - zaginione miasto Inków"     },
+        { "South America - Rain Forest Plateau",        "Ameryka Płd. - tropikalny płaskowyż"       },
+        { "South America - Rio Carnival",               "Ameryka Płd. - karnawał w Rio"             },
+
+        { "Dark Age - Castle",                          "Mroczne Wieki - zamek"                     },
+        { "Dark Age - Robin Hood",                      "Mroczne Wieki - Robin Hood"                },
+        { "Future - First Encounters",                  "Przyszłość - pierwsze spotkania"           },
+        { "Future - Future World",                      "Przyszłość - świat przyszłości"            },
+        { "Mythological - Animatronic Film Set",        "Mitologia - mechaniczny plan filmowy"      },
+        { "Mythological - Cradle of Civilisation",      "Mitologia - kołyska cywilizacji"           },
+        { "Prehistoric - After the Asteroid",           "Prehistoria - po asteroidzie"              },
+        { "Prehistoric - Jurassic Safari",              "Prehistoria - jurajskie safari"            },
+        { "Prehistoric - Stone Age",                    "Prehistoria - epoka kamienna"              },
+        { "Roaring Twenties - Prison Island",           "Ryczące Dwudziestki - wyspa więzienna"     },
+        { "Roaring Twenties - Schneider Cup",           "Ryczące Dwudziestki - puchar Schneidera"   },
+        { "Roaring Twenties - Skyscrapers",             "Ryczące Dwudziestki - drapacze chmur"      },
+        { "Rock 'n' Roll - Flower Power",               "Rock 'n' Roll - dzieci kwiaty"             },
+        // Skipping Rock 'n' Roll - Rock 'n' Roll as that name matches exactly.
+
     };
 
     // RCT
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT1[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT1[] =
     {
         { SC_FOREST_FRONTIERS,          "Forest Frontiers",     SCENARIO_CATEGORY_BEGINNER      },
         { SC_DYNAMITE_DUNES,            "Dynamite Dunes",       SCENARIO_CATEGORY_BEGINNER      },
@@ -82,7 +146,7 @@ namespace ScenarioSources
     };
 
     // RCT: Added Attractions
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT1AA[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT1AA[] =
     {
         { SC_WHISPERING_CLIFFS,         "Whispering Cliffs",    SCENARIO_CATEGORY_BEGINNER      },
         { SC_THREE_MONKEYS_PARK,        "Three Monkeys Park",   SCENARIO_CATEGORY_BEGINNER      },
@@ -117,7 +181,7 @@ namespace ScenarioSources
     };
 
     // RCT: Loopy Landscapes
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT1LL[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT1LL[] =
     {
         {   SC_ICEBERG_ISLANDS,         "Iceberg Islands",      SCENARIO_CATEGORY_BEGINNER      },
         {   SC_VOLCANIA,                "Volcania",             SCENARIO_CATEGORY_BEGINNER      },
@@ -152,7 +216,7 @@ namespace ScenarioSources
     };
 
     // RCT2
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT2[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT2[] =
     {
         { SC_UNIDENTIFIED,              "Crazy Castle",         SCENARIO_CATEGORY_BEGINNER      },
         { SC_UNIDENTIFIED,              "Electric Fields",      SCENARIO_CATEGORY_BEGINNER      },
@@ -172,7 +236,7 @@ namespace ScenarioSources
     };
 
     // RCT2: Wacky Worlds
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT2WW[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT2WW[] =
     {
         { SC_UNIDENTIFIED,              "Africa - Victoria Falls",                          SCENARIO_CATEGORY_BEGINNER      },
         { SC_UNIDENTIFIED,              "Asia - Great Wall of China Tourism Enhancement",   SCENARIO_CATEGORY_BEGINNER      },
@@ -194,7 +258,7 @@ namespace ScenarioSources
     };
 
     // RCT2: Time Twister
-    static const ScenarioTitleDescriptor ScenarioTitlesRCT2TT[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRCT2TT[] =
     {
         { SC_UNIDENTIFIED,              "Dark Age - Robin Hood",                            SCENARIO_CATEGORY_BEGINNER      },
         { SC_UNIDENTIFIED,              "Prehistoric - After the Asteroid",                 SCENARIO_CATEGORY_BEGINNER      },
@@ -213,7 +277,7 @@ namespace ScenarioSources
     };
 
     // Real parks
-    static const ScenarioTitleDescriptor ScenarioTitlesRealParks[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesRealParks[] =
     {
         { SC_ALTON_TOWERS,              "Alton Towers",                                     SCENARIO_CATEGORY_REAL  },
         { SC_HEIDE_PARK,                "Heide-Park",                                       SCENARIO_CATEGORY_REAL  },
@@ -226,7 +290,7 @@ namespace ScenarioSources
     };
 
     // Other parks
-    static const ScenarioTitleDescriptor ScenarioTitlesOtherParks[] =
+    static constexpr const ScenarioTitleDescriptor ScenarioTitlesOtherParks[] =
     {
         { SC_FORT_ANACHRONISM,          "Fort Anachronism",                                 SCENARIO_CATEGORY_DLC               },
         { SC_PCPLAYER,                  "PC Player",                                        SCENARIO_CATEGORY_DLC               },
@@ -257,6 +321,7 @@ namespace ScenarioSources
         DEFINE_SCENARIO_TITLE_DESC_GROUP(ScenarioTitlesRealParks),
         DEFINE_SCENARIO_TITLE_DESC_GROUP(ScenarioTitlesOtherParks),
     };
+    // clang-format on
 
     #pragma endregion
 
@@ -314,7 +379,7 @@ namespace ScenarioSources
             }
         }
 
-        outDesc->title = nullptr;
+        outDesc->title = "";
         outDesc->id = SC_UNIDENTIFIED;
         outDesc->source = SCENARIO_SOURCE_OTHER;
         outDesc->index = -1;
@@ -356,20 +421,18 @@ namespace ScenarioSources
     }
 }
 
-extern "C"
+bool scenario_get_source_desc(const utf8 * name, source_desc * outDesc)
 {
-    bool scenario_get_source_desc(const utf8 * name, source_desc * outDesc)
-    {
-        return ScenarioSources::TryGetByName(name, outDesc);
-    }
-
-    bool scenario_get_source_desc_by_id(uint8 id, source_desc * outDesc)
-    {
-        return ScenarioSources::TryGetById(id, outDesc);
-    }
-
-    void scenario_normalise_name(utf8 * buffer, size_t bufferSize, utf8 * name)
-    {
-        ScenarioSources::NormaliseName(buffer, bufferSize, name);
-    }
+    return ScenarioSources::TryGetByName(name, outDesc);
 }
+
+bool scenario_get_source_desc_by_id(uint8 id, source_desc * outDesc)
+{
+    return ScenarioSources::TryGetById(id, outDesc);
+}
+
+void scenario_normalise_name(utf8 * buffer, size_t bufferSize, utf8 * name)
+{
+    ScenarioSources::NormaliseName(buffer, bufferSize, name);
+}
+

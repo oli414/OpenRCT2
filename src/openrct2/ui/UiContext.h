@@ -16,13 +16,13 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <string>
 #include <vector>
 #include "../common.h"
 #include "../Context.h"
 #include "../interface/Cursors.h"
+
+struct rct_drawpixelinfo;
 
 namespace OpenRCT2
 {
@@ -93,6 +93,9 @@ namespace OpenRCT2
         {
             virtual ~IUiContext() = default;
 
+            virtual void    Update() abstract;
+            virtual void    Draw(rct_drawpixelinfo * dpi) abstract;
+
             // Window
             virtual void    CreateWindow() abstract;
             virtual void    CloseWindow() abstract;
@@ -100,6 +103,7 @@ namespace OpenRCT2
             virtual void *  GetWindow() abstract;
             virtual sint32  GetWidth() abstract;
             virtual sint32  GetHeight() abstract;
+            virtual sint32  GetScaleQuality() abstract;
             virtual void    SetFullscreenMode(FULLSCREEN_MODE mode) abstract;
             virtual std::vector<Resolution> GetFullscreenResolutions() abstract;
             virtual bool HasFocus() abstract;
@@ -116,6 +120,7 @@ namespace OpenRCT2
             virtual const CursorState * GetCursorState() abstract;
             virtual CURSOR_ID           GetCursor() abstract;
             virtual void                SetCursor(CURSOR_ID cursor) abstract;
+            virtual void                SetCursorScale(uint8 scale) abstract;
             virtual void                SetCursorVisible(bool value) abstract;
             virtual void                GetCursorPosition(sint32 * x, sint32 * y) abstract;
             virtual void                SetCursorPosition(sint32 x, sint32 y) abstract;
@@ -147,5 +152,3 @@ namespace OpenRCT2
         IUiContext * CreateDummyUiContext();
     }
 }
-
-#endif

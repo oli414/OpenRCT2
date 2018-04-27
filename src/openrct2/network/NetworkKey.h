@@ -19,14 +19,12 @@
 
 #ifndef DISABLE_NETWORK
 
-#ifdef __cplusplus
-
 #include "../common.h"
-
 #include <string>
+#include <openssl/evp.h>
 
-typedef struct evp_pkey_st EVP_PKEY;
-typedef struct evp_pkey_ctx_st EVP_PKEY_CTX;
+using EVP_PKEY     = evp_pkey_st;
+using EVP_PKEY_CTX = evp_pkey_ctx_st;
 
 interface IStream;
 
@@ -50,8 +48,6 @@ private:
     EVP_PKEY_CTX * _ctx = nullptr;
     EVP_PKEY *     _key = nullptr;
 };
-
-#endif
 
 #endif // DISABLE_NETWORK
 

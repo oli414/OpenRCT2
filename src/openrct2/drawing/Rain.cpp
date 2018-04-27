@@ -14,10 +14,14 @@
  *****************************************************************************/
 #pragma endregion
 
-#include "../interface/window.h"
+#include "../interface/Window.h"
+#include "../interface/Window_internal.h"
 #include "../world/Climate.h"
-#include "drawing.h"
+#include "Drawing.h"
 #include "../config/Config.h"
+#include "../interface/Viewport.h"
+#include "../ride/TrackDesign.h"
+#include "../scenario/Scenario.h"
 
 #include "IDrawingEngine.h"
 #include "Rain.h"
@@ -25,7 +29,7 @@
 
 using namespace OpenRCT2::Drawing;
 
-typedef void (* DrawRainFunc)(IRainDrawer * rainDrawer, sint32 left, sint32 top, sint32 width, sint32 height);
+using DrawRainFunc = void (*)(IRainDrawer * rainDrawer, sint32 left, sint32 top, sint32 width, sint32 height);
 
 static void DrawLightRain(IRainDrawer * rainDrawer, sint32 left, sint32 top, sint32 width, sint32 height);
 static void DrawHeavyRain(IRainDrawer * rainDrawer, sint32 left, sint32 top, sint32 width, sint32 height);
@@ -59,10 +63,10 @@ static void CallDrawRainFunc(IRainDrawer * rainDrawer,
         return;
     }
 
-    left = Math::Max(left, vp->x);
-    right = Math::Min(right, vp->width);
-    top = Math::Max(top, vp->y);
-    bottom = Math::Min(bottom, vp->height);
+    left = Math::Max<sint16>(left, vp->x);
+    right = Math::Min<sint16>(right, vp->x + vp->width);
+    top = Math::Max<sint16>(top, vp->y);
+    bottom = Math::Min<sint16>(bottom, vp->y + vp->height);
     if (left >= right || top >= bottom)
     {
         return;
@@ -175,8 +179,8 @@ static void DrawRainAnimation(rct_drawpixelinfo * dpi, IRainDrawer * rainDrawer,
 void DrawRain(rct_drawpixelinfo * dpi, IRainDrawer * rainDrawer)
 {
     // Get rain draw function and draw rain
-    uint32 rainType = gClimateCurrentRainLevel;
-    if (rainType > 0 && !gTrackDesignSaveMode)
+    uint32 rainType = gClimateCurrent.RainLevel;
+    if (rainType != RAIN_LEVEL_NONE && !gTrackDesignSaveMode && !(gCurrentViewportFlags & VIEWPORT_FLAG_HIGHLIGHT_PATH_ISSUES))
     {
         DrawRainAnimation(dpi, rainDrawer, rainType);
     }

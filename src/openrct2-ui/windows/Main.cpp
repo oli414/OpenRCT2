@@ -17,12 +17,13 @@
 #include <openrct2/Context.h>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/world/footpath.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/localisation/StringIds.h>
+#include <openrct2/world/Footpath.h>
 
-rct_widget window_main_widgets[] = {
-    { WWT_VIEWPORT, 0, 0x0000, -1, 0x0000, -1, 0xFFFFFFFE, 0xFFFF },
+static rct_widget window_main_widgets[] = {
+    { WWT_VIEWPORT, 0, 0x0000, -1, 0x0000, -1, STR_VIEWPORT, 0xFFFF },
     { WIDGETS_END },
 };
 

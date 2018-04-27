@@ -16,11 +16,9 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
+#include <tuple>
+#include "../world/Water.h"
 #include "Object.h"
-
-#include "../world/water.h"
 
 class WaterObject final : public Object
 {
@@ -32,11 +30,14 @@ public:
 
     void * GetLegacyData()  override { return &_legacyType; }
 
+    void ReadJson(IReadObjectContext * context, const json_t * root) override;
     void ReadLegacy(IReadObjectContext * context, IStream * stream) override;
     void Load() override;
     void Unload() override;
 
     void DrawPreview(rct_drawpixelinfo * dpi, sint32 width, sint32 height) const override;
-};
 
-#endif
+private:
+    void ReadJsonPalette(const json_t * jPalette);
+    uint32 ParseColour(const std::string &s) const;
+};

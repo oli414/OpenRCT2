@@ -14,8 +14,6 @@
  *****************************************************************************/
 #pragma endregion
 
-#include <thread>
-
 #include "http.h"
 
 #ifdef DISABLE_HTTP
@@ -25,10 +23,11 @@ void http_dispose() { }
 
 #else
 
+#include <cstring>
+#include <thread>
+
 #include "../core/Console.hpp"
 #include "../core/Math.hpp"
-#include "../core/Path.hpp"
-#include "../core/String.hpp"
 #include "../Version.h"
 
 #ifdef _WIN32
@@ -45,11 +44,12 @@ struct HttpRequest2
     void *          Tag = nullptr;
     std::string     Method;
     std::string     Url;
-    http_data_type  Type;
+    HTTP_DATA_TYPE  Type;
+    bool            ForceIPv4 = false;
     size_t          Size = 0;
     union
     {
-        char *      Buffer = 0;
+        char *      Buffer = nullptr;
         json_t *    Json;
     } Body;
 
@@ -61,6 +61,7 @@ struct HttpRequest2
         Method = request.Method;
         Url = request.Url;
         Type = request.Type;
+        ForceIPv4 = request.ForceIPv4;
         Size = request.Size;
         if (request.Type == HTTP_DATA_JSON)
         {
@@ -79,6 +80,7 @@ struct HttpRequest2
         Method = std::string(request->method);
         Url = std::string(request->url);
         Type = request->type;
+        ForceIPv4 = request->forceIPv4;
         Size = request->size;
         if (request->type == HTTP_DATA_JSON)
         {
@@ -104,17 +106,17 @@ struct HttpRequest2
     }
 };
 
-typedef struct read_buffer {
+struct read_buffer {
     char *ptr;
     size_t length;
     size_t position;
-} read_buffer;
+};
 
-typedef struct write_buffer {
+struct write_buffer {
     char *ptr;
     size_t length;
     size_t capacity;
-} write_buffer;
+};
 
 void http_init()
 {
@@ -153,7 +155,7 @@ static http_response_t *http_request(const HttpRequest2 &request)
     CURL *curl;
     CURLcode curlResult;
     http_response_t *response;
-    read_buffer readBuffer = { 0 };
+    read_buffer readBuffer = { nullptr };
     write_buffer writeBuffer;
 
     curl = curl_easy_init();
@@ -200,6 +202,11 @@ static http_response_t *http_request(const HttpRequest2 &request)
     curl_easy_setopt(curl, CURLOPT_URL, request.Url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &writeBuffer);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, http_request_write_func);
+    if (request.ForceIPv4)
+    {
+        // Force resolving to IPv4 to fix issues where advertising over IPv6 does not work
+        curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    }
 
     curlResult = curl_easy_perform(curl);
 

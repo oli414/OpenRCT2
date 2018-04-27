@@ -15,14 +15,12 @@
 #pragma endregion
 
 #include <string>
-#include "core/String.hpp"
 #include "Version.h"
 
 #ifdef OPENRCT2_BUILD_INFO_HEADER
 #include OPENRCT2_BUILD_INFO_HEADER
 #endif
 
-extern "C" {
 const char gVersionInfoFull[] =
     OPENRCT2_NAME ", v" OPENRCT2_VERSION
 #ifdef OPENRCT2_BRANCH
@@ -38,4 +36,3 @@ const char gVersionInfoFull[] =
     " (DEBUG)"
 #endif
     ;
-}

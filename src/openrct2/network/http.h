@@ -17,40 +17,40 @@
 #ifndef _HTTP_H_
 #define _HTTP_H_
 
-#ifdef __cplusplus
-
 #ifndef DISABLE_HTTP
+#include <string>
 #include <jansson.h>
 #include "../common.h"
 
-typedef enum http_data_type_T {
+enum HTTP_DATA_TYPE {
     HTTP_DATA_NONE,
     HTTP_DATA_RAW,
     HTTP_DATA_JSON
-} http_data_type;
+};
 
-typedef struct http_request_t {
+struct http_request_t {
     void *tag;
-    const char *method;
-    const char *url;
-    http_data_type type = HTTP_DATA_NONE;
+    std::string method;
+    std::string url;
+    HTTP_DATA_TYPE type = HTTP_DATA_NONE;
+    bool forceIPv4;
     size_t size;
     union {
         const json_t *root;
         char* body;
     };
-} http_request_t;
+};
 
-typedef struct http_response_t {
+struct http_response_t {
     void *tag;
     sint32 status_code;
-    http_data_type type;
+    HTTP_DATA_TYPE type;
     size_t size;
     union {
         json_t *root;
         char* body;
     };
-} http_response_t;
+};
 
 #define HTTP_METHOD_GET     "GET"
 #define HTTP_METHOD_POST    "POST"
@@ -75,7 +75,5 @@ size_t http_download_park(const char * url, void * * outData);
 // These callbacks are defined anyway, but are dummy if HTTP is disabled
 void http_init();
 void http_dispose();
-
-#endif
 
 #endif

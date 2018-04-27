@@ -17,13 +17,18 @@
 #include <openrct2/config/Config.h>
 #include <openrct2-ui/windows/Window.h>
 
-#include <openrct2/game.h>
-#include <openrct2/localisation/localisation.h>
-#include <openrct2/interface/viewport.h>
-#include <openrct2/interface/widget.h>
-#include <openrct2/world/scenery.h>
-#include <openrct2/windows/dropdown.h>
+#include <openrct2/Game.h>
+#include <openrct2/localisation/Localisation.h>
+#include <openrct2/localisation/StringIds.h>
+#include <openrct2-ui/interface/Viewport.h>
+#include <openrct2-ui/interface/Widget.h>
+#include <openrct2/world/LargeScenery.h>
+#include <openrct2/world/Scenery.h>
+#include <openrct2/world/Wall.h>
+#include <openrct2-ui/interface/Dropdown.h>
 #include <openrct2/sprites.h>
+#include <openrct2/world/Banner.h>
+#include <openrct2/actions/SignSetNameAction.hpp>
 
 #define WW 113
 #define WH 96
@@ -40,11 +45,11 @@ enum WINDOW_SIGN_WIDGET_IDX {
 };
 
 // 0x9AEE00
-rct_widget window_sign_widgets[] = {
+static rct_widget window_sign_widgets[] = {
         { WWT_FRAME,    0, 0,       WW - 1,     0,          WH - 1,     0xFFFFFFFF,     STR_NONE },                         // panel / background
         { WWT_CAPTION,  0, 1,       WW - 2,     1,          14,         STR_SIGN,       STR_WINDOW_TITLE_TIP },             // title bar
         { WWT_CLOSEBOX, 0, WW - 13, WW - 3,     2,          13,         STR_CLOSE_X,    STR_CLOSE_WINDOW_TIP },             // close x button
-        { WWT_VIEWPORT, 1, 3,       WW - 26,    17,         WH - 20,    0xFFFFFFFE,     STR_NONE },                         // Viewport
+        { WWT_VIEWPORT, 1, 3,       WW - 26,    17,         WH - 20,    STR_VIEWPORT,   STR_NONE },                         // Viewport
         { WWT_FLATBTN,  1, WW - 25, WW - 2,     19,         42,         SPR_RENAME,     STR_CHANGE_SIGN_TEXT_TIP },         // change sign button
         { WWT_FLATBTN,  1, WW - 25, WW - 2,     67,         90,         SPR_DEMOLISH,   STR_DEMOLISH_SIGN_TIP },            // demolish button
         { WWT_COLOURBTN, 1, 5,      16,         WH - 16,    WH - 5,     0xFFFFFFFF,     STR_SELECT_MAIN_SIGN_COLOUR_TIP },  // Main colour
@@ -159,28 +164,30 @@ rct_window * window_sign_open(rct_windownumber number)
     sint32 view_x = gBanners[w->number].x << 5;
     sint32 view_y = gBanners[w->number].y << 5;
 
-    rct_map_element* map_element = map_get_first_element_at(view_x / 32, view_y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(view_x / 32, view_y / 32);
 
-    while (1){
-        if (map_element_get_type(map_element) == MAP_ELEMENT_TYPE_SCENERY_MULTIPLE) {
-            rct_scenery_entry* scenery_entry = get_large_scenery_entry(map_element->properties.scenerymultiple.type & MAP_ELEMENT_LARGE_TYPE_MASK);
-            if (scenery_entry->large_scenery.scrolling_mode != 0xFF){
-                sint32 id = (map_element->type & 0xC0) |
-                    ((map_element->properties.scenerymultiple.colour[0] & 0xE0) >> 2) |
-                    ((map_element->properties.scenerymultiple.colour[1] & 0xE0) >> 5);
+    while (1)
+    {
+        if (tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_LARGE_SCENERY)
+        {
+            rct_scenery_entry* scenery_entry = get_large_scenery_entry(scenery_large_get_type(tile_element));
+            if (scenery_entry->large_scenery.scrolling_mode != 0xFF)
+            {
+                sint32 id = scenery_large_get_banner_id(tile_element);
+
                 if (id == w->number)
                     break;
             }
         }
-        map_element++;
+        tile_element++;
     }
 
-    sint32 view_z = map_element->base_height << 3;
+    sint32 view_z = tile_element->base_height << 3;
     w->frame_no = view_z;
 
-    w->list_information_type = map_element->properties.scenerymultiple.colour[0] & 0x1F;
-    w->var_492 = map_element->properties.scenerymultiple.colour[1] & 0x1F;
-    w->var_48C = map_element->properties.scenerymultiple.type & MAP_ELEMENT_LARGE_TYPE_MASK;
+    w->list_information_type = scenery_large_get_primary_colour(tile_element);
+    w->var_492 = scenery_large_get_secondary_colour(tile_element);
+    w->var_48C = scenery_large_get_type(tile_element);
 
     view_x += 16;
     view_y += 16;
@@ -219,31 +226,32 @@ static void window_sign_mouseup(rct_window *w, rct_widgetindex widgetIndex)
 
     rct_string_id string_id;
 
-    rct_map_element* map_element = map_get_first_element_at(x / 32, y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(x / 32, y / 32);
 
     switch (widgetIndex) {
     case WIDX_CLOSE:
         window_close(w);
         break;
     case WIDX_SIGN_DEMOLISH:
-        while (1){
-            if (map_element_get_type(map_element) == MAP_ELEMENT_TYPE_SCENERY_MULTIPLE) {
-                rct_scenery_entry* scenery_entry = get_large_scenery_entry(map_element->properties.scenerymultiple.type & MAP_ELEMENT_LARGE_TYPE_MASK);
-                if (scenery_entry->large_scenery.scrolling_mode != 0xFF){
-                    sint32 id = (map_element->type & 0xC0) |
-                        ((map_element->properties.scenerymultiple.colour[0] & 0xE0) >> 2) |
-                        ((map_element->properties.scenerymultiple.colour[1] & 0xE0) >> 5);
+        while (1)
+        {
+            if (tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_LARGE_SCENERY)
+            {
+                rct_scenery_entry* scenery_entry = get_large_scenery_entry(scenery_large_get_type(tile_element));
+                if (scenery_entry->large_scenery.scrolling_mode != 0xFF)
+                {
+                    sint32 id = scenery_large_get_banner_id(tile_element);
                     if (id == w->number)
                         break;
                 }
             }
-            map_element++;
+            tile_element++;
         }
         game_do_command(
             x,
-            1 | ((map_element->type&0x3) << 8),
+            1 | ((tile_element->type & TILE_ELEMENT_DIRECTION_MASK) << 8),
             y,
-            map_element->base_height | ((map_element->properties.scenerymultiple.type >> 10) << 8),
+            tile_element->base_height | (scenery_large_get_sequence(tile_element) << 8),
             GAME_COMMAND_REMOVE_LARGE_SCENERY,
             0,
             0);
@@ -309,10 +317,10 @@ static void window_sign_dropdown(rct_window *w, rct_widgetindex widgetIndex, sin
  */
 static void window_sign_textinput(rct_window *w, rct_widgetindex widgetIndex, char *text)
 {
-    if (widgetIndex == WIDX_SIGN_TEXT && text != nullptr) {
-        game_do_command(1, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 0)), GAME_COMMAND_SET_SIGN_NAME, *((sint32*)(text + 8)), *((sint32*)(text + 4)));
-        game_do_command(2, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 12)), GAME_COMMAND_SET_SIGN_NAME, *((sint32*)(text + 20)), *((sint32*)(text + 16)));
-        game_do_command(0, GAME_COMMAND_FLAG_APPLY, w->number, *((sint32*)(text + 24)), GAME_COMMAND_SET_SIGN_NAME, *((sint32*)(text + 32)), *((sint32*)(text + 28)));
+    if (widgetIndex == WIDX_SIGN_TEXT && text != nullptr)
+    {
+        auto signSetNameAction = SignSetNameAction(w->number, text);
+        GameActions::Execute(&signSetNameAction);
     }
 }
 
@@ -362,7 +370,7 @@ static void window_sign_paint(rct_window *w, rct_drawpixelinfo *dpi)
 static void window_sign_viewport_rotate(rct_window *w)
 {
     rct_viewport* view = w->viewport;
-    w->viewport = 0;
+    w->viewport = nullptr;
 
     view->width = 0;
     viewport_update_pointers();
@@ -426,25 +434,25 @@ rct_window * window_sign_small_open(rct_windownumber number){
     sint32 view_x = gBanners[w->number].x << 5;
     sint32 view_y = gBanners[w->number].y << 5;
 
-    rct_map_element* map_element = map_get_first_element_at(view_x / 32, view_y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(view_x / 32, view_y / 32);
 
     while (1){
-        if (map_element_get_type(map_element) == MAP_ELEMENT_TYPE_WALL) {
-            rct_scenery_entry* scenery_entry = get_wall_entry(map_element->properties.wall.type);
+        if (tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_WALL) {
+            rct_scenery_entry* scenery_entry = get_wall_entry(tile_element->properties.wall.type);
             if (scenery_entry->wall.scrolling_mode != 0xFF){
-                if (map_element->properties.wall.banner_index == w->number)
+                if (tile_element->properties.wall.banner_index == w->number)
                     break;
             }
         }
-        map_element++;
+        tile_element++;
     }
 
-    sint32 view_z = map_element->base_height << 3;
+    sint32 view_z = tile_element->base_height << 3;
     w->frame_no = view_z;
 
-    w->list_information_type = map_element->properties.wall.colour_1 & 0x1F;
-    w->var_492 = wall_element_get_secondary_colour(map_element);
-    w->var_48C = map_element->properties.wall.type;
+    w->list_information_type = wall_get_primary_colour(tile_element);
+    w->var_492 = wall_get_secondary_colour(tile_element);
+    w->var_48C = tile_element->properties.wall.type;
 
     view_x += 16;
     view_y += 16;
@@ -484,7 +492,7 @@ static void window_sign_small_mouseup(rct_window *w, rct_widgetindex widgetIndex
 
     rct_string_id string_id;
 
-    rct_map_element* map_element = map_get_first_element_at(x / 32, y / 32);
+    rct_tile_element* tile_element = map_get_first_element_at(x / 32, y / 32);
 
     switch (widgetIndex) {
     case WIDX_CLOSE:
@@ -492,21 +500,21 @@ static void window_sign_small_mouseup(rct_window *w, rct_widgetindex widgetIndex
         break;
     case WIDX_SIGN_DEMOLISH:
         while (1){
-            if (map_element_get_type(map_element) == MAP_ELEMENT_TYPE_WALL) {
-                rct_scenery_entry* scenery_entry = get_wall_entry(map_element->properties.wall.type);
+            if (tile_element_get_type(tile_element) == TILE_ELEMENT_TYPE_WALL) {
+                rct_scenery_entry* scenery_entry = get_wall_entry(tile_element->properties.wall.type);
                 if (scenery_entry->wall.scrolling_mode != 0xFF){
-                    if (map_element->properties.wall.banner_index == w->number)
+                    if (tile_element->properties.wall.banner_index == w->number)
                         break;
                 }
             }
-            map_element++;
+            tile_element++;
         }
         gGameCommandErrorTitle = STR_CANT_REMOVE_THIS;
         game_do_command(
             x,
-            1 | ((map_element->type & 0x3) << 8),
+            1 | ((tile_element->type & TILE_ELEMENT_DIRECTION_MASK) << 8),
             y,
-            (map_element->base_height << 8) | (map_element->type & 0x3),
+            (tile_element->base_height << 8) | (tile_element->type & TILE_ELEMENT_DIRECTION_MASK),
             GAME_COMMAND_REMOVE_WALL,
             0,
             0);

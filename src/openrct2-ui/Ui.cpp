@@ -30,16 +30,16 @@ using namespace OpenRCT2::Audio;
 using namespace OpenRCT2::Ui;
 
 /**
- * Main entry point for non-Windows sytems. Windows instead uses its own DLL proxy.
+ * Main entry point for non-Windows systems. Windows instead uses its own DLL proxy.
  */
-#ifdef _MSC_VER
-int NormalisedMain(int argc, char * * argv)
+#if defined(_MSC_VER) && !defined(__DISABLE_DLL_PROXY__)
+int NormalisedMain(int argc, const char * * argv)
 #else
-int main(int argc, char * * argv)
+int main(int argc, const char * * argv)
 #endif
 {
+    int runGame = cmdline_run(argv, argc);
     core_init();
-    int runGame = cmdline_run((const char * *)argv, argc);
     if (runGame == 1)
     {
         if (gOpenRCT2Headless)
@@ -70,7 +70,7 @@ int main(int argc, char * * argv)
 
 #ifdef __ANDROID__
 extern "C" {
-int SDL_main(int argc, char *argv[])
+int SDL_main(int argc, const char *argv[])
 {
     return main(argc, argv);
 }

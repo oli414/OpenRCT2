@@ -16,9 +16,9 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "../common.h"
+
+interface IStream;
 
 /**
  * Represents a zip file.
@@ -57,5 +57,3 @@ namespace Zip
     IZipArchive * Open(const utf8 * path, ZIP_ACCESS zipAccess);
     IZipArchive * TryOpen(const utf8 * path, ZIP_ACCESS zipAccess);
 }
-
-#endif

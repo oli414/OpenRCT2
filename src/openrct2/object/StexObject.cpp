@@ -17,7 +17,7 @@
 #include "../core/IStream.hpp"
 #include "StexObject.h"
 
-#include "../localisation/localisation.h"
+#include "../localisation/Localisation.h"
 
 void StexObject::ReadLegacy(IReadObjectContext * context, IStream * stream)
 {
@@ -25,14 +25,14 @@ void StexObject::ReadLegacy(IReadObjectContext * context, IStream * stream)
     _legacyType.var_06 = stream->ReadValue<uint8>();
     stream->Seek(1, STREAM_SEEK_CURRENT);
 
-    GetStringTable()->Read(context, stream, OBJ_STRING_ID_SCENARIO_NAME);
-    GetStringTable()->Read(context, stream, OBJ_STRING_ID_PARK_NAME);
-    GetStringTable()->Read(context, stream, OBJ_STRING_ID_SCENARIO_DETAILS);
+    GetStringTable().Read(context, stream, OBJ_STRING_ID_SCENARIO_NAME);
+    GetStringTable().Read(context, stream, OBJ_STRING_ID_PARK_NAME);
+    GetStringTable().Read(context, stream, OBJ_STRING_ID_SCENARIO_DETAILS);
 }
 
 void StexObject::Load()
 {
-    GetStringTable()->Sort();
+    GetStringTable().Sort();
     _legacyType.scenario_name = language_allocate_object_string(GetScenarioName());
     _legacyType.park_name = language_allocate_object_string(GetParkName());
     _legacyType.details = language_allocate_object_string(GetScenarioDetails());
@@ -57,25 +57,22 @@ void StexObject::DrawPreview(rct_drawpixelinfo * dpi, sint32 width, sint32 heigh
     gfx_draw_string_centred(dpi, STR_WINDOW_NO_IMAGE, x, y, COLOUR_BLACK, nullptr);
 }
 
-const utf8 * StexObject::GetName() const
+std::string StexObject::GetName() const
 {
     return GetScenarioName();
 }
 
-const utf8 * StexObject::GetScenarioName() const
+std::string StexObject::GetScenarioName() const
 {
-    const utf8 * name = GetStringTable()->GetString(OBJ_STRING_ID_SCENARIO_NAME);
-    return name != nullptr ? name : "";
+    return GetStringTable().GetString(OBJ_STRING_ID_SCENARIO_NAME);
 }
 
-const utf8 * StexObject::GetScenarioDetails() const
+std::string StexObject::GetScenarioDetails() const
 {
-    const utf8 * name = GetStringTable()->GetString(OBJ_STRING_ID_SCENARIO_DETAILS);
-    return name != nullptr ? name : "";
+    return GetStringTable().GetString(OBJ_STRING_ID_SCENARIO_DETAILS);
 }
 
-const utf8 * StexObject::GetParkName() const
+std::string StexObject::GetParkName() const
 {
-    const utf8 * name = GetStringTable()->GetString(OBJ_STRING_ID_PARK_NAME);
-    return name != nullptr ? name : "";
+    return GetStringTable().GetString(OBJ_STRING_ID_PARK_NAME);
 }

@@ -16,8 +16,6 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <memory>
 #include "../common.h"
 #include "SawyerChunk.h"
@@ -34,7 +32,7 @@ private:
     IStream * const _stream = nullptr;
 
 public:
-    SawyerChunkWriter(IStream * stream);
+    explicit SawyerChunkWriter(IStream * stream);
 
     /**
      * Writes a chunk to the stream.
@@ -57,5 +55,3 @@ public:
         WriteChunk(src, sizeof(T), encoding);
     }
 };
-
-#endif

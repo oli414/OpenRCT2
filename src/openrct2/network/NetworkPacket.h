@@ -16,11 +16,10 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include <memory>
 #include <vector>
 #include "NetworkTypes.h"
+#include "../core/DataSerialiser.h"
 #include "../common.h"
 
 class NetworkPacket final
@@ -68,6 +67,10 @@ public:
         Data->insert(Data->end(), bytes, bytes + sizeof(value));
         return *this;
     }
-};
 
-#endif
+    NetworkPacket& operator<<(DataSerialiser& data)
+    {
+        Write((const uint8_t*)data.GetStream().GetData(), data.GetStream().GetLength());
+        return *this;
+    }
+};

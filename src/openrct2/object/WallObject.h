@@ -16,11 +16,9 @@
 
 #pragma once
 
-#ifdef __cplusplus
-
 #include "SceneryObject.h"
 
-#include "../world/scenery.h"
+#include "../world/Scenery.h"
 
 class WallObject final : public SceneryObject
 {
@@ -33,10 +31,9 @@ public:
     void * GetLegacyData()  override { return &_legacyType; }
 
     void ReadLegacy(IReadObjectContext * context, IStream * stream) override;
+    void ReadJson(IReadObjectContext * context, const json_t * root) override;
     void Load() override;
     void Unload() override;
 
     void DrawPreview(rct_drawpixelinfo * dpi, sint32 width, sint32 height) const override;
 };
-
-#endif
