@@ -30,6 +30,9 @@
 #include "../../ride/TrackDesign.h"
 #include "../../sprites.h"
 #include "../../world/Sprite.h"
+#include "../../localisation/Date.h"
+#include "../../world/MapGen.h"
+#include "../../oli414/Seasons.h"
 #include "../../world/Surface.h"
 #include "Paint.Surface.h"
 #include "Paint.TileElement.h"
@@ -1013,10 +1016,13 @@ void surface_paint(paint_session * session, uint8 direction, uint16 height, cons
 
     const uint16 zoomLevel = dpi->zoom_level;
     const uint8 rotation = session->CurrentRotation;
-    const uint32 terrain_type = surface_get_terrain(tileElement);
+    uint32 terrain_type = surface_get_terrain(tileElement);
     const uint8 surfaceShape = viewport_surface_paint_setup_get_relative_slope(tileElement, rotation);
     const LocationXY16& base = session->SpritePosition;
     const corner_height& cornerHeights = corner_heights[surfaceShape];
+
+    if (Seasons::should_have_snow((sint32)session->MapPosition.x >> 5, (sint32)session->MapPosition.y >> 5))
+            terrain_type = TERRAIN_ICE;
 
     tile_descriptor selfDescriptor =
     {
@@ -1070,6 +1076,9 @@ void surface_paint(paint_session * session, uint8 direction, uint16 height, cons
         descriptor.corner_heights.right = baseHeight + ch.right;
         descriptor.corner_heights.bottom = baseHeight + ch.bottom;
         descriptor.corner_heights.left = baseHeight + ch.left;
+
+        if (Seasons::should_have_snow(position.x >> 5, position.y >> 5))
+                descriptor.terrain = TERRAIN_ICE;
     }
 
 
@@ -1121,9 +1130,12 @@ void surface_paint(paint_session * session, uint8 direction, uint16 height, cons
         sint32 image_id;
         uint32 ebp = terrain_type;
 
+        if (Seasons::should_have_snow((sint32)session->MapPosition.x >> 5, (sint32)session->MapPosition.y >> 5))
+            branch = 1; // Overwrite overgrown and mowed grass during the winter.
+
         switch (branch)
         {
-        case 0:
+        case 0: // Mowed grass
             // loc_660C90
             image_id = dword_97B898[rotation][showGridlines ? 1 : 0] + image_offset;
             break;

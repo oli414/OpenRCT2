@@ -49,3 +49,5 @@ void mapgen_generate_custom_simplex(mapgen_settings * settings);
 bool mapgen_load_heightmap(const utf8 * path);
 void mapgen_unload_heightmap();
 void mapgen_generate_from_heightmap(mapgen_settings * settings);
+bool mapgen_has_snow(sint32 x, sint32 y, float snowyness);
+void mapgen_seed_rand(sint32 seed);

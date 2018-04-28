@@ -866,4 +866,16 @@ void mapgen_generate_from_heightmap(mapgen_settings * settings)
     delete[] dest;
 }
 
+bool mapgen_has_snow(sint32 x, sint32 y, float snowyness)
+{
+    static bool initNoise = false;
+    if (!initNoise) 
+    {
+        util_srand(414);
+        noise_rand();
+        initNoise = true;
+    }
+    return fractal_noise(x, y, 0.1f, 3, 0.3f, 0.65f) > ((1.0f - snowyness) * 2.0f - 1.0f);
+}
+
 #pragma endregion
