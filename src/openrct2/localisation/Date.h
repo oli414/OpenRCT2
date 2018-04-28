@@ -71,4 +71,6 @@ bool date_is_week_start(sint32 monthTicks);
 bool date_is_fortnight_start(sint32 monthTicks);
 bool date_is_month_start(sint32 monthTicks);
 
+bool date_is_winter(sint32 months);
+
 #endif

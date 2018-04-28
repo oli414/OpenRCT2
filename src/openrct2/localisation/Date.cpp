@@ -137,3 +137,9 @@ bool date_is_month_start(sint32 monthTicks)
 {
     return (monthTicks == 0);
 }
+
+bool date_is_winter(sint32 months)
+{
+    sint32 month = date_get_month(months);
+    return month >= MONTH_DECEMBER || month <= MONTH_FEBRUARY;
+}

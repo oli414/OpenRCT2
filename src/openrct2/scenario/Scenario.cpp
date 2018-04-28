@@ -44,6 +44,7 @@
 #include "../world/Scenery.h"
 #include "../world/Sprite.h"
 #include "../world/Water.h"
+#include "../oli414/Seasons.h"
 #include "ScenarioRepository.h"
 #include "ScenarioSources.h"
 #include "Scenario.h"
@@ -384,6 +385,7 @@ static void scenario_update_daynight_cycle()
         }
     }
     
+    /*
     if (gDayNightCycle > 0.5f)
     {
         if (gParkFlags & PARK_FLAGS_PARK_OPEN)
@@ -421,7 +423,7 @@ static void scenario_update_daynight_cycle()
                 }
             }
         }
-    }
+    }*/
 
     // Only update palette if day / night cycle has changed
     if (gDayNightCycle != currentDayNightCycle) {
@@ -439,6 +441,8 @@ void scenario_update()
     {
         static uint16 lastDateMonthTicks = 10;
         date_update();
+
+        Seasons::update();
 
         if (lastDateMonthTicks != gDateMonthTicks)
         {
