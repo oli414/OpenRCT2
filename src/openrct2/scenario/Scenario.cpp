@@ -386,7 +386,7 @@ static void scenario_update_daynight_cycle()
             gDayNightCycle = 0.0f;
         }
     }
-
+    
 #ifdef OLI414_SEASONS
     if (gDayNightCycle > 0.5f)
     {

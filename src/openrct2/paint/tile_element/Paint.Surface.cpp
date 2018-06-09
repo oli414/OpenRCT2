@@ -1021,8 +1021,10 @@ void surface_paint(paint_session * session, uint8 direction, uint16 height, cons
     const LocationXY16& base = session->SpritePosition;
     const corner_height& cornerHeights = corner_heights[surfaceShape];
 
+#ifdef OLI414_SEASONS
     if (Seasons::should_have_snow((sint32)session->MapPosition.x >> 5, (sint32)session->MapPosition.y >> 5))
             terrain_type = TERRAIN_ICE;
+#endif // OLI414_SEASONS
 
     tile_descriptor selfDescriptor =
     {
