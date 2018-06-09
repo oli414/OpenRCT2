@@ -386,8 +386,8 @@ static void scenario_update_daynight_cycle()
             gDayNightCycle = 0.0f;
         }
     }
-    
-    /*
+
+#ifdef OLI414_SEASONS
     if (gDayNightCycle > 0.5f)
     {
         if (gParkFlags & PARK_FLAGS_PARK_OPEN)
@@ -425,7 +425,8 @@ static void scenario_update_daynight_cycle()
                 }
             }
         }
-    }*/
+    }
+#endif // OLI414_SEASONS
 
     // Only update palette if day / night cycle has changed
     if (gDayNightCycle != currentDayNightCycle) {

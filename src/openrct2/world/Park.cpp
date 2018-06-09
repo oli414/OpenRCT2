@@ -32,6 +32,7 @@
 #include "../management/NewsItem.h"
 #include "../management/Research.h"
 #include "../network/network.h"
+#include "../oli414/Seasons.h"
 #include "../OpenRCT2.h"
 #include "../peep/Peep.h"
 #include "../peep/Staff.h"

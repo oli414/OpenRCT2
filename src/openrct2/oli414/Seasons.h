@@ -14,12 +14,14 @@
 *****************************************************************************/
 #pragma endregion
 
+#define OLI414_SEASONS
+
 #ifndef _SEASONS_H_
 #define _SEASONS_H_
 
 #include "../common.h"
 
-namespace Seasons 
+namespace Seasons
 {
     extern float gSnowLevel;
 

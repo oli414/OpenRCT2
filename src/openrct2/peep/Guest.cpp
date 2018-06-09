@@ -24,6 +24,7 @@
 #include "../management/Finance.h"
 #include "../management/Marketing.h"
 #include "../management/NewsItem.h"
+#include "../oli414/Seasons.h"
 #include "../Context.h"
 #include "../Game.h"
 #include "../OpenRCT2.h"
@@ -605,7 +606,6 @@ void rct_peep::Tick128UpdateGuest(sint32 index)
                 peep_insert_new_thought(this, thought_type, PEEP_THOUGHT_ITEM_NONE);
             }
         }
-
         switch (state)
         {
         case PEEP_STATE_WALKING:
@@ -632,6 +632,10 @@ void rct_peep::Tick128UpdateGuest(sint32 index)
             // but it would mean setting the peep happiness from
             // a thought type entry which i think is incorrect.
             peep_update_hunger(this);
+
+#ifdef OLI414_SEASONS
+            peep_decide_whether_to_leave_park(this);
+#endif //OLI414_SEASONS
             break;
 
         case PEEP_STATE_QUEUING:
@@ -2853,27 +2857,6 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
         return;
     }
 
-    /* Peeps that are happy enough, have enough energy and
-     * (if appropriate) have enough money will always stay
-     * in the park. */
-    if (!(peep->peep_flags & PEEP_FLAGS_LEAVING_PARK))
-    {
-        if (gParkFlags & PARK_FLAGS_NO_MONEY)
-        {
-            if (peep->energy >= 70 && peep->happiness >= 60)
-            {
-                return;
-            }
-        }
-        else
-        {
-            if (peep->energy >= 55 && peep->happiness >= 45 && peep->cash_in_pocket >= MONEY(5, 00))
-            {
-                return;
-            }
-        }
-    }
-
 #ifdef OLI414_SEASONS
 
     if (!park_is_open()) // Leave the park if the park is closed.
@@ -2894,6 +2877,27 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
         }
     }*/
 #endif // OLI414_SEASONS
+
+    /* Peeps that are happy enough, have enough energy and
+     * (if appropriate) have enough money will always stay
+     * in the park. */
+    if (!(peep->peep_flags & PEEP_FLAGS_LEAVING_PARK))
+    {
+        if (gParkFlags & PARK_FLAGS_NO_MONEY)
+        {
+            if (peep->energy >= 70 && peep->happiness >= 60)
+            {
+                return;
+            }
+        }
+        else
+        {
+            if (peep->energy >= 55 && peep->happiness >= 45 && peep->cash_in_pocket >= MONEY(5, 00))
+            {
+                return;
+            }
+        }
+    }
 
     // Approx 95% chance of staying in the park
     if ((scenario_rand() & 0xFFFF) > 3276)
