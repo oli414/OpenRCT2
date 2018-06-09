@@ -44,7 +44,84 @@ const rct_string_id DateFormatStringFormatIds[] = {
 };
 // clang-format on
 
+void openrct_datetime::tick(float tickSeconds)
+{
+    seconds += tickSeconds;
+
+    while (seconds < 0.0f)
+    {
+        minute--;
+        seconds += 60.f;
+    }
+    while (seconds >= 60.0f)
+    {
+        minute++;
+        seconds -= 60.f;
+    }
+
+    while (minute < 0)
+    {
+        hour--;
+        minute += 60;
+    }
+    while (minute >= 60)
+    {
+        hour++;
+        minute -= 60;
+    }
+
+    while (hour < 0)
+    {
+        monthDay--;
+        hour += 24;
+    }
+    while (hour >= 24)
+    {
+        monthDay++;
+        hour -= 24;
+    }
+
+    while (monthDay < 0)
+    {
+        month--;
+        monthDay += days_in_month[month % MONTH_COUNT];
+    }
+    while (monthDay >= days_in_month[month % MONTH_COUNT])
+    {
+        monthDay -= days_in_month[month % MONTH_COUNT];
+        month++;
+    }
+
+    while (month < 0)
+    {
+        year--;
+        month += MONTH_COUNT;
+    }
+    while (month >= MONTH_COUNT)
+    {
+        year++;
+        month -= MONTH_COUNT;
+    }
+}
+
+uint16 openrct_datetime::getMonthTicks()
+{
+    double maxVal = (((days_in_month[month] * 24.0f + 24.0f) * 60.0f + 60.0f) * 60.0f) + 60.0f;
+    double ticks = monthDay;
+    ticks *= 24.0f;
+    ticks += hour;
+    ticks *= 60.0f;
+    ticks += minute;
+    ticks *= 60.0f;
+    ticks += seconds;
+
+    return (uint16)floor(ticks / maxVal * 0x10000);
+}
+
 openrct_timeofday gRealTimeOfDay;
+
+openrct_datetime gDateTime;
+openrct_datetime gPreviousDateTime;
 
 sint32 date_get_month(sint32 months)
 {
@@ -70,6 +147,8 @@ void date_reset()
     gDateMonthsElapsed = 0;
     gDateMonthTicks = 0;
     gCurrentTicks = 0;
+
+    gDateTime = openrct_datetime();
 }
 
 void date_set(sint32 year, sint32 month, sint32 day)
@@ -79,10 +158,27 @@ void date_set(sint32 year, sint32 month, sint32 day)
     day = Math::Clamp(1, day, (int)days_in_month[month - 1]);
     gDateMonthsElapsed = (year - 1) * MONTH_COUNT + month - 1;
     gDateMonthTicks = 0x10000 / days_in_month[month - 1] * (day - 1) + 4;
+
+    gDateTime = openrct_datetime();
+    gDateTime.year = year;
+    gDateTime.month = month;
+    gDateTime.monthDay = day;
 }
 
 void date_update()
 {
+    gPreviousDateTime = gDateTime;
+
+    gDateTime.seconds = gRealTimeOfDay.second;
+    gDateTime.minute = gRealTimeOfDay.minute;
+    gDateTime.hour = gRealTimeOfDay.hour;
+    if (gPreviousDateTime.hour > gRealTimeOfDay.hour)
+        gDateTime.tick(86400.0f);
+
+    gDateMonthTicks = gDateTime.getMonthTicks();
+    gDateMonthsElapsed = gDateTime.month + gDateTime.year * MONTH_COUNT;
+
+    /*
     static int dateUpdateSkip = 0;
     dateUpdateSkip++;
     if (dateUpdateSkip >= 4) { // Skip 3 updates in order to make the day night cycle match up with the guests leaving and entering the park.
@@ -98,7 +194,7 @@ void date_update()
         {
             gDateMonthTicks = floor2((uint16)monthTicks, 4);
         }
-    }
+    }*/
 }
 
 void date_update_real_time_of_day()

@@ -372,22 +372,25 @@ static void scenario_update_daynight_cycle()
     gDayNightCycle = 0;
 
     if (gScreenFlags == SCREEN_FLAGS_PLAYING && gConfigGeneral.day_night_cycle) {
-        const int dayNightCycleLength = 1;
-        float monthFraction = ((gDateMonthsElapsed % dayNightCycleLength) + gDateMonthTicks / (float)0x10000) / (float)dayNightCycleLength;
-        if (monthFraction < (1 / 8.0f)) {
-            gDayNightCycle = 0.0f;
-        } else if (monthFraction < (3 / 8.0f)) {
-            gDayNightCycle = (monthFraction - (1 / 8.0f)) / (2 / 8.0f);
-        } else if (monthFraction < (5 / 8.0f)) {
+        double seconds = (gDateTime.hour * 60.0f + gDateTime.minute) * 60.0f + gDateTime.seconds;
+        double total = (23 * 60.0f + 59) * 60.0f + 59;
+        double dayFraction = seconds / total;
+
+        if (dayFraction < (1 / 8.0f)) {
             gDayNightCycle = 1.0f;
-        } else if (monthFraction < (7 / 8.0f)) {
-            gDayNightCycle = 1.0f - ((monthFraction - (5 / 8.0f)) / (2 / 8.0f));
-        } else {
+        } else if (dayFraction < (3 / 8.0f)) {
+            gDayNightCycle = 1.0f - ((dayFraction - (1 / 8.0f)) / (2 / 8.0f));
+        } else if (dayFraction < (5 / 8.0f)) {
             gDayNightCycle = 0.0f;
+        } else if (dayFraction < (7 / 8.0f)) {
+            gDayNightCycle = (dayFraction - (5 / 8.0f)) / (2 / 8.0f);
+        } else {
+            gDayNightCycle = 1.0f;
         }
     }
     
 #ifdef OLI414_SEASONS
+#ifdef OLI414_SEASONS_CLOSING_TIME
     if (gDayNightCycle > 0.5f)
     {
         if (gParkFlags & PARK_FLAGS_PARK_OPEN)
@@ -426,6 +429,7 @@ static void scenario_update_daynight_cycle()
             }
         }
     }
+#endif // OLI414_SEASONS_CLOSING_TIME
 #endif // OLI414_SEASONS
 
     // Only update palette if day / night cycle has changed

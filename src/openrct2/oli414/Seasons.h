@@ -15,6 +15,11 @@
 #pragma endregion
 
 #define OLI414_SEASONS
+#ifdef OLI414_SEASONS
+
+//#define OLI414_SEASONS_CLOSING_TIME
+
+#endif // OLI414_SEASONS
 
 #ifndef _SEASONS_H_
 #define _SEASONS_H_

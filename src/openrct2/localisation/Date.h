@@ -57,6 +57,23 @@ extern const sint16 MonthlyAttendanceModifier[];
 extern uint16 gDateMonthTicks;
 extern uint16 gDateMonthsElapsed;
 
+struct openrct_datetime 
+{
+    float seconds = 0.0f;
+    sint16 minute = 0;
+    sint16 hour = 0;
+    sint16 monthDay = 0;
+    sint16 month = 0;
+    sint32 year = 0;
+
+    void tick(float seconds);
+
+    uint16 getMonthTicks();
+};
+
+extern openrct_datetime gDateTime;
+extern openrct_datetime gPreviousDateTime;
+
 extern openrct_timeofday gRealTimeOfDay;
 
 sint32 date_get_month(sint32 months);

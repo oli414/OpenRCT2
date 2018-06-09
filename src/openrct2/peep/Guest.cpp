@@ -2859,11 +2859,13 @@ static void peep_decide_whether_to_leave_park(rct_peep * peep)
 
 #ifdef OLI414_SEASONS
 
+#ifdef OLI414_SEASONS_CLOSING_TIME
     if (!park_is_open()) // Leave the park if the park is closed.
     {
         peep_leave_park(peep);
         return;
     }
+#endif // OLI414_SEASONS_CLOSING_TIME
     /*
     // Leave the park after 15 minutes
     sint32 x = gScenarioTicks - peep->time_in_park;
