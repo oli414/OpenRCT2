@@ -118,6 +118,15 @@ uint16 openrct_datetime::getMonthTicks()
     return (uint16)floor(ticks / maxVal * 0x10000);
 }
 
+openrct_datetime openrct_datetime::fromOriginalDate(uint16 monthElapsed, uint16 monthTicks)
+{
+    openrct_datetime dateTime;
+    dateTime.month = monthElapsed;
+    dateTime.tick(0.0f); // monthElapsed goes over MONTH_COUNT to include the year as well. Tick extracts the overflow into a seperate year value.
+    dateTime.monthDay = ((monthTicks * days_in_month[dateTime.month]) >> 16) & 0xFF;
+    return dateTime;
+}
+
 openrct_timeofday gRealTimeOfDay;
 
 openrct_datetime gDateTime;

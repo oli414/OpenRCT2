@@ -2172,6 +2172,8 @@ private:
         gDateMonthsElapsed = _s4.month;
         gDateMonthTicks = _s4.day;
 
+        gDateTime = openrct_datetime::fromOriginalDate(gDateMonthsElapsed, gDateMonthTicks);
+
         // Park rating
         gParkRating = _s4.park_rating;
         for (size_t i = 0; i < 32; i++)

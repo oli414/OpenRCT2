@@ -69,6 +69,8 @@ struct openrct_datetime
     void tick(float seconds);
 
     uint16 getMonthTicks();
+
+    static openrct_datetime fromOriginalDate(uint16 monthElapsed, uint16 monthTicks);
 };
 
 extern openrct_datetime gDateTime;

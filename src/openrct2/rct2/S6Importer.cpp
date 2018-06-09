@@ -207,6 +207,8 @@ public:
         gScenarioSrand0    = _s6.scenario_srand_0;
         gScenarioSrand1    = _s6.scenario_srand_1;
 
+        gDateTime = openrct_datetime::fromOriginalDate(gDateMonthsElapsed, gDateMonthTicks);
+
         memcpy(gTileElements, _s6.tile_elements, sizeof(_s6.tile_elements));
 
         gNextFreeTileElementPointerIndex = _s6.next_free_tile_element_pointer_index;
