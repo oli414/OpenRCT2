@@ -31,7 +31,7 @@ static void graph_draw_months_uint8(rct_drawpixelinfo * dpi, const uint8 * histo
     x = baseX;
     y = baseY;
     for (i = count - 1; i >= 0; i--) {
-        if (history[i] != 0 && history[i] != 255 && week % 4 == 0) {
+        if (history[i] != 255 && week % 4 == 0) {
             // Draw month text
             set_format_arg(0, uint32, DateGameShortMonthNames[date_get_month(month + MONTH_COUNT)]);
             gfx_draw_string_centred(dpi, STR_GRAPH_LABEL, x, y - 10, COLOUR_BLACK, gCommonFormatArgs);
