@@ -249,7 +249,7 @@ static void window_game_bottom_toolbar_tooltip(rct_window* w, rct_widgetindex wi
     case WIDX_DATE:
         month = date_get_month(gDateMonthsElapsed);
         day = ((gDateMonthTicks * days_in_month[month]) >> 16) & 0xFF;
-        // MARKER OLI414
+
         set_format_arg(0, rct_string_id, DateDayNames[day]);
         set_format_arg(2, rct_string_id, DateGameMonthNames[month]);
         break;
@@ -564,9 +564,18 @@ static void window_game_bottom_toolbar_draw_right_panel(rct_drawpixelinfo *dpi, 
     set_format_arg(0, rct_string_id, DateDayNames[day]);
     set_format_arg(2, sint16, month);
     set_format_arg(4, sint16, year);
+
+    char dateBuffer[256];
+    format_string(dateBuffer, sizeof(dateBuffer), stringId, gCommonFormatArgs);
+
+    char buffer[256];
+    sprintf(buffer, "%.2d:%.2d  %s", gDateTime.hour, gDateTime.minute, dateBuffer);
+
+    set_format_arg(0, char*, buffer);
+
     gfx_draw_string_centred(
         dpi,
-        stringId,
+        STR_STRING,
         x,
         y,
         (gHoverWidget.window_classification == WC_BOTTOM_TOOLBAR && gHoverWidget.widget_index == WIDX_DATE ? COLOUR_WHITE : NOT_TRANSLUCENT(w->colours[0])),

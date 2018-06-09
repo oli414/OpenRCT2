@@ -68,8 +68,9 @@ namespace Seasons
 
     void update()
     {
+#ifdef OLI414_SEASONS_SNOW
         gSnowLevel = winter_level(gDateMonthsElapsed, gDateMonthTicks);
-        gSnowLevel = 0.0f;
+#endif // OLI414_SEASONS_SNOW
     }
 
     bool should_have_snow(sint32 x, sint32 y)

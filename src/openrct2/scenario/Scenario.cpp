@@ -389,7 +389,6 @@ static void scenario_update_daynight_cycle()
         }
     }
     
-#ifdef OLI414_SEASONS
 #ifdef OLI414_SEASONS_CLOSING_TIME
     if (gDayNightCycle > 0.5f)
     {
@@ -430,7 +429,6 @@ static void scenario_update_daynight_cycle()
         }
     }
 #endif // OLI414_SEASONS_CLOSING_TIME
-#endif // OLI414_SEASONS
 
     // Only update palette if day / night cycle has changed
     if (gDayNightCycle != currentDayNightCycle) {

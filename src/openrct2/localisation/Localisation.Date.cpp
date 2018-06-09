@@ -17,6 +17,7 @@
 #include <time.h>
 #include "../Game.h"
 #include "../core/Math.hpp"
+#include "../oli414/Seasons.h"
 #include "Date.h"
 #include "StringIds.h"
 
@@ -178,32 +179,20 @@ void date_update()
 {
     gPreviousDateTime = gDateTime;
 
+#ifdef OLI414_SEASONS_REALTIME
     gDateTime.seconds = gRealTimeOfDay.second;
     gDateTime.minute = gRealTimeOfDay.minute;
     gDateTime.hour = gRealTimeOfDay.hour;
     if (gPreviousDateTime.hour > gRealTimeOfDay.hour)
         gDateTime.tick(86400.0f);
+#else // OLI414_SEASONS_REALTIME
+
+    gDateTime.tick(10.0f);
+
+#endif
 
     gDateMonthTicks = gDateTime.getMonthTicks();
     gDateMonthsElapsed = gDateTime.month + gDateTime.year * MONTH_COUNT;
-
-    /*
-    static int dateUpdateSkip = 0;
-    dateUpdateSkip++;
-    if (dateUpdateSkip >= 4) { // Skip 3 updates in order to make the day night cycle match up with the guests leaving and entering the park.
-        dateUpdateSkip = 0;
-
-        sint32 monthTicks = gDateMonthTicks + 4;
-        if (monthTicks >= 0x10000)
-        {
-            gDateMonthTicks = 0;
-            gDateMonthsElapsed++;
-        }
-        else
-        {
-            gDateMonthTicks = floor2((uint16)monthTicks, 4);
-        }
-    }*/
 }
 
 void date_update_real_time_of_day()
