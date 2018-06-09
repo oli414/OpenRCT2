@@ -69,6 +69,7 @@ namespace Seasons
     void update()
     {
         gSnowLevel = winter_level(gDateMonthsElapsed, gDateMonthTicks);
+        gSnowLevel = 0.0f;
     }
 
     bool should_have_snow(sint32 x, sint32 y)
