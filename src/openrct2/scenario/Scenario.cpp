@@ -390,7 +390,7 @@ static void scenario_update_daynight_cycle()
     }
     
 #ifdef OLI414_SEASONS_CLOSING_TIME
-    if (gDayNightCycle > 0.5f)
+    if (gDateTime.hourHappened(gPreviousDateTime, gClosingTime.hour, gClosingTime.minute, gClosingTime.seconds))
     {
         if (gParkFlags & PARK_FLAGS_PARK_OPEN)
         {
@@ -407,7 +407,8 @@ static void scenario_update_daynight_cycle()
             }
         }
     }
-    else {
+    if (gDateTime.hourHappened(gPreviousDateTime, gOpeningTime.hour, gOpeningTime.minute, gOpeningTime.seconds))
+    {
         if (!(gParkFlags & PARK_FLAGS_PARK_OPEN))
         {
             park_set_open(1);
@@ -444,15 +445,14 @@ void scenario_update()
 {
     if (gScreenFlags == SCREEN_FLAGS_PLAYING)
     {
-        static uint16 lastDateMonthTicks = 10;
 
 #ifdef OLI414_SEASONS
         Seasons::update();
 #endif //OLI414_SEASONS
 
-        if (lastDateMonthTicks != gDateMonthTicks)
+        if (gDateTime.year != gPreviousDateTime.year || gDateTime.monthDay != gPreviousDateTime.monthDay || gDateTime.hour != gPreviousDateTime.hour || gDateTime.minute != gPreviousDateTime.minute || gDateTime.seconds != gPreviousDateTime.seconds)
         {
-            if (date_is_day_start(gDateMonthTicks))
+            if (gDateTime.hourHappened(gPreviousDateTime, 0))
             {
                 scenario_day_update();
             }
@@ -468,8 +468,6 @@ void scenario_update()
             {
                 scenario_month_update();
             }
-
-            lastDateMonthTicks = gDateMonthTicks;
         }
     }
     scenario_update_daynight_cycle();

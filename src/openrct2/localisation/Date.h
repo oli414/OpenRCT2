@@ -52,6 +52,7 @@ struct openrct_timeofday {
 extern const sint16 days_in_month[MONTH_COUNT];
 extern const rct_string_id DateFormatStringIds[];
 extern const rct_string_id DateFormatStringFormatIds[];
+extern const rct_string_id ShortDateFormatStringFormatIds[];
 extern const sint16 MonthlyAttendanceModifier[];
 
 extern uint16 gDateMonthTicks;
@@ -71,6 +72,13 @@ struct openrct_datetime
     uint16 getMonthTicks();
 
     static openrct_datetime fromOriginalDate(uint16 monthElapsed, uint16 monthTicks);
+
+    bool secondHappened(openrct_datetime previousDateTime, float second);
+    bool minuteHappened(openrct_datetime previousDateTime, sint16 minutes, float second = 0);
+    bool hourHappened(openrct_datetime previousDateTime, sint16 hours, sint16 minutes = 0, float second = 0);
+    bool dayHappened(openrct_datetime previousDateTime, sint16 day, sint16 hours = 0, sint16 minutes = 0, float second = 0);
+
+    sint16 getNumberOfDaysInThisMonth();
 };
 
 extern openrct_datetime gDateTime;

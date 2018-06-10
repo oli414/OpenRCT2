@@ -27,6 +27,10 @@
 #define _SEASONS_H_
 
 #include "../common.h"
+#include "../localisation/Date.h"
+
+extern openrct_datetime gOpeningTime;
+extern openrct_datetime gClosingTime;
 
 namespace Seasons
 {

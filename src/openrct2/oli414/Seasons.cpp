@@ -19,6 +19,9 @@
 #include "../world/Map.h"
 #include "../world/Location.hpp"
 
+openrct_datetime gOpeningTime{ 0.0f, 0, 10, 0, 0 };
+openrct_datetime gClosingTime{ 0.0f, 0, 22, 0, 0 };
+
 namespace Seasons 
 {
     float gSnowLevel = 0.0f;

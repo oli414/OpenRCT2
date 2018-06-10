@@ -560,16 +560,16 @@ static void window_game_bottom_toolbar_draw_right_panel(rct_drawpixelinfo *dpi, 
     sint32 month = date_get_month(gDateMonthsElapsed);
     sint32 day = ((gDateMonthTicks * days_in_month[month]) >> 16) & 0xFF;
 
-    rct_string_id stringId = DateFormatStringFormatIds[gConfigGeneral.date_format];
+    rct_string_id stringId = ShortDateFormatStringFormatIds[gConfigGeneral.date_format];
     set_format_arg(0, rct_string_id, DateDayNames[day]);
-    set_format_arg(2, sint16, month);
+    set_format_arg(2, rct_string_id, DateGameShortMonthNames[month]);
     set_format_arg(4, sint16, year);
 
     char dateBuffer[256];
     format_string(dateBuffer, sizeof(dateBuffer), stringId, gCommonFormatArgs);
 
     char buffer[256];
-    sprintf(buffer, "%.2d:%.2d  %s", gDateTime.hour, gDateTime.minute, dateBuffer);
+    sprintf(buffer, "%.2d:%.2d, %s", gDateTime.hour, gDateTime.minute, dateBuffer);
 
     set_format_arg(0, char*, buffer);
 

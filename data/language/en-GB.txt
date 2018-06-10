@@ -4567,6 +4567,12 @@ STR_6257    :Glassy (translucent)
 STR_6258    :Clear (transparent)
 STR_6259    :Disabled
 
+# Mod Strings:
+STR_8414    :{STRINGID} {STRINGID}, Year {COMMA16}
+STR_8415    :{POP16}{STRINGID} {PUSH16}{PUSH16}{STRINGID}, Year {POP16}{COMMA16}
+STR_8416    :Year {POP16}{POP16}{COMMA16}, {PUSH16}{PUSH16}{STRINGID} {PUSH16}{PUSH16}{STRINGID}
+STR_8417    :Year {POP16}{POP16}{COMMA16}, {PUSH16}{PUSH16}{PUSH16}{STRINGID} {STRINGID}
+
 #############
 # Scenarios #
 ################

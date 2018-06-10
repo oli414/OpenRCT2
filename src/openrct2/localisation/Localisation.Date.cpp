@@ -16,8 +16,10 @@
 
 #include <time.h>
 #include "../Game.h"
+#include "../Context.h"
 #include "../core/Math.hpp"
 #include "../oli414/Seasons.h"
+#include "../windows/Intent.h"
 #include "Date.h"
 #include "StringIds.h"
 
@@ -42,6 +44,12 @@ const rct_string_id DateFormatStringFormatIds[] = {
     STR_DATE_FORMAT_MDY,
     STR_DATE_FORMAT_YMD,
     STR_DATE_FORMAT_YDM
+};
+const rct_string_id ShortDateFormatStringFormatIds[] = {
+    STR_DATE_FORMAT_SHORT_DMY,
+    STR_DATE_FORMAT_SHORT_MDY,
+    STR_DATE_FORMAT_SHORT_YMD,
+    STR_DATE_FORMAT_SHORT_YDM
 };
 // clang-format on
 
@@ -125,7 +133,88 @@ openrct_datetime openrct_datetime::fromOriginalDate(uint16 monthElapsed, uint16 
     dateTime.month = monthElapsed;
     dateTime.tick(0.0f); // monthElapsed goes over MONTH_COUNT to include the year as well. Tick extracts the overflow into a seperate year value.
     dateTime.monthDay = ((monthTicks * days_in_month[dateTime.month]) >> 16) & 0xFF;
+    dateTime.hour = 10;
     return dateTime;
+}
+
+bool openrct_datetime::secondHappened(openrct_datetime previousDateTime, float second)
+{
+    if (previousDateTime.seconds < this->seconds)
+    {
+        if (previousDateTime.seconds < second &&  this->seconds >= second)
+            return true;
+    }
+    else
+    {
+        if (previousDateTime.seconds < second)
+            return true;
+        else if (this->seconds >= second)
+            return true;
+    }
+    return false;
+}
+
+bool openrct_datetime::minuteHappened(openrct_datetime previousDateTime, sint16 minutes, float second)
+{
+    if (!secondHappened(previousDateTime, second))
+        return false;
+    if (previousDateTime.minute < this->minute)
+    {
+        if (previousDateTime.minute < minutes && this->minute >= minutes)
+            return true;
+    }
+    else
+    {
+        if (previousDateTime.minute < minutes)
+            return true;
+        else if (this->minute >= minutes)
+            return true;
+    }
+    return false;
+}
+
+bool openrct_datetime::hourHappened(openrct_datetime previousDateTime, sint16 hours, sint16 minutes, float second)
+{
+    if (!minuteHappened(previousDateTime, minutes, second))
+        return false;
+    if (previousDateTime.hour < this->hour)
+    {
+        if (previousDateTime.hour < hours && this->hour >= hours)
+            return true;
+    }
+    else
+    {
+        if (previousDateTime.hour < hours)
+            return true;
+        else if (this->hour >= hours) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool openrct_datetime::dayHappened(openrct_datetime previousDateTime, sint16 day, sint16 hours, sint16 minutes, float second)
+{
+    if (!hourHappened(previousDateTime, hours, minutes, second))
+        return false;
+    if (previousDateTime.monthDay < this->monthDay)
+    {
+        if (previousDateTime.monthDay < day && this->monthDay >= day)
+            return true;
+    }
+    else
+    {
+        if (previousDateTime.monthDay < day)
+            return true;
+        else if (this->monthDay >= day)
+            return true;
+    }
+    return false;
+}
+
+sint16 openrct_datetime::getNumberOfDaysInThisMonth()
+{
+    return days_in_month[month % MONTH_COUNT];
 }
 
 openrct_timeofday gRealTimeOfDay;
@@ -159,6 +248,7 @@ void date_reset()
     gCurrentTicks = 0;
 
     gDateTime = openrct_datetime();
+    gDateTime.hour = 8;
 }
 
 void date_set(sint32 year, sint32 month, sint32 day)
@@ -180,16 +270,24 @@ void date_update()
     gPreviousDateTime = gDateTime;
 
 #ifdef OLI414_SEASONS_REALTIME
+
     gDateTime.seconds = gRealTimeOfDay.second;
     gDateTime.minute = gRealTimeOfDay.minute;
     gDateTime.hour = gRealTimeOfDay.hour;
     if (gPreviousDateTime.hour > gRealTimeOfDay.hour)
         gDateTime.tick(86400.0f);
+
 #else // OLI414_SEASONS_REALTIME
 
-    gDateTime.tick(10.0f);
+    gDateTime.tick(1.0f);
 
 #endif
+
+    if (gDateTime.minute != gPreviousDateTime.minute || gDateTime.hour != gPreviousDateTime.hour)
+    {
+        auto intent = Intent(INTENT_ACTION_UPDATE_DATE);
+        context_broadcast_intent(&intent);
+    }
 
     gDateMonthTicks = gDateTime.getMonthTicks();
     gDateMonthsElapsed = gDateTime.month + gDateTime.year * MONTH_COUNT;
