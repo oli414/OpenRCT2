@@ -330,9 +330,6 @@ static void path_bit_jumping_fountains_paint(
 /**
  * rct2: 0x006A4101
  * @param tile_element (esi)
- * @param (ecx)
- * @param ebp (ebp)
- * @param base_image_id (0x00F3EF78)
  */
 static void sub_6A4101(
     paint_session *          session,
@@ -797,6 +794,12 @@ void path_paint(paint_session * session, uint16 height, const rct_tile_element *
     if (tile_element->flags & TILE_ELEMENT_FLAG_GHOST) {
         session->InteractionType = VIEWPORT_INTERACTION_ITEM_NONE;
         imageFlags = CONSTRUCTION_MARKER;
+    }
+
+    // For debugging purpose, show blocked tiles with a colour
+    if (gPaintBlockedTiles && (tile_element->flags & TILE_ELEMENT_FLAG_BLOCKED_BY_VEHICLE))
+    {
+        imageFlags = COLOUR_BRIGHT_GREEN << 19 | COLOUR_GREY << 24 | IMAGE_TYPE_REMAP;
     }
 
     sint16 x = session->MapPosition.x, y = session->MapPosition.y;

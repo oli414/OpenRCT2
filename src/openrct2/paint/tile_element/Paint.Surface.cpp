@@ -91,7 +91,7 @@ struct corner_height
 };
 
 /**
-* rct2: 0x0097B4A4 (R), 0x0097B4C4 (T), 0x0097B4E4 (L), 0x0097B504 (B)
+*  rct2: 0x0097B4A4 (R), 0x0097B4C4 (T), 0x0097B4E4 (L), 0x0097B504 (B)
 */
 static constexpr const corner_height corner_heights[] = {
     //   T  R  B  L
@@ -524,7 +524,7 @@ static uint8 viewport_surface_paint_setup_get_relative_slope(const rct_tile_elem
 }
 
 /**
-* rct2: 0x0065E890, 0x0065E946, 0x0065E9FC, 0x0065EAB2
+*  rct2: 0x0065E890, 0x0065E946, 0x0065E9FC, 0x0065EAB2
 */
 static void viewport_surface_smoothen_edge(paint_session * session, enum edge_t edge, struct tile_descriptor self, struct tile_descriptor neighbour)
 {
@@ -830,7 +830,7 @@ static void viewport_surface_draw_tile_side_bottom(paint_session * session, enum
 }
 
 /**
-* rct2: 0x0065EB7D, 0x0065F0D8
+*  rct2: 0x0065EB7D, 0x0065F0D8
 */
 static void viewport_surface_draw_land_side_bottom(paint_session * session, enum edge_t edge, uint8 height, uint8 edgeStyle, struct tile_descriptor self, struct tile_descriptor neighbour)
 {
@@ -838,7 +838,7 @@ static void viewport_surface_draw_land_side_bottom(paint_session * session, enum
 }
 
 /**
-* rct2: 0x0065F8B9, 0x0065FE26
+*  rct2: 0x0065F8B9, 0x0065FE26
 */
 static void viewport_surface_draw_water_side_bottom(paint_session * session, enum edge_t edge, uint8 height, uint8 edgeStyle, struct tile_descriptor self, struct tile_descriptor neighbour)
 {
@@ -985,7 +985,7 @@ static void viewport_surface_draw_tile_side_top(paint_session * session, enum ed
 }
 
 /**
-* rct2: 0x0065F63B, 0x0065F77D
+*  rct2: 0x0065F63B, 0x0065F77D
 */
 static void viewport_surface_draw_land_side_top(paint_session * session, enum edge_t edge, uint8 height, uint8 terrain, struct tile_descriptor self, struct tile_descriptor neighbour)
 {
@@ -993,7 +993,7 @@ static void viewport_surface_draw_land_side_top(paint_session * session, enum ed
 }
 
 /**
-* rct2: 0x0066039B, 0x006604F1
+*  rct2: 0x0066039B, 0x006604F1
 */
 static void viewport_surface_draw_water_side_top(paint_session * session, enum edge_t edge, uint8 height, uint8 terrain, struct tile_descriptor self, struct tile_descriptor neighbour)
 {
@@ -1001,11 +1001,7 @@ static void viewport_surface_draw_water_side_top(paint_session * session, enum e
 }
 
 /**
-* rct2: 0x0066062C
-*
-* @param direction (cl)
-* @param height (dx)
-* @param tile_element (esi)
+*  rct2: 0x0066062C
 */
 void surface_paint(paint_session * session, uint8 direction, uint16 height, const rct_tile_element * tileElement)
 {

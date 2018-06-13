@@ -1,4 +1,4 @@
-#pragma region Copyright (c) 2014-2017 OpenRCT2 Developers
+#pragma region Copyright (c) 2014-2018 OpenRCT2 Developers
 /*****************************************************************************
  * OpenRCT2, an open source clone of Roller Coaster Tycoon 2.
  *
@@ -18,13 +18,6 @@
 
 #include "../common.h"
 
-namespace OpenRCT2
-{
-    class GameState;
-}
-
-interface IScenarioRepository;
-
 interface ITitleSequencePlayer
 {
     virtual ~ITitleSequencePlayer() = default;
@@ -37,14 +30,3 @@ interface ITitleSequencePlayer
     virtual void Seek(sint32 position) abstract;
     virtual void Eject() abstract;
 };
-
-ITitleSequencePlayer * CreateTitleSequencePlayer(IScenarioRepository& scenarioRepository, OpenRCT2::GameState& gameState);
-
-// When testing title sequences within a normal game
-extern bool gPreviewingTitleSequenceInGame;
-
-sint32 title_sequence_player_get_current_position(ITitleSequencePlayer * player);
-bool title_sequence_player_begin(ITitleSequencePlayer * player, uint32 titleSequenceId);
-void title_sequence_player_reset(ITitleSequencePlayer * player);
-bool title_sequence_player_update(ITitleSequencePlayer * player);
-void title_sequence_player_seek(ITitleSequencePlayer * player, uint32 position);

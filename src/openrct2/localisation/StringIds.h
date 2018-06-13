@@ -3930,14 +3930,16 @@ enum {
     STR_VIRTUAL_FLOOR_STYLE_TRANSPARENT = 6258,
     STR_VIRTUAL_FLOOR_STYLE_DISABLED = 6259,
 
+    STR_DEBUG_PAINT_SHOW_BLOCKED_TILES = 6260,
+
+    // Have to include resource strings (from scenarios and objects) for the time being now that language is partially working
+    STR_COUNT = 32768,
+
     // Mod Strings:
     STR_DATE_FORMAT_SHORT_DMY = 8414,
     STR_DATE_FORMAT_SHORT_MDY = 8415,
     STR_DATE_FORMAT_SHORT_YMD = 8416,
     STR_DATE_FORMAT_SHORT_YDM = 8417,
-
-    // Have to include resource strings (from scenarios and objects) for the time being now that language is partially working
-    STR_COUNT = 32768
 };
 
 #endif

@@ -256,8 +256,8 @@ enum WINDOW_TILE_INSPECTOR_WIDGET_IDX {
     { WWT_CAPTION,      0,  1,              WW - 2,             1,              14,         STR_TILE_INSPECTOR_TITLE,   STR_WINDOW_TITLE_TIP },     /* title bar */             \
     { WWT_CLOSEBOX,     0,  WW - 13,        WW - 3,             2,              13,         STR_CLOSE_X,                STR_CLOSE_WINDOW_TIP },     /* close x button */        \
     { WWT_SCROLL,       1,  3,              WW - 4,             57,             WH - PADDING_BOTTOM,    2,              STR_NONE },                 /* Element list */          \
-      STEPPER_WIDGETS  (1,  20,             70,                 23,             34,         STR_NONE,                   STR_NONE),                  /* Spinner X (3 widgets) */ \
-      STEPPER_WIDGETS  (1,  90,             140,                23,             34,         STR_NONE,                   STR_NONE),                  /* Spinner Y (3 widgets) */ \
+      SPINNER_WIDGETS  (1,  20,             70,                 23,             34,         STR_NONE,                   STR_NONE),                  /* Spinner X (3 widgets) */ \
+      SPINNER_WIDGETS  (1,  90,             140,                23,             34,         STR_NONE,                   STR_NONE),                  /* Spinner Y (3 widgets) */ \
     /* Buttons */                                                                                                                                                               \
     { WWT_FLATBTN,      1,  BX,             BW,                 BY,             BH,         SPR_MAP,          STR_INSERT_CORRUPT_TIP },             /* Insert corrupt button */ \
     { WWT_FLATBTN,      1,  BX - BS * 1,    BW - BS * 1,        BY,             BH,         SPR_DEMOLISH,     STR_REMOVE_SELECTED_ELEMENT_TIP },    /* Remove button */         \
@@ -289,7 +289,7 @@ static rct_widget DefaultWidgets[] = {
 #define SUR_GBDT (SUR_GBDB + 20 + 4 * 11)       // Surface group box details top
 static rct_widget SurfaceWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - SUR_GBPT, 0) + 3, GBBB(WH - SUR_GBPT, 0) - 3,   STR_NONE, STR_NONE),  // WIDX_SURFACE_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - SUR_GBPT, 0) + 3, GBBB(WH - SUR_GBPT, 0) - 3,   STR_NONE, STR_NONE),  // WIDX_SURFACE_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_BUTTON,           1,  GBB(WH - SUR_GBPT, 0, 1),   STR_TILE_INSPECTOR_SURFACE_REMOVE_FENCES,   STR_NONE }, // WIDX_SURFACE_BUTTON_REMOVE_FENCES
     { WWT_BUTTON,           1,  GBB(WH - SUR_GBPT, 1, 1),   STR_TILE_INSPECTOR_SURFACE_RESTORE_FENCES,  STR_NONE }, // WIDX_SURFACE_BUTTON_RESTORE_FENCES
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 1, GBBT(WH - SUR_GBPT, 2) + 7 * 0),  STR_NONE,   STR_NONE }, // WIDX_SURFACE_CHECK_CORNER_N
@@ -306,7 +306,7 @@ static rct_widget SurfaceWidgets[] = {
 #define PAT_GBDT (PAT_GBDB + 20 + 2 * 11)       // Path group box info top
 static rct_widget PathWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - PAT_GBPT, 0) + 3, GBBB(WH - PAT_GBPT, 0) - 3,  STR_NONE,  STR_NONE),  // WIDX_PATH_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - PAT_GBPT, 0) + 3, GBBB(WH - PAT_GBPT, 0) - 3,  STR_NONE,  STR_NONE),  // WIDX_PATH_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_CHECKBOX,         1,  GBBF(WH - PAT_GBPT, 0, 1),              STR_TILE_INSPECTOR_PATH_SLOPED, STR_NONE }, // WIDX_PATH_CHECK_SLOPED
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 3, GBBT(WH - PAT_GBPT, 2) + 7 * 1),  STR_NONE,   STR_NONE }, // WIDX_PATH_CHECK_EDGE_NE
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 4, GBBT(WH - PAT_GBPT, 2) + 7 * 2),  STR_NONE,   STR_NONE }, // WIDX_PATH_CHECK_EDGE_E
@@ -326,7 +326,7 @@ static rct_widget PathWidgets[] = {
 static rct_widget TrackWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
     { WWT_CHECKBOX,         1,  GBBF(WH - TRA_GBPT, 0, 0),  STR_TILE_INSPECTOR_TRACK_ENTIRE_TRACK_PIECE,    STR_NONE }, // WIDX_TRACK_CHECK_APPLY_TO_ALL
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - TRA_GBPT, 1) + 3, GBBB(WH - TRA_GBPT, 1) - 3,   STR_NONE, STR_NONE),  // WIDX_TRACK_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - TRA_GBPT, 1) + 3, GBBB(WH - TRA_GBPT, 1) - 3,   STR_NONE, STR_NONE),  // WIDX_TRACK_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_CHECKBOX,         1,  GBBF(WH - TRA_GBPT, 0, 2),  STR_TILE_INSPECTOR_TRACK_CHAIN_LIFT,            STR_NONE }, // WIDX_TRACK_CHECK_CHAIN_LIFT
     { WIDGETS_END },
 };
@@ -337,7 +337,7 @@ static rct_widget TrackWidgets[] = {
 #define SCE_GBDT (SCE_GBDB + 20 + 3 * 11)       // Scenery group box info top
 static rct_widget SceneryWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - SCE_GBPT, 0) + 3, GBBB(WH - SCE_GBPT, 0) - 3,  STR_NONE,   STR_NONE),  // WIDX_SCENERY_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - SCE_GBPT, 0) + 3, GBBB(WH - SCE_GBPT, 0) - 3,  STR_NONE,   STR_NONE),  // WIDX_SCENERY_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 1, GBBT(WH - SCE_GBPT, 1) + 7 * 0),  STR_NONE,   STR_NONE }, // WIDX_SCENERY_CHECK_QUARTER_N
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 2, GBBT(WH - SCE_GBPT, 1) + 7 * 1),  STR_NONE,   STR_NONE }, // WIDX_SCENERY_CHECK_QUARTER_E
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 1, GBBT(WH - SCE_GBPT, 1) + 7 * 2),  STR_NONE,   STR_NONE }, // WIDX_SCENERY_CHECK_QUARTER_S
@@ -356,7 +356,7 @@ static rct_widget SceneryWidgets[] = {
 #define ENT_GBDT (ENT_GBDB + 20 + 3 * 11)       // Entrance group box info top
 static rct_widget EntranceWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - ENT_GBPT, 0) + 3, GBBB(WH - ENT_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_ENTRANCE_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - ENT_GBPT, 0) + 3, GBBB(WH - ENT_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_ENTRANCE_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_BUTTON,           1,  GBB(WH - ENT_GBPT, 0, 1),   STR_TILE_INSPECTOR_ENTRANCE_MAKE_USABLE,        STR_TILE_INSPECTOR_ENTRANCE_MAKE_USABLE_TIP }, // WIDX_ENTRANCE_BUTTON_MAKE_USABLE
     { WIDGETS_END },
 };
@@ -367,7 +367,7 @@ static rct_widget EntranceWidgets[] = {
 #define WALL_GBDT (WALL_GBDB + 20 + 2 * 11)     // Wall group box info top
 static rct_widget WallWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - WALL_GBPT, 0) + 3, GBBB(WH - WALL_GBPT, 0) - 3, STR_NONE,  STR_NONE),  // WIDX_WALL_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - WALL_GBPT, 0) + 3, GBBB(WH - WALL_GBPT, 0) - 3, STR_NONE,  STR_NONE),  // WIDX_WALL_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_DROPDOWN,         1,  GBD(WH - WALL_GBPT, 1, 1),  STR_NONE,                                       STR_NONE }, // WIDX_WALL_DROPDOWN_SLOPE
     { WWT_BUTTON,           1,  GBDB(WH - WALL_GBPT, 1, 1), STR_DROPDOWN_GLYPH,                             STR_NONE }, // WIDX_WALL_DROPDOWN_SLOPE_BUTTON
     { WIDGETS_END },
@@ -379,7 +379,7 @@ static rct_widget WallWidgets[] = {
 #define LAR_GBDT (LAR_GBDB + 20 + 3 * 11)       // Large scenery group box info top
 static rct_widget LargeSceneryWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - LAR_GBPT, 0) + 3, GBBB(WH - LAR_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_LARGE_SCENERY_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - LAR_GBPT, 0) + 3, GBBB(WH - LAR_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_LARGE_SCENERY_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WIDGETS_END },
 };
 
@@ -389,7 +389,7 @@ static rct_widget LargeSceneryWidgets[] = {
 #define BAN_GBDT (BAN_GBDB + 20 + 1 * 11)       // Banner group box info top
 static rct_widget BannerWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - BAN_GBPT, 0) + 3, GBBB(WH - BAN_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_BANNER_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - BAN_GBPT, 0) + 3, GBBB(WH - BAN_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_BANNER_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 3,   GBBT(WH - BAN_GBPT, 1) + 7 * 1),    STR_NONE,       STR_NONE }, // WIDX_BANNER_CHECK_BLOCK_NE
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 3,   GBBT(WH - BAN_GBPT, 1) + 7 * 3),    STR_NONE,       STR_NONE }, // WIDX_BANNER_CHECK_BLOCK_SE
     { WWT_CHECKBOX,         1,  CHK(GBBL(1) + 14 * 1,   GBBT(WH - BAN_GBPT, 1) + 7 * 3),    STR_NONE,       STR_NONE }, // WIDX_BANNER_CHECK_BLOCK_SW
@@ -404,7 +404,7 @@ static rct_widget BannerWidgets[] = {
 #define COR_GBDT (COR_GBDB + 20 + 0 * 11)       // Corrupt element group box info top
 static rct_widget CorruptWidgets[] = {
     MAIN_TILE_INSPECTOR_WIDGETS,
-      STEPPER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - COR_GBPT, 0) + 3, GBBB(WH - COR_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_CORRUPT_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
+      SPINNER_WIDGETS      (1,  GBBL(1), GBBR(1), GBBT(WH - COR_GBPT, 0) + 3, GBBB(WH - COR_GBPT, 0) - 3,   STR_NONE,  STR_NONE),  // WIDX_CORRUPT_SPINNER_HEIGHT{,_INCREASE,_DECREASE}
     { WWT_BUTTON,           1,  GBB(WH - SUR_GBPT, 0, 1),   STR_TILE_INSPECTOR_CLAMP_TO_NEXT, STR_TILE_INSPECTOR_CLAMP_TO_NEXT_TIP }, // WIDX_CORRUPT_BUTTON_CLAMP
     { WIDGETS_END },
 };
@@ -514,9 +514,22 @@ static uint64 PageEnabledWidgets[] = {
     (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_ROTATE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_SCENERY_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_SCENERY_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_SCENERY_CHECK_QUARTER_N) | (1ULL << WIDX_SCENERY_CHECK_QUARTER_E) | (1ULL << WIDX_SCENERY_CHECK_QUARTER_S) | (1ULL << WIDX_SCENERY_CHECK_QUARTER_W) | (1ULL << WIDX_SCENERY_CHECK_COLLISION_N) | (1ULL << WIDX_SCENERY_CHECK_COLLISION_E) | (1ULL << WIDX_SCENERY_CHECK_COLLISION_S) | (1ULL << WIDX_SCENERY_CHECK_COLLISION_W),
     (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_ROTATE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_ENTRANCE_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_ENTRANCE_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_ENTRANCE_BUTTON_MAKE_USABLE),
     (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_ROTATE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_WALL_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_WALL_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_WALL_DROPDOWN_SLOPE) | (1ULL << WIDX_WALL_DROPDOWN_SLOPE_BUTTON),
-    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_DECREASE),
-    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_ROTATE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_NE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_SE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_SW) | (1ULL << WIDX_BANNER_CHECK_BLOCK_NW),
-    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_CORRUPT_BUTTON_CLAMP),
+    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_ROTATE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_NE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_SE) | (1ULL << WIDX_BANNER_CHECK_BLOCK_SW) | (1ULL << WIDX_BANNER_CHECK_BLOCK_NW),
+    (1ULL << WIDX_CLOSE) | (1ULL << WIDX_BUTTON_CORRUPT) | (1ULL << WIDX_BUTTON_REMOVE) | (1ULL << WIDX_BUTTON_COPY) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_DECREASE) | (1ULL << WIDX_CORRUPT_BUTTON_CLAMP),
+};
+
+static uint64 PageHoldDownWidgets[] = {
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_SURFACE_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_SURFACE_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_PATH_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_PATH_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_TRACK_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_TRACK_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_SCENERY_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_SCENERY_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_ENTRANCE_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_ENTRANCE_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_WALL_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_WALL_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_LARGE_SCENERY_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_BANNER_SPINNER_HEIGHT_DECREASE),
+    (1ULL << WIDX_SPINNER_X_INCREASE) | (1ULL << WIDX_SPINNER_X_DECREASE) | (1ULL << WIDX_SPINNER_Y_INCREASE) | (1ULL << WIDX_SPINNER_Y_DECREASE) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_INCREASE) | (1ULL << WIDX_CORRUPT_SPINNER_HEIGHT_DECREASE),
 };
 
 static uint64 PageDisabledWidgets[] = {
@@ -557,7 +570,7 @@ rct_window * window_tile_inspector_open()
     window->min_height = MIN_WH;
     window->max_width = MAX_WW;
     window->max_height = MAX_WH;
-    window->selected_list_item = -1;
+    windowTileInspectorSelectedIndex = -1;
     window_init_scroll_widgets(window);
 
     windowTileInspectorTileSelected = false;
@@ -574,20 +587,20 @@ void window_tile_inspector_clear_clipboard()
 
 static rct_tile_element* window_tile_inspector_get_selected_element(rct_window *w)
 {
-    openrct2_assert(w->selected_list_item >= 0 && w->selected_list_item < windowTileInspectorElementCount,
+    openrct2_assert(windowTileInspectorSelectedIndex >= 0 && windowTileInspectorSelectedIndex < windowTileInspectorElementCount,
                     "Selected list item out of range");
-    return map_get_first_element_at(windowTileInspectorTileX, windowTileInspectorTileY) + w->selected_list_item;
+    return map_get_first_element_at(windowTileInspectorTileX, windowTileInspectorTileY) + windowTileInspectorSelectedIndex;
 }
 
 static void window_tile_inspector_select_element_from_list(rct_window *w, sint32 index)
 {
     if (index < 0 || index >= windowTileInspectorElementCount)
     {
-        w->selected_list_item = -1;
+        windowTileInspectorSelectedIndex = -1;
     }
     else
     {
-        w->selected_list_item = index;
+        windowTileInspectorSelectedIndex = index;
     }
 
     window_invalidate(w);
@@ -595,7 +608,7 @@ static void window_tile_inspector_select_element_from_list(rct_window *w, sint32
 
 static void window_tile_inspector_load_tile(rct_window* w, rct_tile_element* elementToSelect)
 {
-    w->selected_list_item = -1;
+    windowTileInspectorSelectedIndex = -1;
     w->scrolls[0].v_top = 0;
 
     rct_tile_element* element = map_get_first_element_at(windowTileInspectorTileX, windowTileInspectorTileY);
@@ -604,7 +617,7 @@ static void window_tile_inspector_load_tile(rct_window* w, rct_tile_element* ele
     {
         if (element == elementToSelect)
         {
-            w->selected_list_item = numItems;
+            windowTileInspectorSelectedIndex = numItems;
         }
 
         numItems++;
@@ -922,33 +935,17 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
         tool_cancel();
         window_close(w);
         break;
-    case WIDX_SPINNER_X_INCREASE:
-        windowTileInspectorTileX = Math::Min<uint32>(windowTileInspectorTileX + 1, MAXIMUM_MAP_SIZE_TECHNICAL - 1);
-        window_tile_inspector_load_tile(w, nullptr);
-        break;
-    case WIDX_SPINNER_X_DECREASE:
-        windowTileInspectorTileX = Math::Max<uint32>(windowTileInspectorTileX - 1, 0);
-        window_tile_inspector_load_tile(w, nullptr);
-        break;
-    case WIDX_SPINNER_Y_INCREASE:
-        windowTileInspectorTileY = Math::Min<uint32>(windowTileInspectorTileY + 1, MAXIMUM_MAP_SIZE_TECHNICAL - 1);
-        window_tile_inspector_load_tile(w, nullptr);
-        break;
-    case WIDX_SPINNER_Y_DECREASE:
-        windowTileInspectorTileY = Math::Max<uint32>(windowTileInspectorTileY - 1, 0);
-        window_tile_inspector_load_tile(w, nullptr);
-        break;
     case WIDX_BUTTON_CORRUPT:
-        window_tile_inspector_insert_corrupt_element(w->selected_list_item);
+        window_tile_inspector_insert_corrupt_element(windowTileInspectorSelectedIndex);
         break;
     case WIDX_BUTTON_REMOVE: {
-        sint32 nextItemToSelect = w->selected_list_item - 1;
-        window_tile_inspector_remove_element(w->selected_list_item);
+        sint32 nextItemToSelect = windowTileInspectorSelectedIndex - 1;
+        window_tile_inspector_remove_element(windowTileInspectorSelectedIndex);
         window_tile_inspector_select_element_from_list(w, nextItemToSelect);
         break;
     }
     case WIDX_BUTTON_ROTATE:
-        window_tile_inspector_rotate_element(w->selected_list_item);
+        window_tile_inspector_rotate_element(windowTileInspectorSelectedIndex);
         break;
     case WIDX_BUTTON_SORT:
         window_tile_inspector_sort_elements();
@@ -960,15 +957,15 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
         window_tile_inspector_paste_element(w);
         break;
     case WIDX_BUTTON_MOVE_DOWN:
-        window_tile_inspector_swap_elements(w->selected_list_item, w->selected_list_item + 1);
+        window_tile_inspector_swap_elements(windowTileInspectorSelectedIndex, windowTileInspectorSelectedIndex + 1);
         break;
     case WIDX_BUTTON_MOVE_UP:
-        window_tile_inspector_swap_elements(w->selected_list_item - 1, w->selected_list_item);
+        window_tile_inspector_swap_elements(windowTileInspectorSelectedIndex - 1, windowTileInspectorSelectedIndex);
         break;
     }
 
     // Only element-specific widgets from now on
-    if (w->page == TILE_INSPECTOR_PAGE_DEFAULT || w->selected_list_item == -1) {
+    if (w->page == TILE_INSPECTOR_PAGE_DEFAULT || windowTileInspectorSelectedIndex == -1) {
         return;
     }
 
@@ -979,12 +976,6 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
     switch (w->page) {
     case TILE_INSPECTOR_PAGE_SURFACE:
         switch (widgetIndex) {
-        case WIDX_SURFACE_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_SURFACE_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_SURFACE_BUTTON_REMOVE_FENCES:
             window_tile_inspector_surface_show_park_fences(false);
             break;
@@ -1005,14 +996,8 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
 
     case TILE_INSPECTOR_PAGE_PATH:
         switch (widgetIndex) {
-        case WIDX_PATH_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_PATH_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_PATH_CHECK_SLOPED:
-            window_tile_inspector_path_set_sloped(w->selected_list_item, !footpath_element_is_sloped(tileElement));
+            window_tile_inspector_path_set_sloped(windowTileInspectorSelectedIndex, !footpath_element_is_sloped(tileElement));
             break;
         case WIDX_PATH_CHECK_EDGE_E:
         case WIDX_PATH_CHECK_EDGE_S:
@@ -1023,7 +1008,7 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
             const sint32 eswn = (widgetIndex - WIDX_PATH_CHECK_EDGE_E) / 2;
             // Transform to world orientation
             const sint32 index = (eswn - get_current_rotation()) & 3;
-            window_tile_inspector_path_toggle_edge(w->selected_list_item, index + 4);  // The corners are stored in the 4 most significant bits, hence the + 4
+            window_tile_inspector_path_toggle_edge(windowTileInspectorSelectedIndex, index + 4);  // The corners are stored in the 4 most significant bits, hence the + 4
             break;
         }
         case WIDX_PATH_CHECK_EDGE_NE:
@@ -1035,7 +1020,7 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
             const sint32 neseswnw = (widgetIndex - WIDX_PATH_CHECK_EDGE_NE) / 2;
             // Transform to world orientation
             const sint32 index = (neseswnw - get_current_rotation()) & 3;
-            window_tile_inspector_path_toggle_edge(w->selected_list_item, index);
+            window_tile_inspector_path_toggle_edge(windowTileInspectorSelectedIndex, index);
             break;
         }
         } // switch widget index
@@ -1047,27 +1032,11 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
             windowTileInspectorApplyToAll ^= 1;
             widget_invalidate(w, widgetIndex);
             break;
-        case WIDX_TRACK_SPINNER_HEIGHT_INCREASE:
-            if (widget_is_pressed(w, WIDX_TRACK_CHECK_APPLY_TO_ALL)) {
-                window_tile_inspector_track_block_height_offset(w->selected_list_item, 1);
-            }
-            else {
-                window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            }
-            break;
-        case WIDX_TRACK_SPINNER_HEIGHT_DECREASE:
-            if (widget_is_pressed(w, WIDX_TRACK_CHECK_APPLY_TO_ALL)) {
-                window_tile_inspector_track_block_height_offset(w->selected_list_item, -1);
-            }
-            else {
-                window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            }
-            break;
         case WIDX_TRACK_CHECK_CHAIN_LIFT:
         {
             bool entireTrackBlock = widget_is_pressed(w, WIDX_TRACK_CHECK_APPLY_TO_ALL);
             bool newLift = !track_element_is_lift_hill(tileElement);
-            window_tile_inspector_track_block_set_lift(w->selected_list_item, entireTrackBlock, newLift);
+            window_tile_inspector_track_block_set_lift(windowTileInspectorSelectedIndex, entireTrackBlock, newLift);
             break;
         }
         } // switch widget index
@@ -1075,90 +1044,44 @@ static void window_tile_inspector_mouseup(rct_window *w, rct_widgetindex widgetI
 
     case TILE_INSPECTOR_PAGE_SCENERY:
         switch (widgetIndex) {
-        case WIDX_SCENERY_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_SCENERY_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_SCENERY_CHECK_QUARTER_N:
         case WIDX_SCENERY_CHECK_QUARTER_E:
         case WIDX_SCENERY_CHECK_QUARTER_S:
         case WIDX_SCENERY_CHECK_QUARTER_W:
-            window_tile_inspector_quarter_tile_set(w->selected_list_item, widgetIndex - WIDX_SCENERY_CHECK_QUARTER_N);
+            window_tile_inspector_quarter_tile_set(windowTileInspectorSelectedIndex, widgetIndex - WIDX_SCENERY_CHECK_QUARTER_N);
             break;
         case WIDX_SCENERY_CHECK_COLLISION_N:
         case WIDX_SCENERY_CHECK_COLLISION_E:
         case WIDX_SCENERY_CHECK_COLLISION_S:
         case WIDX_SCENERY_CHECK_COLLISION_W:
-            window_tile_inspector_toggle_quadrant_collosion(w->selected_list_item, widgetIndex - WIDX_SCENERY_CHECK_COLLISION_N);
+            window_tile_inspector_toggle_quadrant_collosion(windowTileInspectorSelectedIndex, widgetIndex - WIDX_SCENERY_CHECK_COLLISION_N);
             break;
         } // switch widget index
         break;
 
     case TILE_INSPECTOR_PAGE_ENTRANCE:
         switch (widgetIndex) {
-        case WIDX_ENTRANCE_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_ENTRANCE_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_ENTRANCE_BUTTON_MAKE_USABLE:
-            window_tile_inspector_entrance_make_usable(w->selected_list_item);
-            break;
-        } // switch widget index
-        break;
-
-    case TILE_INSPECTOR_PAGE_WALL:
-        switch (widgetIndex) {
-        case WIDX_WALL_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_WALL_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
-        } // switch widget index
-        break;
-
-    case TILE_INSPECTOR_PAGE_LARGE_SCENERY:
-        switch (widgetIndex) {
-        case WIDX_LARGE_SCENERY_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_LARGE_SCENERY_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
+            window_tile_inspector_entrance_make_usable(windowTileInspectorSelectedIndex);
             break;
         } // switch widget index
         break;
 
     case TILE_INSPECTOR_PAGE_BANNER:
         switch (widgetIndex) {
-        case WIDX_BANNER_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_BANNER_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_BANNER_CHECK_BLOCK_NE:
         case WIDX_BANNER_CHECK_BLOCK_SE:
         case WIDX_BANNER_CHECK_BLOCK_SW:
         case WIDX_BANNER_CHECK_BLOCK_NW:
-            window_tile_inspector_banner_toggle_block(w->selected_list_item, widgetIndex - WIDX_BANNER_CHECK_BLOCK_NE);
+            window_tile_inspector_banner_toggle_block(windowTileInspectorSelectedIndex, widgetIndex - WIDX_BANNER_CHECK_BLOCK_NE);
             break;
         } // switch widget index
         break;
 
     case TILE_INSPECTOR_PAGE_CORRUPT:
         switch (widgetIndex) {
-        case WIDX_CORRUPT_SPINNER_HEIGHT_INCREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, 1);
-            break;
-        case WIDX_CORRUPT_SPINNER_HEIGHT_DECREASE:
-            window_tile_inspector_base_height_offset(w->selected_list_item, -1);
-            break;
         case WIDX_CORRUPT_BUTTON_CLAMP:
-            window_tile_inspector_clamp_corrupt(w->selected_list_item);
+            window_tile_inspector_clamp_corrupt(windowTileInspectorSelectedIndex);
             break;
         } // switch widget index
         break;
@@ -1181,38 +1104,181 @@ static void window_tile_inspector_resize(rct_window *w)
 
 static void window_tile_inspector_mousedown(rct_window *w, rct_widgetindex widgetIndex, rct_widget* widget)
 {
-    switch (w->page) {
-    case TILE_INSPECTOR_PAGE_WALL:
-        switch (widgetIndex) {
-        case WIDX_WALL_DROPDOWN_SLOPE_BUTTON:
-            // Use dropdown instead of dropdown button
-            widget--;
-
-            // Fill dropdown list
-            gDropdownItemsFormat[0] = STR_DROPDOWN_MENU_LABEL;
-            gDropdownItemsFormat[1] = STR_DROPDOWN_MENU_LABEL;
-            gDropdownItemsFormat[2] = STR_DROPDOWN_MENU_LABEL;
-            gDropdownItemsArgs[0] = STR_TILE_INSPECTOR_WALL_FLAT;
-            gDropdownItemsArgs[1] = STR_TILE_INSPECTOR_WALL_SLOPED_LEFT;
-            gDropdownItemsArgs[2] = STR_TILE_INSPECTOR_WALL_SLOPED_RIGHT;
-            window_dropdown_show_text_custom_width(
-                w->x + widget->left,
-                w->y + widget->top,
-                widget->bottom - widget->top + 1,
-                w->colours[1],
-                0,
-                DROPDOWN_FLAG_STAY_OPEN,
-                3,
-                widget->right - widget->left - 3
-            );
-
-            // Set current value as checked
-            rct_tile_element *const tileElement = window_tile_inspector_get_selected_element(w);
-            dropdown_set_checked(tileElement->GetSceneryQuadrant(), true);
+    switch (widgetIndex)
+    {
+        case WIDX_SPINNER_X_INCREASE:
+            windowTileInspectorTileX = Math::Min<uint32>(windowTileInspectorTileX + 1, MAXIMUM_MAP_SIZE_TECHNICAL - 1);
+            window_tile_inspector_load_tile(w, nullptr);
             break;
-        }
-        break;
+        case WIDX_SPINNER_X_DECREASE:
+            windowTileInspectorTileX = Math::Max<uint32>(windowTileInspectorTileX - 1, 0);
+            window_tile_inspector_load_tile(w, nullptr);
+            break;
+        case WIDX_SPINNER_Y_INCREASE:
+            windowTileInspectorTileY = Math::Min<uint32>(windowTileInspectorTileY + 1, MAXIMUM_MAP_SIZE_TECHNICAL - 1);
+            window_tile_inspector_load_tile(w, nullptr);
+            break;
+        case WIDX_SPINNER_Y_DECREASE:
+            windowTileInspectorTileY = Math::Max<uint32>(windowTileInspectorTileY - 1, 0);
+            window_tile_inspector_load_tile(w, nullptr);
+            break;
+    } // switch widget index
+
+    // Only element-specific widgets from now on
+    if (w->page == TILE_INSPECTOR_PAGE_DEFAULT || windowTileInspectorSelectedIndex == -1)
+    {
+        return;
     }
+
+    switch (w->page)
+    {
+        case TILE_INSPECTOR_PAGE_SURFACE:
+            switch (widgetIndex)
+            {
+                case WIDX_SURFACE_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_SURFACE_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_PATH:
+            switch (widgetIndex)
+            {
+                case WIDX_PATH_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_PATH_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_TRACK:
+            switch (widgetIndex)
+            {
+                case WIDX_TRACK_SPINNER_HEIGHT_INCREASE:
+                    if (widget_is_pressed(w, WIDX_TRACK_CHECK_APPLY_TO_ALL))
+                    {
+                        window_tile_inspector_track_block_height_offset(windowTileInspectorSelectedIndex, 1);
+                    }
+                    else
+                    {
+                        window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    }
+                    break;
+                case WIDX_TRACK_SPINNER_HEIGHT_DECREASE:
+                    if (widget_is_pressed(w, WIDX_TRACK_CHECK_APPLY_TO_ALL))
+                    {
+                        window_tile_inspector_track_block_height_offset(windowTileInspectorSelectedIndex, -1);
+                    }
+                    else
+                    {
+                        window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    }
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_SCENERY:
+            switch (widgetIndex)
+            {
+                case WIDX_SCENERY_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_SCENERY_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_ENTRANCE:
+            switch (widgetIndex)
+            {
+                case WIDX_ENTRANCE_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_ENTRANCE_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+                case WIDX_ENTRANCE_BUTTON_MAKE_USABLE: window_tile_inspector_entrance_make_usable(windowTileInspectorSelectedIndex); break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_WALL:
+            switch (widgetIndex)
+            {
+                case WIDX_WALL_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_WALL_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+                case WIDX_WALL_DROPDOWN_SLOPE_BUTTON:
+                    // Use dropdown instead of dropdown button
+                    widget--;
+
+                    // Fill dropdown list
+                    gDropdownItemsFormat[0] = STR_DROPDOWN_MENU_LABEL;
+                    gDropdownItemsFormat[1] = STR_DROPDOWN_MENU_LABEL;
+                    gDropdownItemsFormat[2] = STR_DROPDOWN_MENU_LABEL;
+                    gDropdownItemsArgs[0] = STR_TILE_INSPECTOR_WALL_FLAT;
+                    gDropdownItemsArgs[1] = STR_TILE_INSPECTOR_WALL_SLOPED_LEFT;
+                    gDropdownItemsArgs[2] = STR_TILE_INSPECTOR_WALL_SLOPED_RIGHT;
+                    window_dropdown_show_text_custom_width(
+                        w->x + widget->left,
+                        w->y + widget->top,
+                        widget->bottom - widget->top + 1,
+                        w->colours[1],
+                        0,
+                        DROPDOWN_FLAG_STAY_OPEN,
+                        3,
+                        widget->right - widget->left - 3);
+
+                    // Set current value as checked
+                    rct_tile_element* const tileElement = window_tile_inspector_get_selected_element(w);
+                    dropdown_set_checked(tileElement->GetSceneryQuadrant(), true);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_LARGE_SCENERY:
+            switch (widgetIndex)
+            {
+                case WIDX_LARGE_SCENERY_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_LARGE_SCENERY_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_BANNER:
+            switch (widgetIndex)
+            {
+                case WIDX_BANNER_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_BANNER_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+            break;
+
+        case TILE_INSPECTOR_PAGE_CORRUPT:
+            switch (widgetIndex)
+            {
+                case WIDX_CORRUPT_SPINNER_HEIGHT_INCREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, 1);
+                    break;
+                case WIDX_CORRUPT_SPINNER_HEIGHT_DECREASE:
+                    window_tile_inspector_base_height_offset(windowTileInspectorSelectedIndex, -1);
+                    break;
+            } // switch widget index
+    } // switch page
 }
 
 static void window_tile_inspector_update(rct_window *w)
@@ -1242,7 +1308,7 @@ static void window_tile_inspector_dropdown(rct_window *w, rct_widgetindex widget
 
         switch (widgetIndex) {
         case WIDX_WALL_DROPDOWN_SLOPE_BUTTON:
-            window_tile_inspector_wall_set_slope(w->selected_list_item, dropdownIndex << 6);
+            window_tile_inspector_wall_set_slope(windowTileInspectorSelectedIndex, dropdownIndex << 6);
             break;
         }
         break;
@@ -1372,6 +1438,7 @@ static void window_tile_inspector_set_page(rct_window *w, const TILE_INSPECTOR_P
     w->page = page;
     w->widgets = PageWidgets[page];
     w->enabled_widgets = PageEnabledWidgets[page];
+    w->hold_down_widgets = PageHoldDownWidgets[page];
     w->disabled_widgets = PageDisabledWidgets[page];
     w->pressed_widgets = 0;
 }
@@ -1398,7 +1465,7 @@ static void window_tile_inspector_invalidate(rct_window *w)
 {
     // Set the correct page automatically
     TILE_INSPECTOR_PAGE page = TILE_INSPECTOR_PAGE_DEFAULT;
-    if (w->selected_list_item != -1)
+    if (windowTileInspectorSelectedIndex != -1)
     {
         const auto element = window_tile_inspector_get_selected_element(w);
         auto type = element->GetType();
@@ -1435,16 +1502,16 @@ static void window_tile_inspector_invalidate(rct_window *w)
     widget_set_enabled(w, WIDX_BUTTON_SORT, (windowTileInspectorTileSelected && windowTileInspectorElementCount > 1));
 
     // Move Up button
-    widget_set_enabled(w, WIDX_BUTTON_MOVE_UP, (w->selected_list_item > 0));
+    widget_set_enabled(w, WIDX_BUTTON_MOVE_UP, (windowTileInspectorSelectedIndex > 0));
     widget_invalidate(w, WIDX_BUTTON_MOVE_UP);
 
     // Move Down button
     widget_set_enabled(
-        w, WIDX_BUTTON_MOVE_DOWN, (w->selected_list_item != -1 && w->selected_list_item < windowTileInspectorElementCount - 1));
+        w, WIDX_BUTTON_MOVE_DOWN, (windowTileInspectorSelectedIndex != -1 && windowTileInspectorSelectedIndex < windowTileInspectorElementCount - 1));
     widget_invalidate(w, WIDX_BUTTON_MOVE_DOWN);
 
     // Copy button
-    widget_set_enabled(w, WIDX_BUTTON_COPY, w->selected_list_item >= 0);
+    widget_set_enabled(w, WIDX_BUTTON_COPY, windowTileInspectorSelectedIndex >= 0);
     widget_invalidate(w, WIDX_BUTTON_COPY);
 
     // Paste button
@@ -1654,6 +1721,14 @@ static void window_tile_inspector_invalidate(rct_window *w)
         w->widgets[WIDX_BANNER_SPINNER_HEIGHT_INCREASE].bottom = GBBB(propertiesAnchor, 0) - 4;
         w->widgets[WIDX_BANNER_SPINNER_HEIGHT_DECREASE].top = GBBT(propertiesAnchor, 0) + 4;
         w->widgets[WIDX_BANNER_SPINNER_HEIGHT_DECREASE].bottom = GBBB(propertiesAnchor, 0) - 4;
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_NE].top = GBBT(propertiesAnchor, 1);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_NE].bottom = GBBB(propertiesAnchor, 1);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_SE].top = GBBT(propertiesAnchor, 2);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_SE].bottom = GBBB(propertiesAnchor, 2);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_SW].top = GBBT(propertiesAnchor, 2);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_SW].bottom = GBBB(propertiesAnchor, 2);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_NW].top = GBBT(propertiesAnchor, 1);
+        w->widgets[WIDX_BANNER_CHECK_BLOCK_NW].bottom = GBBB(propertiesAnchor, 1);
         widget_set_checkbox_value(w, WIDX_BANNER_CHECK_BLOCK_NE, !(tileElement->properties.banner.flags & (1 << ((0 - get_current_rotation()) & 3))));
         widget_set_checkbox_value(w, WIDX_BANNER_CHECK_BLOCK_SE, !(tileElement->properties.banner.flags & (1 << ((1 - get_current_rotation()) & 3))));
         widget_set_checkbox_value(w, WIDX_BANNER_CHECK_BLOCK_SW, !(tileElement->properties.banner.flags & (1 << ((2 - get_current_rotation()) & 3))));
@@ -1712,7 +1787,7 @@ static void window_tile_inspector_paint(rct_window *w, rct_drawpixelinfo *dpi)
         gfx_draw_string(dpi, (char *)"-", COLOUR_DARK_GREEN, w->x + 113 - 7, w->y + 24);
     }
 
-    if (w->selected_list_item != -1) {
+    if (windowTileInspectorSelectedIndex != -1) {
         // X and Y of first element in detail box
         sint32 x = w->x + w->widgets[WIDX_GROUPBOX_DETAILS].left + 7;
         sint32 y = w->y + w->widgets[WIDX_GROUPBOX_DETAILS].top + 14;
@@ -2054,7 +2129,7 @@ static void window_tile_inspector_scrollpaint(rct_window* w, rct_drawpixelinfo* 
 
     gCurrentFontSpriteBase = FONT_SPRITE_BASE_MEDIUM;
     do {
-        const bool selectedRow = i == w->selected_list_item;
+        const bool selectedRow = i == windowTileInspectorSelectedIndex;
         const bool hoveredRow = i == windowTileInspectorHighlightedIndex;
         sint32 type = tileElement->GetType();
         const char* typeName = "";

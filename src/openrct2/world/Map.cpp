@@ -3772,8 +3772,22 @@ static void clear_element_at(sint32 x, sint32 y, rct_tile_element **elementPtr)
         (*elementPtr)++;
         break;
     case TILE_ELEMENT_TYPE_ENTRANCE:
-        viewport_interaction_remove_park_entrance(element, x, y);
+    {
+        sint32 rotation = tile_element_get_direction_with_offset(element, 1);
+        switch (element->properties.entrance.index & 0x0F) {
+        case 1:
+            x += CoordsDirectionDelta[rotation].x;
+            y += CoordsDirectionDelta[rotation].y;
+            break;
+        case 2:
+            x -= CoordsDirectionDelta[rotation].x;
+            y -= CoordsDirectionDelta[rotation].y;
+            break;
+        }
+        gGameCommandErrorTitle = STR_CANT_REMOVE_THIS;
+        game_do_command(x, GAME_COMMAND_FLAG_APPLY, y, element->base_height / 2, GAME_COMMAND_REMOVE_PARK_ENTRANCE, 0, 0);
         break;
+    }
     case TILE_ELEMENT_TYPE_WALL:
         {
             TileCoordsXYZD wallLocation = { x >> 5, y >> 5, element->base_height, element->GetDirection() };
@@ -4542,7 +4556,6 @@ rct_tile_element *map_get_track_element_at(sint32 x, sint32 y, sint32 z)
  * @param x x units, not tiles.
  * @param y y units, not tiles.
  * @param z Base height.
- * @param trackType
  */
 rct_tile_element *map_get_track_element_at_of_type(sint32 x, sint32 y, sint32 z, sint32 trackType)
 {
@@ -4563,8 +4576,6 @@ rct_tile_element *map_get_track_element_at_of_type(sint32 x, sint32 y, sint32 z,
  * @param x x units, not tiles.
  * @param y y units, not tiles.
  * @param z Base height.
- * @param trackType
- * @param sequence
  */
 rct_tile_element *map_get_track_element_at_of_type_seq(sint32 x, sint32 y, sint32 z, sint32 trackType, sint32 sequence)
 {
@@ -4587,8 +4598,6 @@ rct_tile_element *map_get_track_element_at_of_type_seq(sint32 x, sint32 y, sint3
  * @param x x units, not tiles.
  * @param y y units, not tiles.
  * @param z Base height.
- * @param trackType
- * @param ride index
  */
 rct_tile_element *map_get_track_element_at_of_type_from_ride(sint32 x, sint32 y, sint32 z, sint32 trackType, sint32 rideIndex) {
     rct_tile_element *tileElement = map_get_first_element_at(x >> 5, y >> 5);
@@ -4609,7 +4618,6 @@ rct_tile_element *map_get_track_element_at_of_type_from_ride(sint32 x, sint32 y,
  * @param x x units, not tiles.
  * @param y y units, not tiles.
  * @param z Base height.
- * @param ride index
  */
 rct_tile_element *map_get_track_element_at_from_ride(sint32 x, sint32 y, sint32 z, sint32 rideIndex) {
     rct_tile_element *tileElement = map_get_first_element_at(x >> 5, y >> 5);
@@ -4630,7 +4638,6 @@ rct_tile_element *map_get_track_element_at_from_ride(sint32 x, sint32 y, sint32 
  * @param y y units, not tiles.
  * @param z Base height.
  * @param direction The direction (0 - 3).
- * @param ride index
  */
 rct_tile_element *map_get_track_element_at_with_direction_from_ride(sint32 x, sint32 y, sint32 z, sint32 direction, sint32 rideIndex)
 {

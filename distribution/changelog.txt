@@ -1,4 +1,10 @@
-0.1.3 (in development)
+0.2.0+ (in development)
+------------------------------------------------------------------------
+- Feature: [#6998] Guests now wait for passing vehicles before crossing railway tracks.
+- Fix: [#7653] Finances money spinner is too narrow for big loans.
+- Fix: [#7674] Rides show up as random numbers in guest's ride list.
+
+0.2.0 (2018-06-10)
 ------------------------------------------------------------------------
 - Feature: [#1417] Allow saving track designs for flat rides.
 - Feature: [#1675] Auto-rotate shops to face footpaths.
@@ -11,7 +17,7 @@
 - Feature: [#7332] Keyboard shortcuts for view path issues and cutaway view.
 - Feature: [#7348] Add large half loops to the Vertical Drop Roller Coaster.
 - Feature: [#7459] Allow opening and closing of parks that use no money.
-- Feature: [#7579] New horizontal +/- stepper widgets to make adjusting values easier.
+- Feature: [#7579] New horizontal +/- spinner widgets to make adjusting values easier.
 - Fix: [#2053] When clearance checks are disabled, a track piece ghost can remove non-ghost track pieces.
 - Fix: [#2611] Some objects show (undefined string) instead of a description in Korean.
 - Fix: [#3596] Saving parks, landscapes and tracks with a period in the filenames don't get their extension.
@@ -32,6 +38,7 @@
 - Fix: [#7402] Edges of neigbouring footpaths stay connected after removing a path that's underneath a ride entrance.
 - Fix: [#7405] Rides can be covered by placing scenery underneath them.
 - Fix: [#7418] Staff walk off paths with a connection but no adjacent path.
+- Fix: [#7434] Diagonal ride segments cannot be deleted if they are isolated.
 - Fix: [#7436] Only the first 32 vehicles of a train can be painted.
 - Fix: [#7480] Graphs skip values of 0.
 - Fix: [#7505] Game crashes when trying to make path over map edge while having clearance checks disabled.
@@ -53,7 +60,7 @@
 - Improved: [#7577] Allow fine-tuning the virtual floor style.
 - Improved: [#7608] The vehicle selection dropdown is now sorted orthographically.
 - Improved: [#7613] Resizing the staff window now resizes the name and action columns too.
-- Improved: [#7627] Allow scrolling up and down on steppers to change their values.
+- Improved: [#7627] Allow scrolling up and down on spinners to change their values.
 
 0.1.2 (2018-03-18)
 ------------------------------------------------------------------------

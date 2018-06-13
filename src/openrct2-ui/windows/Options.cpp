@@ -34,7 +34,6 @@
 #include <openrct2-ui/windows/Window.h>
 
 #include <openrct2/audio/audio.h>
-#include <openrct2/interface/themes.h>
 #include <openrct2-ui/interface/Viewport.h>
 #include <openrct2-ui/interface/Widget.h>
 #include <openrct2/localisation/Currency.h>
@@ -47,6 +46,7 @@
 #include <openrct2/util/Util.h>
 #include <openrct2-ui/interface/Dropdown.h>
 #include <openrct2/scenario/Scenario.h>
+#include "../interface/Theme.h"
 
 // clang-format off
 enum WINDOW_OPTIONS_PAGE {
@@ -229,7 +229,7 @@ static rct_widget window_options_display_widgets[] = {
     { WWT_BUTTON,           1,  288,    298,    69,     78,     STR_DROPDOWN_GLYPH,     STR_FULLSCREEN_MODE_TIP },
     { WWT_DROPDOWN,         1,  155,    299,    83,     94,     STR_ARG_16_RESOLUTION_X_BY_Y,   STR_NONE },             // Resolution
     { WWT_BUTTON,           1,  288,    298,    84,     93,     STR_DROPDOWN_GLYPH,     STR_DISPLAY_RESOLUTION_TIP },
-      STEPPER_WIDGETS      (1,  155,    299,    98,    109,     STR_NONE,               STR_WINDOW_SCALE_TIP), // Scale spinner (3 widgets)
+      SPINNER_WIDGETS      (1,  155,    299,    98,    109,     STR_NONE,               STR_WINDOW_SCALE_TIP), // Scale spinner (3 widgets)
     { WWT_DROPDOWN,         1,  155,    299,    113,    124,    STR_NONE,               STR_NONE },
     { WWT_BUTTON,           1,  288,    298,    114,    123,    STR_DROPDOWN_GLYPH,     STR_DRAWING_ENGINE_TIP },
     { WWT_DROPDOWN,         1,  155,    299,    128,    139,    STR_NONE,                       STR_NONE },                         // Scaling quality hint
